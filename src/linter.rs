@@ -7,6 +7,7 @@ use markdown::unist::Position;
 use crate::rule;
 use crate::Rule;
 
+#[derive(Default)]
 pub struct Linter {
     rules: Vec<Box<dyn Rule>>,
 }
