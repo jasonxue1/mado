@@ -1,4 +1,5 @@
 mod md001;
+mod md022;
 
 pub trait Rule {
     fn name(&self) -> String;
@@ -13,3 +14,4 @@ pub trait Rule {
 }
 
 pub use md001::MD001;
+pub use md022::MD022;

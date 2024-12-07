@@ -15,7 +15,7 @@ pub struct Linter {
 impl Linter {
     pub fn new() -> Self {
         Self {
-            rules: vec![Box::new(rule::MD001::new())],
+            rules: vec![Box::new(rule::MD001::new()), Box::new(rule::MD022::new())],
         }
     }
 
