@@ -1,5 +1,7 @@
+use std::ffi::OsStr;
+use std::fs;
+
 use clap::Parser;
-use markdown::mdast::Node;
 
 use markdownlint::rule;
 use markdownlint::Cli;
@@ -10,19 +12,21 @@ fn main() {
     let cli = Cli::parse();
 
     match &cli.command {
-        // TODO
         Some(Command::Check { files }) => {
-            let text = "# Hello
-        ### Cluel
-        ## World
-        ";
-            let doc: Node = markdown::to_mdast(text, &markdown::ParseOptions::default()).unwrap();
-
             let md001 = rule::MD001::new();
 
-            println!("{:?}", md001.check(&doc));
-            println!("{:?}", doc);
-            println!("{:?}", files);
+            for file in files {
+                let path = file.as_path();
+                if path.is_dir() {
+                    // TODO
+                } else if path.is_file() && path.extension() == Some(OsStr::new("md")) {
+                    let text = &fs::read_to_string(path).unwrap(); // TODO: Don't use unwrap
+                    let doc = markdown::to_mdast(text, &markdown::ParseOptions::default()).unwrap();
+                    println!("{:?}", md001.check(&doc));
+                } else {
+                    // TODO
+                }
+            }
         }
         None => {}
     }
