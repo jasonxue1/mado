@@ -1,5 +1,3 @@
-use std::path::PathBuf;
-
 use clap::Subcommand;
 
 #[derive(Subcommand)]
@@ -8,6 +6,6 @@ pub enum Command {
     Check {
         /// List of files or directories to check
         #[arg(required = true)]
-        files: Vec<PathBuf>,
+        files: Vec<String>,
     },
 }
