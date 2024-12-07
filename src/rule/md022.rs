@@ -1,5 +1,7 @@
 use markdown::mdast::Node;
 
+use crate::violation::Violation;
+
 use super::Rule;
 
 #[derive(Default)]
@@ -28,7 +30,8 @@ impl Rule for MD022 {
         vec!["blanks-around-headers".to_string()]
     }
 
-    fn check(&self, doc: &markdown::mdast::Node) -> Vec<markdown::unist::Position> {
+    fn check(&self, doc: &markdown::mdast::Node) -> Vec<Violation> {
+        // TODO: Do de-duplication of violdations
         match doc.children() {
             Some(children) => {
                 children
@@ -44,7 +47,12 @@ impl Rule for MD022 {
                                     let prev_position = prev.position().unwrap();
                                     let position = node.position().unwrap();
                                     if position.start.line == prev_position.end.line + 1 {
-                                        vec.push(position.clone());
+                                        let violation = Violation::new(
+                                            self.name(),
+                                            self.description(),
+                                            prev_position.clone(),
+                                        );
+                                        vec.push(violation);
                                     }
                                 }
 
@@ -52,7 +60,12 @@ impl Rule for MD022 {
                                     let prev_position = prev.position().unwrap();
                                     let position = node.position().unwrap();
                                     if position.start.line == prev_position.end.line + 1 {
-                                        vec.push(position.clone());
+                                        let violation = Violation::new(
+                                            self.name(),
+                                            self.description(),
+                                            position.clone(),
+                                        );
+                                        vec.push(violation);
                                     }
                                 }
 

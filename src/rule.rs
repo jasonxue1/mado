@@ -1,3 +1,5 @@
+use crate::violation::Violation;
+
 mod md001;
 mod md022;
 
@@ -10,7 +12,7 @@ pub trait Rule {
 
     fn aliases(&self) -> Vec<String>;
 
-    fn check(&self, doc: &markdown::mdast::Node) -> Vec<markdown::unist::Position>;
+    fn check(&self, doc: &markdown::mdast::Node) -> Vec<Violation>;
 }
 
 pub use md001::MD001;

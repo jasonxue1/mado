@@ -14,7 +14,20 @@ fn main() {
 
             for pattern in files {
                 for entry in glob(pattern).unwrap() {
-                    println!("{:?}", linter.check(&entry.unwrap()));
+                    // TODO: Don't use unwrap
+                    let path = entry.unwrap();
+                    let violations = linter.check(&path);
+                    if !violations.is_empty() {
+                        println!("{}", path.to_str().unwrap());
+                        for violation in violations {
+                            println!(
+                                "{}:{} {}",
+                                violation.position().start.line,
+                                violation.name(),
+                                violation.description()
+                            );
+                        }
+                    }
                 }
             }
         }

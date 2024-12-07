@@ -1,5 +1,7 @@
 use markdown::mdast::Node;
 
+use crate::violation::Violation;
+
 use super::Rule;
 
 #[derive(Default)]
@@ -28,7 +30,7 @@ impl Rule for MD001 {
         vec!["header-increment".to_string()]
     }
 
-    fn check(&self, doc: &markdown::mdast::Node) -> Vec<markdown::unist::Position> {
+    fn check(&self, doc: &markdown::mdast::Node) -> Vec<Violation> {
         match doc.children() {
             Some(children) => {
                 children
@@ -38,7 +40,12 @@ impl Rule for MD001 {
                             let mut vec = acc.clone();
                             if heading.depth != old_depth + 1 {
                                 // TODO: Don't use unwrap
-                                vec.push(heading.position.clone().unwrap());
+                                let violation = Violation::new(
+                                    self.name(),
+                                    self.description(),
+                                    heading.position.clone().unwrap(),
+                                );
+                                vec.push(violation);
                             }
                             (vec, heading.depth)
                         }

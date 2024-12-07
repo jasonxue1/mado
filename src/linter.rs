@@ -2,9 +2,8 @@ use std::ffi::OsStr;
 use std::fs;
 use std::path::Path;
 
-use markdown::unist::Position;
-
 use crate::rule;
+use crate::violation::Violation;
 use crate::Rule;
 
 #[derive(Default)]
@@ -19,7 +18,7 @@ impl Linter {
         }
     }
 
-    pub fn check(&self, path: &Path) -> Vec<Position> {
+    pub fn check(&self, path: &Path) -> Vec<Violation> {
         if path.is_file() && path.extension() == Some(OsStr::new("md")) {
             // TODO: Don't use unwrap
             let text = &fs::read_to_string(path).unwrap();
