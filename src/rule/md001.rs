@@ -2,6 +2,7 @@ use markdown::mdast::Node;
 
 use super::Rule;
 
+#[derive(Default)]
 pub struct MD001 {}
 
 impl MD001 {
