@@ -35,7 +35,7 @@ impl Rule for MD001 {
                     .fold((vec![], 0), |(acc, old_depth), node| match node {
                         Node::Heading(heading) => {
                             let mut vec = acc.clone();
-                            if heading.depth < old_depth {
+                            if heading.depth != old_depth + 1 {
                                 // TODO: Don't use unwrap
                                 vec.push(heading.position.clone().unwrap());
                             }
