@@ -1,3 +1,3 @@
-mod rule;
+pub mod rule;
 
 pub use rule::Rule;
