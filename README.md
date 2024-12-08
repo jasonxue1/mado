@@ -1,5 +1,4 @@
-downlint
-========
+# downlint
 
 A fast Markdown linter, written in Rust.
 
