@@ -1,5 +1,5 @@
 mod cli;
-mod command;
+pub mod command;
 mod linter;
 pub mod rule;
 mod violation;
@@ -9,4 +9,5 @@ pub use cli::Cli;
 pub use command::Command;
 pub use linter::Linter;
 pub use rule::Rule;
+pub use violation::Violation;
 pub use walker::MarkdownWalker;
