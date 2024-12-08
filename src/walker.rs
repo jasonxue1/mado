@@ -42,3 +42,25 @@ impl Iterator for MarkdownWalker {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::path::Path;
+
+    use super::*;
+
+    #[test]
+    fn iterator_next() {
+        // TODO: Use stub or temporary files
+        let walker = MarkdownWalker::new(&[Path::new(".").to_path_buf()]);
+        let actual: Vec<String> = walker
+            .into_iter()
+            .filter_map(|either_entry| match either_entry {
+                Ok(entry) => entry.path().to_str().map(|s| s.to_string()),
+                Err(_) => None,
+            })
+            .collect();
+        let expected = vec!["./README.md"];
+        assert_eq!(actual, expected);
+    }
+}
