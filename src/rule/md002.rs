@@ -56,11 +56,11 @@ impl Rule for MD002 {
                 match maybe_first_heading {
                     Some(Heading {
                         depth, position, ..
-                    }) if *depth != self.depth => Ok(vec![Violation::new(
-                        self.name(),
-                        self.description(),
-                        position.clone().expect("heading must have position"),
-                    )]),
+                    }) if *depth != self.depth => {
+                        Ok(vec![self.to_violation(
+                            position.clone().expect("heading must have position"),
+                        )])
+                    }
                     _ => Ok(vec![]),
                 }
             }

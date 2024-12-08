@@ -45,9 +45,7 @@ impl Rule for MD001 {
                             (Node::Heading(heading), Some(old_depth))
                                 if heading.depth > old_depth + 1 =>
                             {
-                                let violation = Violation::new(
-                                    self.name(),
-                                    self.description(),
+                                let violation = self.to_violation(
                                     heading
                                         .position
                                         .clone()

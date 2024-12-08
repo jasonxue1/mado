@@ -1,3 +1,4 @@
+use markdown::unist::Position;
 use miette::Result;
 
 use crate::violation::Violation;
@@ -16,6 +17,11 @@ pub trait Rule {
     fn aliases(&self) -> Vec<String>;
 
     fn check(&self, doc: &markdown::mdast::Node) -> Result<Vec<Violation>>;
+
+    #[inline]
+    fn to_violation(&self, position: Position) -> Violation {
+        Violation::new(self.name(), self.description(), position)
+    }
 }
 
 pub use md001::MD001;

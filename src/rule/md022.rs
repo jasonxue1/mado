@@ -52,20 +52,12 @@ impl Rule for MD022 {
 
                                 if let Node::Heading(_) = node {
                                     if position.start.line == prev_position.end.line + 1 {
-                                        let violation = Violation::new(
-                                            self.name(),
-                                            self.description(),
-                                            position.clone(),
-                                        );
+                                        let violation = self.to_violation(position.clone());
                                         vec.push(violation);
                                     }
                                 } else if let Node::Heading(_) = prev {
                                     if position.start.line == prev_position.end.line + 1 {
-                                        let violation = Violation::new(
-                                            self.name(),
-                                            self.description(),
-                                            prev_position.clone(),
-                                        );
+                                        let violation = self.to_violation(position.clone());
                                         vec.push(violation);
                                     }
                                 }
