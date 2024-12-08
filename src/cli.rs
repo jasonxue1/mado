@@ -4,8 +4,8 @@ use crate::Command;
 
 #[derive(Parser)]
 #[command(
-    name = "markdownlint",
-    bin_name = "markdownlint",
+    name = "downlint",
+    bin_name = "downlint",
     version,
     about,
     long_about = None,

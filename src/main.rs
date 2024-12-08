@@ -1,9 +1,9 @@
 use clap::Parser;
 
-use markdownlint::Cli;
-use markdownlint::Command;
-use markdownlint::Linter;
-use markdownlint::MarkdownWalker;
+use downlint::Cli;
+use downlint::Command;
+use downlint::Linter;
+use downlint::MarkdownWalker;
 
 fn main() {
     let cli = Cli::parse();

@@ -142,6 +142,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "22ec99545bb0ed0ea7bb9b8e1e9122ea386ff8a48c0922e43f36d45ab09e0e80"
 
 [[package]]
+name = "downlint"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "ignore",
+ "markdown",
+ "walkdir",
+]
+
+[[package]]
 name = "globset"
 version = "0.4.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -195,16 +205,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a6491e6c702bf7e3b24e769d800746d5f2c06a6c6a2db7992612e0f429029e81"
 dependencies = [
  "unicode-id",
-]
-
-[[package]]
-name = "markdownlint"
-version = "0.1.0"
-dependencies = [
- "clap",
- "ignore",
- "markdown",
- "walkdir",
 ]
 
 [[package]]
