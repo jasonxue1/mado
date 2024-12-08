@@ -1,7 +1,7 @@
 use markdown::{mdast::Node, unist::Position};
 use miette::Result;
 
-use crate::violation::Violation;
+use crate::{violation::Violation, Document};
 
 use super::Rule;
 
@@ -12,35 +12,9 @@ impl MD005 {
     pub fn new() -> Self {
         Self {}
     }
-}
 
-impl Rule for MD005 {
-    #[inline]
-    fn name(&self) -> String {
-        "MD005".to_string()
-    }
-
-    #[inline]
-    fn description(&self) -> String {
-        "Inconsistent indentation for list items at the same level".to_string()
-    }
-
-    #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec![
-            "bullet".to_string(),
-            "ul".to_string(),
-            "indentation".to_string(),
-        ]
-    }
-
-    #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["list-indent".to_string()]
-    }
-
-    fn check(&self, doc: &Node) -> Result<Vec<Violation>> {
-        match doc.children() {
+    fn check_recursive(&self, ast: &Node) -> Result<Vec<Violation>> {
+        match ast.children() {
             Some(children) => {
                 let all_violations = children.iter().fold(vec![], |mut acc, node| match node {
                     Node::List(list) => {
@@ -71,8 +45,9 @@ impl Rule for MD005 {
                                     }
 
                                     // Check list recursively
-                                    let item_violations =
-                                        self.check(item_node).expect("check should be successful");
+                                    let item_violations = self
+                                        .check_recursive(item_node)
+                                        .expect("check should be successful");
                                     acc.extend(item_violations);
 
                                     (acc, Some(position))
@@ -93,8 +68,40 @@ impl Rule for MD005 {
     }
 }
 
+impl Rule for MD005 {
+    #[inline]
+    fn name(&self) -> String {
+        "MD005".to_string()
+    }
+
+    #[inline]
+    fn description(&self) -> String {
+        "Inconsistent indentation for list items at the same level".to_string()
+    }
+
+    #[inline]
+    fn tags(&self) -> Vec<String> {
+        vec![
+            "bullet".to_string(),
+            "ul".to_string(),
+            "indentation".to_string(),
+        ]
+    }
+
+    #[inline]
+    fn aliases(&self) -> Vec<String> {
+        vec!["list-indent".to_string()]
+    }
+
+    fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
+        self.check_recursive(&doc.ast)
+    }
+}
+
 #[cfg(test)]
 mod tests {
+    use std::path::Path;
+
     use markdown::{unist::Position, ParseOptions};
 
     use super::*;
@@ -105,7 +112,13 @@ mod tests {
     * Nested Item 1
     * Nested Item 2
    * A misaligned item";
-        let doc = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let path = Path::new("test.md").to_path_buf();
+        let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let doc = Document {
+            path,
+            ast,
+            text: text.to_string(),
+        };
         let rule = MD005::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![rule.to_violation(Position::new(4, 6, 54, 4, 23, 71))];
@@ -118,7 +131,13 @@ mod tests {
     * Nested Item 1
     * Nested Item 2
     * Nested Item 3";
-        let doc = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let path = Path::new("test.md").to_path_buf();
+        let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let doc = Document {
+            path,
+            ast,
+            text: text.to_string(),
+        };
         let rule = MD005::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -132,8 +151,13 @@ mod tests {
     *
     *
    *";
-        let doc = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
-        println!("{:?}", doc);
+        let path = Path::new("test.md").to_path_buf();
+        let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let doc = Document {
+            path,
+            ast,
+            text: text.to_string(),
+        };
         let rule = MD005::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

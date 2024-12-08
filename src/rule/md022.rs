@@ -1,7 +1,7 @@
 use markdown::mdast::Node;
 use miette::Result;
 
-use crate::violation::Violation;
+use crate::{violation::Violation, Document};
 
 use super::Rule;
 
@@ -35,8 +35,8 @@ impl Rule for MD022 {
         vec!["blanks-around-headers".to_string()]
     }
 
-    fn check(&self, doc: &Node) -> Result<Vec<Violation>> {
-        match doc.children() {
+    fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
+        match doc.ast.children() {
             Some(children) => {
                 let (violations, _) =
                     children
@@ -76,6 +76,8 @@ impl Rule for MD022 {
 
 #[cfg(test)]
 mod tests {
+    use std::path::Path;
+
     use markdown::{unist::Position, ParseOptions};
 
     use super::*;
@@ -87,7 +89,13 @@ Some text
 
 Some more text
 ## Header 2";
-        let doc = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let path = Path::new("test.md").to_path_buf();
+        let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let doc = Document {
+            path,
+            ast,
+            text: text.to_string(),
+        };
         let rule = MD022::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
@@ -106,7 +114,13 @@ Some text
 Some more text
 
 ## Header 2";
-        let doc = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let path = Path::new("test.md").to_path_buf();
+        let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let doc = Document {
+            path,
+            ast,
+            text: text.to_string(),
+        };
         let rule = MD022::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

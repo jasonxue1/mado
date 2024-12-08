@@ -1,13 +1,11 @@
-use std::fs;
 use std::path::Path;
 
-use markdown::ParseOptions;
 use miette::miette;
-use miette::IntoDiagnostic;
 use miette::Result;
 
 use crate::rule;
 use crate::violation::Violation;
+use crate::Document;
 use crate::Rule;
 
 #[derive(Default)]
@@ -32,10 +30,8 @@ impl Linter {
             return Err(miette!("Unexpected file: {:?}", path));
         }
 
-        let text = &fs::read_to_string(path).into_diagnostic()?;
-        let doc = markdown::to_mdast(text, &ParseOptions::default()).map_err(|err| miette!(err))?;
-
         // Iterate rules while unrolling Vec<Result<Vec<..>>> to Result<Vec<..>>
+        let doc = Document::open(path)?;
         let either_violations: Result<Vec<Violation>> =
             self.rules.iter().try_fold(vec![], |mut unrolled, rule| {
                 let result = rule.check(&doc);

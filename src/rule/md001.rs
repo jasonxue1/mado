@@ -1,7 +1,7 @@
 use markdown::mdast::Node;
 use miette::Result;
 
-use crate::violation::Violation;
+use crate::{violation::Violation, Document};
 
 use super::Rule;
 
@@ -35,8 +35,8 @@ impl Rule for MD001 {
         vec!["header-increment".to_string()]
     }
 
-    fn check(&self, doc: &Node) -> Result<Vec<Violation>> {
-        match doc.children() {
+    fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
+        match doc.ast.children() {
             Some(children) => {
                 let (violations, _) = children.iter().fold(
                     (vec![], None),
@@ -67,6 +67,8 @@ impl Rule for MD001 {
 
 #[cfg(test)]
 mod tests {
+    use std::path::Path;
+
     use markdown::{unist::Position, ParseOptions};
 
     use super::*;
@@ -78,7 +80,13 @@ mod tests {
 ### Header 3
 
 We skipped out a 2nd level header in this document";
-        let doc = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let path = Path::new("test.md").to_path_buf();
+        let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let doc = Document {
+            path,
+            ast,
+            text: text.to_string(),
+        };
         let rule = MD001::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![rule.to_violation(Position::new(3, 1, 12, 3, 13, 24))];
@@ -98,7 +106,13 @@ We skipped out a 2nd level header in this document";
 ## Another Header 2
 
 ### Another Header 3";
-        let doc = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let path = Path::new("test.md").to_path_buf();
+        let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let doc = Document {
+            path,
+            ast,
+            text: text.to_string(),
+        };
         let rule = MD001::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -108,7 +122,13 @@ We skipped out a 2nd level header in this document";
     #[test]
     fn check_no_errors_no_top_level() {
         let text = "## This isn't a H1 header";
-        let doc = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let path = Path::new("test.md").to_path_buf();
+        let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let doc = Document {
+            path,
+            ast,
+            text: text.to_string(),
+        };
         let rule = MD001::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

@@ -3,6 +3,7 @@ use markdown::mdast::Node;
 use miette::Result;
 
 use crate::violation::Violation;
+use crate::Document;
 
 use super::Rule;
 
@@ -45,8 +46,8 @@ impl Rule for MD002 {
         vec!["first-header-h1".to_string()]
     }
 
-    fn check(&self, doc: &Node) -> Result<Vec<Violation>> {
-        match doc.children() {
+    fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
+        match doc.ast.children() {
             Some(children) => {
                 let maybe_first_heading = children.iter().find_map(|node| match node {
                     Node::Heading(heading) => Some(heading),
@@ -71,6 +72,8 @@ impl Rule for MD002 {
 
 #[cfg(test)]
 mod tests {
+    use std::path::Path;
+
     use markdown::{unist::Position, ParseOptions};
 
     use super::*;
@@ -80,7 +83,13 @@ mod tests {
         let text = "## This isn't a H1 header
 
 ### Another header";
-        let doc = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let path = Path::new("test.md").to_path_buf();
+        let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let doc = Document {
+            path,
+            ast,
+            text: text.to_string(),
+        };
         let rule = MD002::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![rule.to_violation(Position::new(1, 1, 0, 1, 26, 25))];
@@ -92,7 +101,13 @@ mod tests {
         let text = "# Start with a H1 header
 
 ## Then use a H2 for subsections";
-        let doc = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let path = Path::new("test.md").to_path_buf();
+        let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let doc = Document {
+            path,
+            ast,
+            text: text.to_string(),
+        };
         let rule = MD002::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
