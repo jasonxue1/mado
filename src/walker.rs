@@ -12,8 +12,7 @@ pub struct MarkdownWalker {
 
 impl MarkdownWalker {
     pub fn new(files: &[PathBuf]) -> Self {
-        // TODO: Don't use unwrap
-        let (head, tail_files) = files.split_first().unwrap();
+        let (head, tail_files) = files.split_first().expect("files must be non-empty");
         let mut builder = WalkBuilder::new(head);
         for file in tail_files {
             builder.add(file);

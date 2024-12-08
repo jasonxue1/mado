@@ -2,6 +2,9 @@ use std::fs;
 use std::path::Path;
 
 use markdown::ParseOptions;
+use miette::miette;
+use miette::IntoDiagnostic;
+use miette::Result;
 
 use crate::rule;
 use crate::violation::Violation;
@@ -19,21 +22,26 @@ impl Linter {
         }
     }
 
-    pub fn check(&self, path: &Path) -> Vec<Violation> {
+    pub fn check(&self, path: &Path) -> Result<Vec<Violation>> {
         if !path.is_file() || path.extension() != Some("md".as_ref()) {
             panic!("Unexpected file: {:?}", path);
         }
 
-        // TODO: Don't use unwrap
-        let text = &fs::read_to_string(path).unwrap();
-        let doc = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
-        let mut violations: Vec<Violation> = self
-            .rules
-            .iter()
-            .flat_map(|rule| rule.check(&doc))
-            .collect();
+        let text = &fs::read_to_string(path).into_diagnostic()?;
+        let doc = markdown::to_mdast(text, &ParseOptions::default()).map_err(|err| miette!(err))?;
+        let violation_results: Vec<Result<Vec<Violation>>> =
+            self.rules.iter().map(|rule| rule.check(&doc)).collect();
+        let either_nested_violations: Result<Vec<Vec<Violation>>> =
+            violation_results.into_iter().collect();
+        let either_violations: Result<Vec<Violation>> = either_nested_violations
+            .map(|nested_violations| nested_violations.iter().flatten().cloned().collect());
 
-        violations.sort();
-        violations
+        match either_violations {
+            Ok(mut violations) => {
+                violations.sort();
+                Ok(violations)
+            }
+            err => err,
+        }
     }
 }

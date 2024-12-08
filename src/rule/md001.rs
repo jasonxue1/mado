@@ -1,4 +1,5 @@
 use markdown::mdast::Node;
+use miette::Result;
 
 use crate::violation::Violation;
 
@@ -30,20 +31,22 @@ impl Rule for MD001 {
         vec!["header-increment".to_string()]
     }
 
-    fn check(&self, doc: &Node) -> Vec<Violation> {
+    fn check(&self, doc: &Node) -> Result<Vec<Violation>> {
         match doc.children() {
             Some(children) => {
-                children
+                let violations = children
                     .iter()
                     .fold((vec![], 0), |(acc, old_depth), node| match node {
                         Node::Heading(heading) => {
                             let mut vec = acc.clone();
                             if heading.depth != old_depth + 1 {
-                                // TODO: Don't use unwrap
                                 let violation = Violation::new(
                                     self.name(),
                                     self.description(),
-                                    heading.position.clone().unwrap(),
+                                    heading
+                                        .position
+                                        .clone()
+                                        .expect("heading must have position"),
                                 );
                                 vec.push(violation);
                             }
@@ -51,9 +54,10 @@ impl Rule for MD001 {
                         }
                         _ => (acc, old_depth),
                     })
-                    .0
+                    .0;
+                Ok(violations)
             }
-            None => vec![],
+            None => Ok(vec![]),
         }
     }
 }

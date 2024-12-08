@@ -1,4 +1,5 @@
 use markdown::mdast::Node;
+use miette::Result;
 
 use crate::violation::Violation;
 
@@ -30,21 +31,22 @@ impl Rule for MD022 {
         vec!["blanks-around-headers".to_string()]
     }
 
-    fn check(&self, doc: &Node) -> Vec<Violation> {
+    fn check(&self, doc: &Node) -> Result<Vec<Violation>> {
         match doc.children() {
             Some(children) => {
-                children
+                let violations = children
                     .iter()
                     .fold(
                         (vec![], None::<&Node>),
                         |(acc, maybe_prev), node| match maybe_prev {
                             Some(prev) => {
-                                // TODO: Don't use unwrap
                                 let mut vec = acc.clone();
 
+                                let prev_position =
+                                    prev.position().expect("prev node must have position");
+                                let position = node.position().expect("node must have position");
+
                                 if let Node::Heading(_) = node {
-                                    let prev_position = prev.position().unwrap();
-                                    let position = node.position().unwrap();
                                     if position.start.line == prev_position.end.line + 1 {
                                         let violation = Violation::new(
                                             self.name(),
@@ -54,8 +56,6 @@ impl Rule for MD022 {
                                         vec.push(violation);
                                     }
                                 } else if let Node::Heading(_) = prev {
-                                    let prev_position = prev.position().unwrap();
-                                    let position = node.position().unwrap();
                                     if position.start.line == prev_position.end.line + 1 {
                                         let violation = Violation::new(
                                             self.name(),
@@ -71,9 +71,10 @@ impl Rule for MD022 {
                             None => (acc, Some(node)),
                         },
                     )
-                    .0
+                    .0;
+                Ok(violations)
             }
-            None => vec![],
+            None => Ok(vec![]),
         }
     }
 }

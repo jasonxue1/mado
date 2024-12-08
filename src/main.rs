@@ -1,11 +1,12 @@
 use clap::Parser;
+use miette::{IntoDiagnostic, Result};
 
 use downlint::Cli;
 use downlint::Command;
 use downlint::Linter;
 use downlint::MarkdownWalker;
 
-fn main() {
+fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match &cli.command {
@@ -13,15 +14,14 @@ fn main() {
             let linter = Linter::new();
             let walker = MarkdownWalker::new(files);
             for maybe_entry in walker {
-                // TODO: Don't use unwrap
-                let entry = maybe_entry.unwrap();
+                let entry = maybe_entry.into_diagnostic()?;
                 let path = entry.path();
-                let violations = linter.check(path);
+                let violations = linter.check(path)?;
                 if !violations.is_empty() {
                     for violation in violations {
                         println!(
                             "{}:{}:{} {}",
-                            path.to_str().unwrap(),
+                            path.to_str().expect("path must convert to string"),
                             violation.position().start.line,
                             violation.name(),
                             violation.description()
@@ -29,7 +29,8 @@ fn main() {
                     }
                 }
             }
+            Ok(())
         }
-        None => {}
+        None => Ok(()),
     }
 }

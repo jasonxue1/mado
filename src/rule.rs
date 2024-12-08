@@ -1,3 +1,5 @@
+use miette::Result;
+
 use crate::violation::Violation;
 
 mod md001;
@@ -12,7 +14,7 @@ pub trait Rule {
 
     fn aliases(&self) -> Vec<String>;
 
-    fn check(&self, doc: &markdown::mdast::Node) -> Vec<Violation>;
+    fn check(&self, doc: &markdown::mdast::Node) -> Result<Vec<Violation>>;
 }
 
 pub use md001::MD001;
