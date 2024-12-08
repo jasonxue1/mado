@@ -3,6 +3,7 @@ use miette::Result;
 use crate::violation::Violation;
 
 mod md001;
+mod md002;
 mod md022;
 
 pub trait Rule {
@@ -18,4 +19,5 @@ pub trait Rule {
 }
 
 pub use md001::MD001;
+pub use md002::MD002;
 pub use md022::MD022;
