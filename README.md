@@ -20,5 +20,5 @@ downlint check path/to/*.md
 | MD005 | :warning:          | If the list item has no text, consistency cannot be checked correctly.               |
 | MD009 | :white_check_mark: |                                                                                      |
 | MD010 | :white_check_mark: |                                                                                      |
-| MD012 | :x:                | [markdown-rs](https://github.com/wooorm/markdown-rs) parser removes new-lines.       |
+| MD012 | :white_check_mark: |                                                                                      |
 | MD022 | :white_check_mark: |                                                                                      |
