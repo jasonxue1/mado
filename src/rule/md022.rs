@@ -78,3 +78,51 @@ impl Rule for MD022 {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use markdown::{unist::Position, ParseOptions};
+
+    use super::*;
+
+    #[test]
+    fn check_errors() {
+        let text = "# Header 1
+Some text
+
+Some more text
+## Header 2";
+        let doc = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let rule = MD022::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![
+            Violation::new(
+                "MD022".to_string(),
+                "Headers should be surrounded by blank lines".to_string(),
+                Position::new(1, 1, 0, 1, 11, 10),
+            ),
+            Violation::new(
+                "MD022".to_string(),
+                "Headers should be surrounded by blank lines".to_string(),
+                Position::new(5, 1, 37, 5, 12, 48),
+            ),
+        ];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors() {
+        let text = "# Header 1
+
+Some text
+
+Some more text
+
+## Header 2";
+        let doc = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let rule = MD022::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+}
