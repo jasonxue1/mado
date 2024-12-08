@@ -1,3 +1,5 @@
+use std::process;
+
 use clap::Parser;
 use miette::{IntoDiagnostic, Result};
 
@@ -18,15 +20,18 @@ fn main() -> Result<()> {
                 let path = entry.path();
                 let violations = linter.check(path)?;
                 if !violations.is_empty() {
+                    let path_str = path.to_str().expect("path must convert to string");
                     for violation in violations {
                         println!(
                             "{}:{}:{} {}",
-                            path.to_str().expect("path must convert to string"),
+                            path_str,
                             violation.position().start.line,
                             violation.name(),
                             violation.description()
                         );
                     }
+
+                    process::exit(1);
                 }
             }
             Ok(())
