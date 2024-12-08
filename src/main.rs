@@ -1,6 +1,7 @@
 use std::process;
 
 use clap::Parser;
+use colored::Colorize;
 use miette::{IntoDiagnostic, Result};
 
 use downlint::Cli;
@@ -23,10 +24,14 @@ fn main() -> Result<()> {
                     let path_str = path.to_str().expect("path must convert to string");
                     for violation in violations {
                         println!(
-                            "{}:{}:{} {}",
-                            path_str,
+                            "{}{}{}{}{}{} {} {}",
+                            path_str.bold(),
+                            ":".blue(),
                             violation.position().start.line,
-                            violation.name(),
+                            ":".blue(),
+                            violation.position().start.column,
+                            ":".blue(),
+                            violation.name().red().bold(),
                             violation.description()
                         );
                     }
