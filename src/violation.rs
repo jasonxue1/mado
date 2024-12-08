@@ -18,20 +18,24 @@ impl Violation {
         }
     }
 
+    #[inline]
     pub fn name(&self) -> String {
         self.name.clone()
     }
 
+    #[inline]
     pub fn description(&self) -> String {
         self.description.clone()
     }
 
+    #[inline]
     pub fn position(&self) -> Position {
         self.position.clone()
     }
 }
 
 impl PartialOrd for Violation {
+    #[inline]
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
