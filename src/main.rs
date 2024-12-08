@@ -18,10 +18,10 @@ fn main() {
                 let path = entry.path();
                 let violations = linter.check(path);
                 if !violations.is_empty() {
-                    println!("{}", path.to_str().unwrap());
                     for violation in violations {
                         println!(
-                            "{}:{} {}",
+                            "{}:{}:{} {}",
+                            path.to_str().unwrap(),
                             violation.position().start.line,
                             violation.name(),
                             violation.description()
