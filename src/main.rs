@@ -22,6 +22,7 @@ fn main() -> Result<()> {
                 let violations = linter.check(path)?;
                 if !violations.is_empty() {
                     let path_str = path.to_str().expect("path must convert to string");
+                    let num_violations = violations.len();
                     for violation in violations {
                         println!(
                             "{}{}{}{}{}{} {} {}",
@@ -36,8 +37,18 @@ fn main() -> Result<()> {
                         );
                     }
 
+                    println!("");
+
+                    if num_violations == 1 {
+                        println!("Found 1 error.");
+                    } else {
+                        println!("Found {} errors.", num_violations);
+                    }
+
                     process::exit(1);
                 }
+
+                println!("All checks passed!")
             }
             Ok(())
         }
