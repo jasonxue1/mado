@@ -7,4 +7,5 @@ edition = "2021"
 clap = { version = "4.5.23", features = ["derive"] }
 ignore = "0.4.23"
 markdown = "1.0.0-alpha.21"
+miette = { version = "7.4.0", features = ["fancy"] }
 walkdir = "2.5.0"
