@@ -81,11 +81,7 @@ We skipped out a 2nd level header in this document";
         let doc = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
         let rule = MD001::new();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![Violation::new(
-            "MD001".to_string(),
-            "Header levels should only increment by one level at a time".to_string(),
-            Position::new(3, 1, 12, 3, 13, 24),
-        )];
+        let expected = vec![rule.to_violation(Position::new(3, 1, 12, 3, 13, 24))];
         assert_eq!(actual, expected);
     }
 

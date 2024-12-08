@@ -83,11 +83,7 @@ mod tests {
         let doc = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
         let rule = MD002::default();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![Violation::new(
-            "MD002".to_string(),
-            "First header should be a top level header".to_string(),
-            Position::new(1, 1, 0, 1, 26, 25),
-        )];
+        let expected = vec![rule.to_violation(Position::new(1, 1, 0, 1, 26, 25))];
         assert_eq!(actual, expected);
     }
 

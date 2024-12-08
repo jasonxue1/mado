@@ -91,16 +91,8 @@ Some more text
         let rule = MD022::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
-            Violation::new(
-                "MD022".to_string(),
-                "Headers should be surrounded by blank lines".to_string(),
-                Position::new(1, 1, 0, 1, 11, 10),
-            ),
-            Violation::new(
-                "MD022".to_string(),
-                "Headers should be surrounded by blank lines".to_string(),
-                Position::new(5, 1, 37, 5, 12, 48),
-            ),
+            rule.to_violation(Position::new(1, 1, 0, 1, 11, 10)),
+            rule.to_violation(Position::new(5, 1, 37, 5, 12, 48)),
         ];
         assert_eq!(actual, expected);
     }
