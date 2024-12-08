@@ -15,18 +15,22 @@ impl MD001 {
 }
 
 impl Rule for MD001 {
+    #[inline]
     fn name(&self) -> String {
         "MD001".to_string()
     }
 
+    #[inline]
     fn description(&self) -> String {
         "Header levels should only increment by one level at a time".to_string()
     }
 
+    #[inline]
     fn tags(&self) -> Vec<String> {
         vec!["headers".to_string()]
     }
 
+    #[inline]
     fn aliases(&self) -> Vec<String> {
         vec!["header-increment".to_string()]
     }

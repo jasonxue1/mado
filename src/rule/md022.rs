@@ -15,18 +15,22 @@ impl MD022 {
 }
 
 impl Rule for MD022 {
+    #[inline]
     fn name(&self) -> String {
         "MD022".to_string()
     }
 
+    #[inline]
     fn description(&self) -> String {
         "Headers should be surrounded by blank lines".to_string()
     }
 
+    #[inline]
     fn tags(&self) -> Vec<String> {
         vec!["headers".to_string(), "blank_lines".to_string()]
     }
 
+    #[inline]
     fn aliases(&self) -> Vec<String> {
         vec!["blanks-around-headers".to_string()]
     }

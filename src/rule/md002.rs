@@ -11,30 +11,36 @@ pub struct MD002 {
 }
 
 impl MD002 {
+    #[inline]
     pub fn new(depth: u8) -> Self {
         Self { depth }
     }
 }
 
 impl Default for MD002 {
+    #[inline]
     fn default() -> Self {
         Self { depth: 1 }
     }
 }
 
 impl Rule for MD002 {
+    #[inline]
     fn name(&self) -> String {
         "MD002".to_string()
     }
 
+    #[inline]
     fn description(&self) -> String {
         "First header should be a top level header".to_string()
     }
 
+    #[inline]
     fn tags(&self) -> Vec<String> {
         vec!["headers".to_string()]
     }
 
+    #[inline]
     fn aliases(&self) -> Vec<String> {
         vec!["first-header-h1".to_string()]
     }
