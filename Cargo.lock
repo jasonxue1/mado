@@ -200,7 +200,6 @@ dependencies = [
  "ignore",
  "markdown",
  "miette",
- "walkdir",
 ]
 
 [[package]]
