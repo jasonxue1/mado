@@ -11,7 +11,7 @@ pub struct MarkdownWalker {
 }
 
 impl MarkdownWalker {
-    pub fn new(files: &Vec<PathBuf>) -> Self {
+    pub fn new(files: &[PathBuf]) -> Self {
         // TODO: Don't use unwrap
         let (head, tail_files) = files.split_first().unwrap();
         let mut builder = WalkBuilder::new(head);
