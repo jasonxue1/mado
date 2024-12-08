@@ -21,6 +21,7 @@ impl Linter {
             rules: vec![
                 Box::new(rule::MD001::new()),
                 Box::new(rule::MD002::default()),
+                Box::new(rule::MD005::new()),
                 Box::new(rule::MD022::new()),
             ],
         }
