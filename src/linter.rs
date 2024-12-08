@@ -28,7 +28,7 @@ impl Linter {
 
     pub fn check(&self, path: &Path) -> Result<Vec<Violation>> {
         if !path.is_file() || path.extension() != Some("md".as_ref()) {
-            panic!("Unexpected file: {:?}", path);
+            return Err(miette!("Unexpected file: {:?}", path));
         }
 
         let text = &fs::read_to_string(path).into_diagnostic()?;

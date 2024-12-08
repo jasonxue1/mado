@@ -2,6 +2,7 @@ use std::path::PathBuf;
 use std::process;
 
 use colored::Colorize;
+use miette::miette;
 use miette::IntoDiagnostic;
 use miette::Result;
 
@@ -15,11 +16,11 @@ pub struct Checker {
 }
 
 impl Checker {
-    pub fn new(files: &[PathBuf]) -> Self {
+    pub fn new(files: &[PathBuf]) -> Result<Self> {
         let linter = Linter::new();
-        let walker = MarkdownWalker::new(files);
+        let walker = MarkdownWalker::new(files)?;
 
-        Self { linter, walker }
+        Ok(Self { linter, walker })
     }
 
     pub fn check(self) -> Result<()> {
@@ -30,7 +31,7 @@ impl Checker {
             let path = entry.path();
             let path_str = path
                 .to_str()
-                .expect("path must convert to string")
+                .ok_or(miette!("path must convert to string"))?
                 .to_string();
             let violations = self.linter.check(path)?;
             for violation in violations {

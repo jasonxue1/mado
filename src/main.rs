@@ -10,7 +10,7 @@ fn main() -> Result<()> {
 
     match &cli.command {
         Some(Command::Check { files }) => {
-            let checker = Checker::new(files);
+            let checker = Checker::new(files)?;
             checker.check()
         }
         None => Ok(()),

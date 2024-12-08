@@ -4,6 +4,8 @@ use ignore::DirEntry;
 use ignore::Error;
 use ignore::Walk;
 use ignore::WalkBuilder;
+use miette::miette;
+use miette::Result;
 
 pub struct MarkdownWalker {
     // TODO: Use WalkParallel
@@ -11,16 +13,18 @@ pub struct MarkdownWalker {
 }
 
 impl MarkdownWalker {
-    pub fn new(files: &[PathBuf]) -> Self {
-        let (head, tail_files) = files.split_first().expect("files must be non-empty");
+    pub fn new(files: &[PathBuf]) -> Result<Self> {
+        let (head, tail_files) = files
+            .split_first()
+            .ok_or(miette!("files must be non-empty"))?;
         let mut builder = WalkBuilder::new(head);
         for file in tail_files {
             builder.add(file);
         }
 
-        Self {
+        Ok(Self {
             walker: builder.build(),
-        }
+        })
     }
 }
 
@@ -52,7 +56,7 @@ mod tests {
     #[test]
     fn iterator_next() {
         // TODO: Use stub or temporary files
-        let walker = MarkdownWalker::new(&[Path::new(".").to_path_buf()]);
+        let walker = MarkdownWalker::new(&[Path::new(".").to_path_buf()]).unwrap();
         let actual: Vec<String> = walker
             .into_iter()
             .filter_map(|either_entry| match either_entry {
