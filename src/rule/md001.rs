@@ -40,10 +40,11 @@ impl Rule for MD001 {
             Some(children) => {
                 let violations = children
                     .iter()
-                    .fold((vec![], 0), |(acc, old_depth), node| match node {
-                        Node::Heading(heading) => {
-                            let mut vec = acc.clone();
-                            if heading.depth > old_depth + 1 {
+                    .fold((vec![], None), |(mut acc, maybe_old_depth), node| {
+                        match (node, maybe_old_depth) {
+                            (Node::Heading(heading), Some(old_depth))
+                                if heading.depth > old_depth + 1 =>
+                            {
                                 let violation = Violation::new(
                                     self.name(),
                                     self.description(),
@@ -52,11 +53,13 @@ impl Rule for MD001 {
                                         .clone()
                                         .expect("heading must have position"),
                                 );
-                                vec.push(violation);
+                                acc.push(violation);
+
+                                (acc, Some(heading.depth))
                             }
-                            (vec, heading.depth)
+                            (Node::Heading(heading), _) => (acc, Some(heading.depth)),
+                            _ => (acc, maybe_old_depth),
                         }
-                        _ => (acc, old_depth),
                     })
                     .0;
                 Ok(violations)
@@ -103,6 +106,16 @@ We skipped out a 2nd level header in this document";
 ## Another Header 2
 
 ### Another Header 3";
+        let doc = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let rule = MD001::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_no_top_level() {
+        let text = "## This isn't a H1 header";
         let doc = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
         let rule = MD001::new();
         let actual = rule.check(&doc).unwrap();
