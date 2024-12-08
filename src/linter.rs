@@ -29,12 +29,14 @@ impl Linter {
 
         let text = &fs::read_to_string(path).into_diagnostic()?;
         let doc = markdown::to_mdast(text, &ParseOptions::default()).map_err(|err| miette!(err))?;
-        let violation_results: Vec<Result<Vec<Violation>>> =
-            self.rules.iter().map(|rule| rule.check(&doc)).collect();
-        let either_nested_violations: Result<Vec<Vec<Violation>>> =
-            violation_results.into_iter().collect();
-        let either_violations: Result<Vec<Violation>> = either_nested_violations
-            .map(|nested_violations| nested_violations.iter().flatten().cloned().collect());
+
+        // Iterate rules while unrolling Vec<Result<Vec<..>>> to Result<Vec<..>>
+        let either_violations: Result<Vec<Violation>> =
+            self.rules.iter().try_fold(vec![], |mut unrolled, rule| {
+                let result = rule.check(&doc);
+                unrolled.extend(result?);
+                Ok(unrolled)
+            });
 
         match either_violations {
             Ok(mut violations) => {
