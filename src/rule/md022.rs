@@ -42,10 +42,8 @@ impl Rule for MD022 {
                     .iter()
                     .fold(
                         (vec![], None::<&Node>),
-                        |(acc, maybe_prev), node| match maybe_prev {
+                        |(mut acc, maybe_prev), node| match maybe_prev {
                             Some(prev) => {
-                                let mut vec = acc.clone();
-
                                 let prev_position =
                                     prev.position().expect("prev node must have position");
                                 let position = node.position().expect("node must have position");
@@ -53,16 +51,16 @@ impl Rule for MD022 {
                                 if let Node::Heading(_) = node {
                                     if position.start.line == prev_position.end.line + 1 {
                                         let violation = self.to_violation(position.clone());
-                                        vec.push(violation);
+                                        acc.push(violation);
                                     }
                                 } else if let Node::Heading(_) = prev {
                                     if position.start.line == prev_position.end.line + 1 {
                                         let violation = self.to_violation(position.clone());
-                                        vec.push(violation);
+                                        acc.push(violation);
                                     }
                                 }
 
-                                (vec, Some(node))
+                                (acc, Some(node))
                             }
                             None => (acc, Some(node)),
                         },
