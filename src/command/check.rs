@@ -58,12 +58,10 @@ impl Checker {
             );
         }
 
-        println!("");
-
         if num_violations == 1 {
-            println!("Found 1 error.");
+            println!("\nFound 1 error.");
         } else {
-            println!("Found {} errors.", num_violations);
+            println!("\nFound {} errors.", num_violations);
         }
 
         process::exit(1);
