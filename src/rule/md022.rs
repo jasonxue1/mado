@@ -31,7 +31,6 @@ impl Rule for MD022 {
     }
 
     fn check(&self, doc: &markdown::mdast::Node) -> Vec<Violation> {
-        // TODO: Do de-duplication of violdations
         match doc.children() {
             Some(children) => {
                 children
@@ -43,19 +42,6 @@ impl Rule for MD022 {
                                 // TODO: Don't use unwrap
                                 let mut vec = acc.clone();
 
-                                if let Node::Heading(_) = prev {
-                                    let prev_position = prev.position().unwrap();
-                                    let position = node.position().unwrap();
-                                    if position.start.line == prev_position.end.line + 1 {
-                                        let violation = Violation::new(
-                                            self.name(),
-                                            self.description(),
-                                            prev_position.clone(),
-                                        );
-                                        vec.push(violation);
-                                    }
-                                }
-
                                 if let Node::Heading(_) = node {
                                     let prev_position = prev.position().unwrap();
                                     let position = node.position().unwrap();
@@ -64,6 +50,17 @@ impl Rule for MD022 {
                                             self.name(),
                                             self.description(),
                                             position.clone(),
+                                        );
+                                        vec.push(violation);
+                                    }
+                                } else if let Node::Heading(_) = prev {
+                                    let prev_position = prev.position().unwrap();
+                                    let position = node.position().unwrap();
+                                    if position.start.line == prev_position.end.line + 1 {
+                                        let violation = Violation::new(
+                                            self.name(),
+                                            self.description(),
+                                            prev_position.clone(),
                                         );
                                         vec.push(violation);
                                     }
