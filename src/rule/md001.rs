@@ -30,7 +30,7 @@ impl Rule for MD001 {
         vec!["header-increment".to_string()]
     }
 
-    fn check(&self, doc: &markdown::mdast::Node) -> Vec<Violation> {
+    fn check(&self, doc: &Node) -> Vec<Violation> {
         match doc.children() {
             Some(children) => {
                 children
