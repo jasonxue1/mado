@@ -38,28 +38,26 @@ impl Rule for MD001 {
     fn check(&self, doc: &Node) -> Result<Vec<Violation>> {
         match doc.children() {
             Some(children) => {
-                let violations = children
-                    .iter()
-                    .fold((vec![], None), |(mut acc, maybe_old_depth), node| {
-                        match (node, maybe_old_depth) {
-                            (Node::Heading(heading), Some(old_depth))
-                                if heading.depth > old_depth + 1 =>
-                            {
-                                let violation = self.to_violation(
-                                    heading
-                                        .position
-                                        .clone()
-                                        .expect("heading must have position"),
-                                );
-                                acc.push(violation);
+                let (violations, _) = children.iter().fold(
+                    (vec![], None),
+                    |(mut acc, maybe_old_depth), node| match (node, maybe_old_depth) {
+                        (Node::Heading(heading), Some(old_depth))
+                            if heading.depth > old_depth + 1 =>
+                        {
+                            let violation = self.to_violation(
+                                heading
+                                    .position
+                                    .clone()
+                                    .expect("heading must have position"),
+                            );
+                            acc.push(violation);
 
-                                (acc, Some(heading.depth))
-                            }
-                            (Node::Heading(heading), _) => (acc, Some(heading.depth)),
-                            _ => (acc, maybe_old_depth),
+                            (acc, Some(heading.depth))
                         }
-                    })
-                    .0;
+                        (Node::Heading(heading), _) => (acc, Some(heading.depth)),
+                        _ => (acc, maybe_old_depth),
+                    },
+                );
                 Ok(violations)
             }
             None => Ok(vec![]),

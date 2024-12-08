@@ -38,34 +38,34 @@ impl Rule for MD022 {
     fn check(&self, doc: &Node) -> Result<Vec<Violation>> {
         match doc.children() {
             Some(children) => {
-                let violations = children
-                    .iter()
-                    .fold(
-                        (vec![], None::<&Node>),
-                        |(mut acc, maybe_prev), node| match maybe_prev {
-                            Some(prev) => {
-                                let prev_position =
-                                    prev.position().expect("prev node must have position");
-                                let position = node.position().expect("node must have position");
+                let (violations, _) =
+                    children
+                        .iter()
+                        .fold((vec![], None::<&Node>), |(mut acc, maybe_prev), node| {
+                            match maybe_prev {
+                                Some(prev) => {
+                                    let prev_position =
+                                        prev.position().expect("prev node must have position");
+                                    let position =
+                                        node.position().expect("node must have position");
 
-                                if let Node::Heading(_) = node {
-                                    if position.start.line == prev_position.end.line + 1 {
-                                        let violation = self.to_violation(position.clone());
-                                        acc.push(violation);
+                                    if let Node::Heading(_) = node {
+                                        if position.start.line == prev_position.end.line + 1 {
+                                            let violation = self.to_violation(position.clone());
+                                            acc.push(violation);
+                                        }
+                                    } else if let Node::Heading(_) = prev {
+                                        if position.start.line == prev_position.end.line + 1 {
+                                            let violation = self.to_violation(position.clone());
+                                            acc.push(violation);
+                                        }
                                     }
-                                } else if let Node::Heading(_) = prev {
-                                    if position.start.line == prev_position.end.line + 1 {
-                                        let violation = self.to_violation(position.clone());
-                                        acc.push(violation);
-                                    }
+
+                                    (acc, Some(node))
                                 }
-
-                                (acc, Some(node))
+                                None => (acc, Some(node)),
                             }
-                            None => (acc, Some(node)),
-                        },
-                    )
-                    .0;
+                        });
                 Ok(violations)
             }
             None => Ok(vec![]),
