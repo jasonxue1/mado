@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 use markdown::unist::Position;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -26,5 +28,20 @@ impl Violation {
 
     pub fn position(&self) -> Position {
         self.position.clone()
+    }
+}
+
+impl PartialOrd for Violation {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Violation {
+    fn cmp(&self, other: &Self) -> Ordering {
+        match self.position().start.line.cmp(&other.position().start.line) {
+            Ordering::Equal => self.name.cmp(&other.name),
+            ord => ord,
+        }
     }
 }

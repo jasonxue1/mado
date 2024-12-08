@@ -27,9 +27,13 @@ impl Linter {
         // TODO: Don't use unwrap
         let text = &fs::read_to_string(path).unwrap();
         let doc = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
-        self.rules
+        let mut violations: Vec<Violation> = self
+            .rules
             .iter()
             .flat_map(|rule| rule.check(&doc))
-            .collect()
+            .collect();
+
+        violations.sort();
+        violations
     }
 }
