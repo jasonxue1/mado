@@ -56,7 +56,8 @@ impl Rule for MD022 {
                                         }
                                     } else if let Node::Heading(_) = prev {
                                         if position.start.line == prev_position.end.line + 1 {
-                                            let violation = self.to_violation(position.clone());
+                                            let violation =
+                                                self.to_violation(prev_position.clone());
                                             acc.push(violation);
                                         }
                                     }
