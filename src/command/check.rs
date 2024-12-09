@@ -18,8 +18,8 @@ pub struct Checker {
 }
 
 impl Checker {
-    pub fn new(files: &[PathBuf]) -> Result<Self> {
-        let walker = MarkdownWalker::new(files)?;
+    pub fn new(patterns: &[PathBuf]) -> Result<Self> {
+        let walker = MarkdownWalker::new(patterns)?;
 
         Ok(Self { walker })
     }

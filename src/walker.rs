@@ -10,13 +10,13 @@ pub struct MarkdownWalker {
 }
 
 impl MarkdownWalker {
-    pub fn new(files: &[PathBuf]) -> Result<Self> {
-        let (head, tail_files) = files
+    pub fn new(patterns: &[PathBuf]) -> Result<Self> {
+        let (head_pattern, tail_patterns) = patterns
             .split_first()
             .ok_or(miette!("files must be non-empty"))?;
-        let mut builder = WalkBuilder::new(head);
-        for file in tail_files {
-            builder.add(file);
+        let mut builder = WalkBuilder::new(head_pattern);
+        for pattern in tail_patterns {
+            builder.add(pattern);
         }
 
         Ok(Self {
