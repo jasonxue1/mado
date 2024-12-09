@@ -43,12 +43,9 @@ impl Linter {
                 Ok(unrolled)
             });
 
-        match either_violations {
-            Ok(mut violations) => {
-                violations.sort();
-                Ok(violations)
-            }
-            err => err,
-        }
+        either_violations.map(|mut violations| {
+            violations.sort();
+            violations
+        })
     }
 }
