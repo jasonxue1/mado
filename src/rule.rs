@@ -14,7 +14,7 @@ mod md012;
 mod md013;
 mod md022;
 
-pub trait Rule {
+pub trait Rule: Send {
     fn name(&self) -> String;
 
     fn description(&self) -> String;
