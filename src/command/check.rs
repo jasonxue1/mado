@@ -1,8 +1,6 @@
 use std::path::PathBuf;
 use std::process;
 
-use colored::Colorize;
-use miette::miette;
 use miette::IntoDiagnostic;
 use miette::Result;
 
@@ -24,18 +22,14 @@ impl Checker {
     }
 
     pub fn check(self) -> Result<()> {
-        let mut all_violations: Vec<(String, Violation)> = vec![];
+        let mut all_violations: Vec<Violation> = vec![];
 
         for maybe_entry in self.walker {
             let entry = maybe_entry.into_diagnostic()?;
             let path = entry.path();
-            let path_str = path
-                .to_str()
-                .ok_or(miette!("path must convert to string"))?
-                .to_string();
             let violations = self.linter.check(path)?;
             for violation in violations {
-                all_violations.push((path_str.clone(), violation));
+                all_violations.push(violation);
             }
         }
 
@@ -45,18 +39,8 @@ impl Checker {
         }
 
         let num_violations = all_violations.len();
-        for (file, violation) in all_violations {
-            println!(
-                "{}{}{}{}{}{} {} {}",
-                file.bold(),
-                ":".blue(),
-                violation.position().start.line,
-                ":".blue(),
-                violation.position().start.column,
-                ":".blue(),
-                violation.name().red().bold(),
-                violation.description()
-            );
+        for violation in all_violations {
+            println!("{violation}");
         }
 
         if num_violations == 1 {

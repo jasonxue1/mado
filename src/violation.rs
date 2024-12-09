@@ -1,5 +1,10 @@
-use std::{cmp::Ordering, path::PathBuf};
+use std::{
+    cmp::Ordering,
+    fmt::{Display, Error},
+    path::PathBuf,
+};
 
+use colored::Colorize;
 use markdown::unist::Position;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -54,5 +59,45 @@ impl Ord for Violation {
             Ordering::Equal => self.name.cmp(&other.name),
             ord => ord,
         }
+    }
+}
+
+impl Display for Violation {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let path = self.path.to_str().ok_or(Error)?;
+        write!(
+            f,
+            "{}{}{}{}{}{} {} {}",
+            path.bold(),
+            ":".blue(),
+            self.position.start.line,
+            ":".blue(),
+            self.position.start.column,
+            ":".blue(),
+            self.name.red().bold(),
+            self.description
+        )
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::path::Path;
+
+    use super::*;
+
+    #[test]
+    fn display_fmt() {
+        let path = Path::new("file.md").to_path_buf();
+        let position = Position::new(0, 1, 2, 3, 4, 5);
+        let violation = Violation::new(
+            path,
+            "name".to_string(),
+            "description".to_string(),
+            position,
+        );
+        let actual = violation.to_string();
+        let expected = "\u{1b}[1mfile.md\u{1b}[0m\u{1b}[34m:\u{1b}[0m0\u{1b}[34m:\u{1b}[0m1\u{1b}[34m:\u{1b}[0m \u{1b}[1;31mname\u{1b}[0m description";
+        assert_eq!(actual, expected);
     }
 }
