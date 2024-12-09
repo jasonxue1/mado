@@ -1,5 +1,5 @@
 use std::path::PathBuf;
-use std::process;
+use std::process::ExitCode;
 use std::sync::Arc;
 use std::sync::Mutex;
 use std::thread;
@@ -63,11 +63,11 @@ impl Checker {
         lock.into_inner().into_diagnostic()
     }
 
-    pub fn check(self) -> Result<()> {
+    pub fn check(self) -> Result<ExitCode> {
         let violations = self.collect_violations()?;
         if violations.is_empty() {
             println!("All checks passed!");
-            return Ok(());
+            return Ok(ExitCode::SUCCESS);
         }
 
         let num_violations = violations.len();
@@ -81,6 +81,6 @@ impl Checker {
             println!("\nFound {} errors.", num_violations);
         }
 
-        process::exit(1);
+        Ok(ExitCode::FAILURE)
     }
 }

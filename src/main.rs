@@ -1,3 +1,5 @@
+use std::process::ExitCode;
+
 use clap::Parser;
 use miette::Result;
 
@@ -5,7 +7,7 @@ use downlint::command::check::Checker;
 use downlint::Cli;
 use downlint::Command;
 
-fn main() -> Result<()> {
+fn main() -> Result<ExitCode> {
     let cli = Cli::parse();
 
     match &cli.command {
@@ -13,6 +15,6 @@ fn main() -> Result<()> {
             let checker = Checker::new(files)?;
             checker.check()
         }
-        None => Ok(()),
+        None => Ok(ExitCode::FAILURE),
     }
 }
