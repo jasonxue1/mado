@@ -1,21 +1,28 @@
-use std::cmp::Ordering;
+use std::{cmp::Ordering, path::PathBuf};
 
 use markdown::unist::Position;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Violation {
+    path: PathBuf,
     name: String,
     description: String,
     position: Position,
 }
 
 impl Violation {
-    pub fn new(name: String, description: String, position: Position) -> Self {
+    pub fn new(path: PathBuf, name: String, description: String, position: Position) -> Self {
         Self {
+            path,
             position,
             name,
             description,
         }
+    }
+
+    #[inline]
+    pub fn path(&self) -> PathBuf {
+        self.path.clone()
     }
 
     #[inline]

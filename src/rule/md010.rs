@@ -48,7 +48,7 @@ impl Rule for MD010 {
             if let Some((start_column, end_column)) = locs.get(0) {
                 // TODO: Use correct offset
                 let position = Position::new(lineno, start_column, 0, lineno, end_column, 0);
-                let violation = self.to_violation(position);
+                let violation = self.to_violation(doc.path.clone(), position);
                 violations.push(violation);
             }
         }
@@ -73,13 +73,13 @@ mod tests {
         let path = Path::new("test.md").to_path_buf();
         let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
         let doc = Document {
-            path,
+            path: path.clone(),
             ast,
             text: text.to_string(),
         };
         let rule = MD010::new();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(Position::new(3, 0, 0, 3, 1, 0))];
+        let expected = vec![rule.to_violation(path, Position::new(3, 0, 0, 3, 1, 0))];
         assert_eq!(actual, expected);
     }
 

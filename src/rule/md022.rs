@@ -51,13 +51,16 @@ impl Rule for MD022 {
 
                                     if let Node::Heading(_) = node {
                                         if position.start.line == prev_position.end.line + 1 {
-                                            let violation = self.to_violation(position.clone());
+                                            let violation = self
+                                                .to_violation(doc.path.clone(), position.clone());
                                             acc.push(violation);
                                         }
                                     } else if let Node::Heading(_) = prev {
                                         if position.start.line == prev_position.end.line + 1 {
-                                            let violation =
-                                                self.to_violation(prev_position.clone());
+                                            let violation = self.to_violation(
+                                                doc.path.clone(),
+                                                prev_position.clone(),
+                                            );
                                             acc.push(violation);
                                         }
                                     }
@@ -92,15 +95,15 @@ Some more text
         let path = Path::new("test.md").to_path_buf();
         let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
         let doc = Document {
-            path,
+            path: path.clone(),
             ast,
             text: text.to_string(),
         };
         let rule = MD022::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
-            rule.to_violation(Position::new(1, 1, 0, 1, 11, 10)),
-            rule.to_violation(Position::new(5, 1, 37, 5, 12, 48)),
+            rule.to_violation(path.clone(), Position::new(1, 1, 0, 1, 11, 10)),
+            rule.to_violation(path, Position::new(5, 1, 37, 5, 12, 48)),
         ];
         assert_eq!(actual, expected);
     }

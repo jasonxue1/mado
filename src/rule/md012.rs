@@ -46,7 +46,7 @@ impl Rule for MD012 {
                 if prev_line.is_empty() && line.is_empty() {
                     // TODO: Use correct offset
                     let position = Position::new(lineno, 0, 0, lineno, 1, 0);
-                    let violation = self.to_violation(position);
+                    let violation = self.to_violation(doc.path.clone(), position);
                     violations.push(violation);
                 }
             }
@@ -75,13 +75,13 @@ Some more text here";
         let path = Path::new("test.md").to_path_buf();
         let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
         let doc = Document {
-            path,
+            path: path.clone(),
             ast,
             text: text.to_string(),
         };
         let rule = MD012::new();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(Position::new(3, 0, 0, 3, 1, 0))];
+        let expected = vec![rule.to_violation(path, Position::new(3, 0, 0, 3, 1, 0))];
         assert_eq!(actual, expected);
     }
 

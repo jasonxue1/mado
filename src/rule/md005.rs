@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use markdown::{mdast::Node, unist::Position};
 use miette::Result;
 
@@ -13,7 +15,7 @@ impl MD005 {
         Self {}
     }
 
-    fn check_recursive(&self, ast: &Node) -> Result<Vec<Violation>> {
+    fn check_recursive(&self, path: &PathBuf, ast: &Node) -> Result<Vec<Violation>> {
         match ast.children() {
             Some(children) => {
                 let all_violations = children.iter().fold(vec![], |mut acc, node| match node {
@@ -40,13 +42,15 @@ impl MD005 {
 
                                     if let Some(indent) = maybe_indent {
                                         if position.start.column != indent.start.column {
-                                            acc.push(self.to_violation(position.clone()));
+                                            acc.push(
+                                                self.to_violation(path.clone(), position.clone()),
+                                            );
                                         }
                                     }
 
                                     // Check list recursively
                                     let item_violations = self
-                                        .check_recursive(item_node)
+                                        .check_recursive(path, item_node)
                                         .expect("check should be successful");
                                     acc.extend(item_violations);
 
@@ -94,7 +98,7 @@ impl Rule for MD005 {
     }
 
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
-        self.check_recursive(&doc.ast)
+        self.check_recursive(&doc.path, &doc.ast)
     }
 }
 
@@ -115,13 +119,13 @@ mod tests {
         let path = Path::new("test.md").to_path_buf();
         let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
         let doc = Document {
-            path,
+            path: path.clone(),
             ast,
             text: text.to_string(),
         };
         let rule = MD005::new();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(Position::new(4, 6, 54, 4, 23, 71))];
+        let expected = vec![rule.to_violation(path, Position::new(4, 6, 54, 4, 23, 71))];
         assert_eq!(actual, expected);
     }
 

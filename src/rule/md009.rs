@@ -48,7 +48,7 @@ impl Rule for MD009 {
             if let Some((start_column, end_column)) = locs.get(0) {
                 // TODO: Use correct offset
                 let position = Position::new(lineno, start_column, 0, lineno, end_column, 0);
-                let violation = self.to_violation(position);
+                let violation = self.to_violation(doc.path.clone(), position);
                 violations.push(violation);
             }
         }
@@ -72,15 +72,15 @@ And text with some trailing spaces   ";
         let path = Path::new("test.md").to_path_buf();
         let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
         let doc = Document {
-            path,
+            path: path.clone(),
             ast,
             text: text.to_string(),
         };
         let rule = MD009::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
-            rule.to_violation(Position::new(1, 26, 0, 1, 27, 0)),
-            rule.to_violation(Position::new(2, 34, 0, 2, 37, 0)),
+            rule.to_violation(path.clone(), Position::new(1, 26, 0, 1, 27, 0)),
+            rule.to_violation(path, Position::new(2, 34, 0, 2, 37, 0)),
         ];
         assert_eq!(actual, expected);
     }

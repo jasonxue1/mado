@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use markdown::unist::Position;
 use miette::Result;
 
@@ -24,8 +26,8 @@ pub trait Rule {
     fn check(&self, doc: &Document) -> Result<Vec<Violation>>;
 
     #[inline]
-    fn to_violation(&self, position: Position) -> Violation {
-        Violation::new(self.name(), self.description(), position)
+    fn to_violation(&self, path: PathBuf, position: Position) -> Violation {
+        Violation::new(path, self.name(), self.description(), position)
     }
 }
 

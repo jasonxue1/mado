@@ -45,6 +45,7 @@ impl Rule for MD001 {
                             if heading.depth > old_depth + 1 =>
                         {
                             let violation = self.to_violation(
+                                doc.path.clone(),
                                 heading
                                     .position
                                     .clone()
@@ -83,13 +84,13 @@ We skipped out a 2nd level header in this document";
         let path = Path::new("test.md").to_path_buf();
         let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
         let doc = Document {
-            path,
+            path: path.clone(),
             ast,
             text: text.to_string(),
         };
         let rule = MD001::new();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(Position::new(3, 1, 12, 3, 13, 24))];
+        let expected = vec![rule.to_violation(path, Position::new(3, 1, 12, 3, 13, 24))];
         assert_eq!(actual, expected);
     }
 

@@ -57,11 +57,10 @@ impl Rule for MD002 {
                 match maybe_first_heading {
                     Some(Heading {
                         depth, position, ..
-                    }) if *depth != self.depth => {
-                        Ok(vec![self.to_violation(
-                            position.clone().expect("heading must have position"),
-                        )])
-                    }
+                    }) if *depth != self.depth => Ok(vec![self.to_violation(
+                        doc.path.clone(),
+                        position.clone().expect("heading must have position"),
+                    )]),
                     _ => Ok(vec![]),
                 }
             }
@@ -86,13 +85,13 @@ mod tests {
         let path = Path::new("test.md").to_path_buf();
         let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
         let doc = Document {
-            path,
+            path: path.clone(),
             ast,
             text: text.to_string(),
         };
         let rule = MD002::default();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(Position::new(1, 1, 0, 1, 26, 25))];
+        let expected = vec![rule.to_violation(path, Position::new(1, 1, 0, 1, 26, 25))];
         assert_eq!(actual, expected);
     }
 
