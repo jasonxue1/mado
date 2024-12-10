@@ -1,4 +1,4 @@
-use markdown::mdast::Node;
+use comrak::nodes::{AstNode, NodeValue};
 use miette::Result;
 
 use crate::{violation::Violation, Document};
@@ -36,44 +36,38 @@ impl Rule for MD022 {
     }
 
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
-        match doc.ast.children() {
-            Some(children) => {
-                let (violations, _) =
-                    children
-                        .iter()
-                        .fold((vec![], None::<&Node>), |(mut acc, maybe_prev), node| {
-                            match maybe_prev {
-                                Some(prev) => {
-                                    let prev_position =
-                                        prev.position().expect("prev node must have position");
-                                    let position =
-                                        node.position().expect("node must have position");
+        let mut violations = vec![];
+        let mut maybe_prev_node: Option<&AstNode> = None;
 
-                                    if let Node::Heading(_) = node {
-                                        if position.start.line == prev_position.end.line + 1 {
-                                            let violation = self
-                                                .to_violation(doc.path.clone(), position.clone());
-                                            acc.push(violation);
-                                        }
-                                    } else if let Node::Heading(_) = prev {
-                                        if position.start.line == prev_position.end.line + 1 {
-                                            let violation = self.to_violation(
-                                                doc.path.clone(),
-                                                prev_position.clone(),
-                                            );
-                                            acc.push(violation);
-                                        }
-                                    }
+        for node in doc.ast.children() {
+            if let Some(prev_node) = maybe_prev_node {
+                let prev_position = prev_node.data.borrow().sourcepos;
+                let position = node.data.borrow().sourcepos;
 
-                                    (acc, Some(node))
-                                }
-                                None => (acc, Some(node)),
-                            }
-                        });
-                Ok(violations)
+                match (
+                    prev_node.data.borrow().value.clone(),
+                    node.data.borrow().value.clone(),
+                ) {
+                    (NodeValue::Heading(_), _) => {
+                        if position.start.line == prev_position.start.line + 1 {
+                            let violation = self.to_violation(doc.path.clone(), prev_position);
+                            violations.push(violation);
+                        }
+                    }
+                    (_, NodeValue::Heading(_)) => {
+                        if position.start.line == prev_position.start.line + 1 {
+                            let violation = self.to_violation(doc.path.clone(), position);
+                            violations.push(violation);
+                        }
+                    }
+                    _ => {}
+                }
             }
-            None => Ok(vec![]),
+
+            maybe_prev_node = Some(node);
         }
+
+        Ok(violations)
     }
 }
 
@@ -81,7 +75,7 @@ impl Rule for MD022 {
 mod tests {
     use std::path::Path;
 
-    use markdown::{unist::Position, ParseOptions};
+    use comrak::{nodes::Sourcepos, parse_document, Arena, Options};
 
     use super::*;
 
@@ -93,7 +87,8 @@ Some text
 Some more text
 ## Header 2";
         let path = Path::new("test.md").to_path_buf();
-        let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
@@ -102,8 +97,8 @@ Some more text
         let rule = MD022::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
-            rule.to_violation(path.clone(), Position::new(1, 1, 0, 1, 11, 10)),
-            rule.to_violation(path, Position::new(5, 1, 37, 5, 12, 48)),
+            rule.to_violation(path.clone(), Sourcepos::from((1, 1, 1, 10))),
+            rule.to_violation(path, Sourcepos::from((5, 1, 5, 11))),
         ];
         assert_eq!(actual, expected);
     }
@@ -118,7 +113,8 @@ Some more text
 
 ## Header 2";
         let path = Path::new("test.md").to_path_buf();
-        let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, text, &Options::default());
         let doc = Document {
             path,
             ast,

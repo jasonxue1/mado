@@ -1,4 +1,4 @@
-use markdown::unist::Position;
+use comrak::nodes::Sourcepos;
 use miette::Result;
 
 use crate::{violation::Violation, Document};
@@ -44,8 +44,7 @@ impl Rule for MD012 {
 
             if let Some(prev_line) = maybe_prev_line {
                 if prev_line.is_empty() && line.is_empty() {
-                    // TODO: Use correct offset
-                    let position = Position::new(lineno, 0, 0, lineno, 1, 0);
+                    let position = Sourcepos::from((lineno, 0, lineno, 0));
                     let violation = self.to_violation(doc.path.clone(), position);
                     violations.push(violation);
                 }
@@ -62,7 +61,7 @@ impl Rule for MD012 {
 mod tests {
     use std::path::Path;
 
-    use markdown::{unist::Position, ParseOptions};
+    use comrak::{parse_document, Arena, Options};
 
     use super::*;
 
@@ -73,7 +72,8 @@ mod tests {
 
 Some more text here";
         let path = Path::new("test.md").to_path_buf();
-        let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
@@ -81,7 +81,7 @@ Some more text here";
         };
         let rule = MD012::new();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(path, Position::new(3, 0, 0, 3, 1, 0))];
+        let expected = vec![rule.to_violation(path, Sourcepos::from((3, 0, 3, 0)))];
         assert_eq!(actual, expected);
     }
 
@@ -91,7 +91,8 @@ Some more text here";
 
 Some more text here";
         let path = Path::new("test.md").to_path_buf();
-        let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, text, &Options::default());
         let doc = Document {
             path,
             ast,

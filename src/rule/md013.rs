@@ -1,4 +1,4 @@
-use markdown::unist::Position;
+use comrak::nodes::Sourcepos;
 use miette::Result;
 
 use crate::{violation::Violation, Document};
@@ -49,9 +49,8 @@ impl Rule for MD013 {
             let lineno = i + 1;
 
             if line.len() > self.line_length {
-                // TODO: Use correct offset
                 let position =
-                    Position::new(lineno, self.line_length + 1, 0, lineno, line.len(), 0);
+                    Sourcepos::from((lineno, self.line_length + 1, lineno, line.len() - 1));
                 let violation = self.to_violation(doc.path.clone(), position);
                 violations.push(violation);
             }
@@ -65,7 +64,7 @@ impl Rule for MD013 {
 mod tests {
     use std::path::Path;
 
-    use markdown::{unist::Position, ParseOptions};
+    use comrak::{parse_document, Arena, Options};
 
     use super::*;
 
@@ -74,7 +73,8 @@ mod tests {
         let text =
             "This is a very very very very very very very very very very very very very long line";
         let path = Path::new("test.md").to_path_buf();
-        let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
@@ -82,7 +82,7 @@ mod tests {
         };
         let rule = MD013::default();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(path, Position::new(1, 81, 0, 1, 84, 0))];
+        let expected = vec![rule.to_violation(path, Sourcepos::from((1, 81, 1, 83)))];
         assert_eq!(actual, expected);
     }
 
@@ -90,7 +90,8 @@ mod tests {
     fn check_no_errors() {
         let text = "This is a short line";
         let path = Path::new("test.md").to_path_buf();
-        let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, text, &Options::default());
         let doc = Document {
             path,
             ast,

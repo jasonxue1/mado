@@ -1,6 +1,4 @@
-use std::path::PathBuf;
-
-use markdown::{mdast::Node, unist::Position};
+use comrak::nodes::NodeValue;
 use miette::Result;
 
 use crate::{violation::Violation, Document};
@@ -13,62 +11,6 @@ pub struct MD005 {}
 impl MD005 {
     pub fn new() -> Self {
         Self {}
-    }
-
-    fn check_recursive(&self, path: &PathBuf, ast: &Node) -> Result<Vec<Violation>> {
-        match ast.children() {
-            Some(children) => {
-                let all_violations = children.iter().fold(vec![], |mut acc, node| match node {
-                    Node::List(list) => {
-                        let (list_violations, _) = list.children.iter().fold(
-                            (vec![], None::<Position>),
-                            |(mut acc, maybe_indent), item_node| match item_node.clone() {
-                                // NOTE: The position of Node::ListItem's is limited to be the same column even if it is not consistent,
-                                //       so use the position of the inner node instead.
-                                //       This prevents consistency checks if inner nodes are empty.
-                                // TODO: Use Result instead of expect
-                                Node::ListItem(item) if item.children.is_empty() => {
-                                    (acc, maybe_indent)
-                                }
-                                Node::ListItem(item) => {
-                                    let first_child = item
-                                        .children
-                                        .first()
-                                        .expect("list item must have children");
-                                    let position = first_child
-                                        .position()
-                                        .expect("child of list item must have position")
-                                        .clone();
-
-                                    if let Some(indent) = maybe_indent {
-                                        if position.start.column != indent.start.column {
-                                            acc.push(
-                                                self.to_violation(path.clone(), position.clone()),
-                                            );
-                                        }
-                                    }
-
-                                    // Check list recursively
-                                    let item_violations = self
-                                        .check_recursive(path, item_node)
-                                        .expect("check should be successful");
-                                    acc.extend(item_violations);
-
-                                    (acc, Some(position))
-                                }
-                                _ => (acc, maybe_indent),
-                            },
-                        );
-
-                        acc.extend(list_violations);
-                        acc
-                    }
-                    _ => acc,
-                });
-                Ok(all_violations)
-            }
-            None => Ok(vec![]),
-        }
     }
 }
 
@@ -98,7 +40,31 @@ impl Rule for MD005 {
     }
 
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
-        self.check_recursive(&doc.path, &doc.ast)
+        let mut violations = vec![];
+
+        for node in doc.ast.descendants() {
+            if let NodeValue::List(_) = node.data.borrow().value {
+                let mut maybe_first_item_offset = None;
+                for item_node in node.children() {
+                    if let NodeValue::Item(item) = item_node.data.borrow().value {
+                        match maybe_first_item_offset {
+                            Some(first_item_offset) => {
+                                if first_item_offset != item.marker_offset {
+                                    let position = item_node.data.borrow().sourcepos;
+                                    let violation = self.to_violation(doc.path.clone(), position);
+                                    violations.push(violation);
+                                }
+                            }
+                            None => {
+                                maybe_first_item_offset = Some(item.marker_offset);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Ok(violations)
     }
 }
 
@@ -106,7 +72,7 @@ impl Rule for MD005 {
 mod tests {
     use std::path::Path;
 
-    use markdown::{unist::Position, ParseOptions};
+    use comrak::{nodes::Sourcepos, parse_document, Arena, Options};
 
     use super::*;
 
@@ -117,7 +83,8 @@ mod tests {
     * Nested Item 2
    * A misaligned item";
         let path = Path::new("test.md").to_path_buf();
-        let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
@@ -125,7 +92,27 @@ mod tests {
         };
         let rule = MD005::new();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(path, Position::new(4, 6, 54, 4, 23, 71))];
+        let expected = vec![rule.to_violation(path, Sourcepos::from((4, 4, 4, 22)))];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_errors_for_empty_item_text() {
+        let text = "*
+    *
+    *
+   *";
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text: text.to_string(),
+        };
+        let rule = MD005::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![rule.to_violation(path, Sourcepos::from((4, 4, 4, 4)))];
         assert_eq!(actual, expected);
     }
 
@@ -136,27 +123,8 @@ mod tests {
     * Nested Item 2
     * Nested Item 3";
         let path = Path::new("test.md").to_path_buf();
-        let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
-        let rule = MD005::new();
-        let actual = rule.check(&doc).unwrap();
-        let expected = vec![];
-        assert_eq!(actual, expected);
-    }
-
-    // NOTE: Due to limitations of markdown-rs, consistency cannot be checked correctly.
-    #[test]
-    fn check_no_errors_empty_children() {
-        let text = "*
-    *
-    *
-   *";
-        let path = Path::new("test.md").to_path_buf();
-        let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, text, &Options::default());
         let doc = Document {
             path,
             ast,

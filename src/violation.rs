@@ -5,18 +5,18 @@ use std::{
 };
 
 use colored::Colorize;
-use markdown::unist::Position;
+use comrak::nodes::Sourcepos;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Violation {
     path: PathBuf,
     name: String,
     description: String,
-    position: Position,
+    position: Sourcepos,
 }
 
 impl Violation {
-    pub fn new(path: PathBuf, name: String, description: String, position: Position) -> Self {
+    pub fn new(path: PathBuf, name: String, description: String, position: Sourcepos) -> Self {
         Self {
             path,
             position,
@@ -41,8 +41,8 @@ impl Violation {
     }
 
     #[inline]
-    pub fn position(&self) -> Position {
-        self.position.clone()
+    pub fn position(&self) -> Sourcepos {
+        self.position
     }
 }
 
@@ -89,7 +89,7 @@ mod tests {
     #[test]
     fn display_fmt() {
         let path = Path::new("file.md").to_path_buf();
-        let position = Position::new(0, 1, 2, 3, 4, 5);
+        let position = Sourcepos::from((0, 1, 3, 5));
         let violation = Violation::new(
             path,
             "name".to_string(),

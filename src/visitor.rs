@@ -1,3 +1,4 @@
+use comrak::Arena;
 use crossbeam_channel::Sender;
 use ignore::{ParallelVisitor, ParallelVisitorBuilder, WalkState};
 
@@ -24,7 +25,8 @@ impl ParallelVisitor for MarkdownLintVisitor {
                 // TODO: Handle errors
                 let path = entry.path();
                 if path.is_file() && path.extension() == Some("md".as_ref()) {
-                    let either_doc = Document::open(path);
+                    let arena = Arena::new();
+                    let either_doc = Document::open(&arena, path);
                     match either_doc {
                         Ok(doc) => {
                             let violations = self.linter.check(doc).unwrap();

@@ -1,4 +1,4 @@
-use markdown::mdast::Node;
+use comrak::nodes::NodeValue;
 use miette::Result;
 
 use crate::{violation::Violation, Document};
@@ -36,33 +36,24 @@ impl Rule for MD001 {
     }
 
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
-        match doc.ast.children() {
-            Some(children) => {
-                let (violations, _) = children.iter().fold(
-                    (vec![], None),
-                    |(mut acc, maybe_old_depth), node| match (node, maybe_old_depth) {
-                        (Node::Heading(heading), Some(old_depth))
-                            if heading.depth > old_depth + 1 =>
-                        {
-                            let violation = self.to_violation(
-                                doc.path.clone(),
-                                heading
-                                    .position
-                                    .clone()
-                                    .expect("heading must have position"),
-                            );
-                            acc.push(violation);
+        let mut violations = vec![];
+        let mut maybe_prev_level = None;
 
-                            (acc, Some(heading.depth))
-                        }
-                        (Node::Heading(heading), _) => (acc, Some(heading.depth)),
-                        _ => (acc, maybe_old_depth),
-                    },
-                );
-                Ok(violations)
+        for node in doc.ast.children() {
+            if let NodeValue::Heading(heading) = node.data.borrow().value {
+                if let Some(prev_level) = maybe_prev_level {
+                    if heading.level > prev_level + 1 {
+                        let position = node.data.clone().borrow().sourcepos;
+                        let violation = self.to_violation(doc.path.clone(), position);
+                        violations.push(violation);
+                    }
+                }
+
+                maybe_prev_level = Some(heading.level);
             }
-            None => Ok(vec![]),
         }
+
+        Ok(violations)
     }
 }
 
@@ -70,7 +61,7 @@ impl Rule for MD001 {
 mod tests {
     use std::path::Path;
 
-    use markdown::{unist::Position, ParseOptions};
+    use comrak::{nodes::Sourcepos, parse_document, Arena, Options};
 
     use super::*;
 
@@ -82,7 +73,8 @@ mod tests {
 
 We skipped out a 2nd level header in this document";
         let path = Path::new("test.md").to_path_buf();
-        let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
@@ -90,7 +82,7 @@ We skipped out a 2nd level header in this document";
         };
         let rule = MD001::new();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(path, Position::new(3, 1, 12, 3, 13, 24))];
+        let expected = vec![rule.to_violation(path, Sourcepos::from((3, 1, 3, 12)))];
         assert_eq!(actual, expected);
     }
 
@@ -108,7 +100,8 @@ We skipped out a 2nd level header in this document";
 
 ### Another Header 3";
         let path = Path::new("test.md").to_path_buf();
-        let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, text, &Options::default());
         let doc = Document {
             path,
             ast,
@@ -124,7 +117,8 @@ We skipped out a 2nd level header in this document";
     fn check_no_errors_no_top_level() {
         let text = "## This isn't a H1 header";
         let path = Path::new("test.md").to_path_buf();
-        let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, text, &Options::default());
         let doc = Document {
             path,
             ast,

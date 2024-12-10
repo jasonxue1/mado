@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use markdown::unist::Position;
+use comrak::nodes::Sourcepos;
 use miette::Result;
 
 use crate::{violation::Violation, Document};
@@ -26,7 +26,7 @@ pub trait Rule: Send {
     fn check(&self, doc: &Document) -> Result<Vec<Violation>>;
 
     #[inline]
-    fn to_violation(&self, path: PathBuf, position: Position) -> Violation {
+    fn to_violation(&self, path: PathBuf, position: Sourcepos) -> Violation {
         Violation::new(path, self.name(), self.description(), position)
     }
 }

@@ -1,5 +1,4 @@
-use markdown::mdast::Heading;
-use markdown::mdast::Node;
+use comrak::nodes::NodeValue;
 use miette::Result;
 
 use crate::violation::Violation;
@@ -47,25 +46,20 @@ impl Rule for MD002 {
     }
 
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
-        match doc.ast.children() {
-            Some(children) => {
-                let maybe_first_heading = children.iter().find_map(|node| match node {
-                    Node::Heading(heading) => Some(heading),
-                    _ => None,
-                });
+        for node in doc.ast.children() {
+            if let NodeValue::Heading(heading) = node.data.borrow().value {
+                if heading.level != self.depth {
+                    let position = node.data.borrow().sourcepos;
+                    let violation = self.to_violation(doc.path.clone(), position);
 
-                match maybe_first_heading {
-                    Some(Heading {
-                        depth, position, ..
-                    }) if *depth != self.depth => Ok(vec![self.to_violation(
-                        doc.path.clone(),
-                        position.clone().expect("heading must have position"),
-                    )]),
-                    _ => Ok(vec![]),
+                    return Ok(vec![violation]);
                 }
+
+                break;
             }
-            None => Ok(vec![]),
         }
+
+        Ok(vec![])
     }
 }
 
@@ -73,7 +67,7 @@ impl Rule for MD002 {
 mod tests {
     use std::path::Path;
 
-    use markdown::{unist::Position, ParseOptions};
+    use comrak::{nodes::Sourcepos, parse_document, Arena, Options};
 
     use super::*;
 
@@ -83,7 +77,8 @@ mod tests {
 
 ### Another header";
         let path = Path::new("test.md").to_path_buf();
-        let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
@@ -91,7 +86,7 @@ mod tests {
         };
         let rule = MD002::default();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(path, Position::new(1, 1, 0, 1, 26, 25))];
+        let expected = vec![rule.to_violation(path, Sourcepos::from((1, 1, 1, 25)))];
         assert_eq!(actual, expected);
     }
 
@@ -101,7 +96,8 @@ mod tests {
 
 ## Then use a H2 for subsections";
         let path = Path::new("test.md").to_path_buf();
-        let ast = markdown::to_mdast(text, &ParseOptions::default()).unwrap();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, text, &Options::default());
         let doc = Document {
             path,
             ast,
