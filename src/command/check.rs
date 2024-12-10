@@ -1,17 +1,10 @@
 use std::path::PathBuf;
 use std::process::ExitCode;
-use std::sync::Arc;
-use std::sync::Mutex;
-use std::thread;
 
-use ignore::WalkState;
-use miette::miette;
-use miette::IntoDiagnostic;
 use miette::Result;
 
-use crate::Linter;
+use crate::runner::ParallelLintRunner;
 use crate::MarkdownWalker;
-use crate::Violation;
 
 pub struct Checker {
     walker: MarkdownWalker,
@@ -24,47 +17,11 @@ impl Checker {
         Ok(Self { walker })
     }
 
-    fn collect_violations(self) -> Result<Vec<Violation>> {
-        let mutex_violations: Arc<Mutex<Vec<Violation>>> = Arc::new(Mutex::new(vec![]));
-        let (tx, rx) = crossbeam_channel::bounded::<Vec<Violation>>(100);
-
-        let local_mutex_violations = mutex_violations.clone();
-        let thread = thread::spawn(move || {
-            for violations in rx {
-                let mut acquired_violations = local_mutex_violations
-                    .lock()
-                    .expect("lock must be acquired");
-                acquired_violations.extend(violations);
-            }
-        });
-
-        self.walker.walker.run(|| {
-            let linter = Linter::new();
-            let tx = tx.clone();
-            Box::new(move |either_entry| {
-                // TODO: Handler errors
-                let entry = either_entry.unwrap();
-                let path = entry.path();
-                if path.is_file() && path.extension() == Some("md".as_ref()) {
-                    let violations = linter.check(path).unwrap();
-                    tx.send(violations).unwrap();
-                }
-
-                WalkState::Continue
-            })
-        });
-
-        // Wait for the completion
-        drop(tx);
-        thread.join().unwrap();
-
-        // Take ownership of violations
-        let lock = Arc::into_inner(mutex_violations).ok_or(miette!("Failed to unwrap Arc"))?;
-        lock.into_inner().into_diagnostic()
-    }
-
     pub fn check(self) -> Result<ExitCode> {
-        let violations = self.collect_violations()?;
+        let walker = self.walker.walker;
+        let runner = ParallelLintRunner::new(walker, 100);
+        let violations = runner.run()?;
+
         if violations.is_empty() {
             println!("All checks passed!");
             return Ok(ExitCode::SUCCESS);

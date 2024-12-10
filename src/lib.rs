@@ -3,7 +3,9 @@ pub mod command;
 mod document;
 mod linter;
 pub mod rule;
+pub mod runner;
 mod violation;
+mod visitor;
 mod walker;
 
 pub use cli::Cli;
