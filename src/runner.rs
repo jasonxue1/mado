@@ -32,12 +32,14 @@ impl ParallelLintRunner {
             }
         });
 
-        let mut builder = MarkdownLintVisitorFactory::new(Some(tx));
+        let mut builder = MarkdownLintVisitorFactory::new(tx);
         self.walker.visit(&mut builder);
 
         // Wait for the completion
         drop(builder);
-        thread.join().unwrap();
+        thread
+            .join()
+            .map_err(|err| miette!("Failed to join thread. {:?}", err))?;
 
         // Take ownership of violations
         let lock = Arc::into_inner(mutex_violations).ok_or(miette!("Failed to unwrap Arc"))?;
