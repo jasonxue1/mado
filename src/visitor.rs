@@ -1,7 +1,7 @@
 use crossbeam_channel::Sender;
 use ignore::{ParallelVisitor, ParallelVisitorBuilder, WalkState};
 
-use crate::{Linter, Violation};
+use crate::{Document, Linter, Violation};
 
 pub struct MarkdownLintVisitor {
     linter: Linter,
@@ -24,13 +24,17 @@ impl ParallelVisitor for MarkdownLintVisitor {
                 // TODO: Handle errors
                 let path = entry.path();
                 if path.is_file() && path.extension() == Some("md".as_ref()) {
-                    let violations = self.linter.check(path).unwrap();
-                    self.tx.send(violations).unwrap();
+                    let either_doc = Document::open(path);
+                    match either_doc {
+                        Ok(doc) => {
+                            let violations = self.linter.check(doc).unwrap();
+                            self.tx.send(violations).unwrap();
+                        }
+                        Err(err) => println!("{}", err),
+                    }
                 }
             }
-            Err(err) => {
-                println!("{}", err);
-            }
+            Err(err) => println!("{}", err),
         }
 
         WalkState::Continue

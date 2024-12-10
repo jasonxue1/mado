@@ -1,6 +1,3 @@
-use std::path::Path;
-
-use miette::miette;
 use miette::Result;
 
 use crate::rule;
@@ -29,13 +26,8 @@ impl Linter {
         }
     }
 
-    pub fn check(&self, path: &Path) -> Result<Vec<Violation>> {
-        if !path.is_file() || path.extension() != Some("md".as_ref()) {
-            return Err(miette!("Unexpected file: {:?}", path));
-        }
-
+    pub fn check(&self, doc: Document) -> Result<Vec<Violation>> {
         // Iterate rules while unrolling Vec<Result<Vec<..>>> to Result<Vec<..>>
-        let doc = Document::open(path)?;
         let either_violations: Result<Vec<Violation>> =
             self.rules.iter().try_fold(vec![], |mut unrolled, rule| {
                 let result = rule.check(&doc);
