@@ -19,11 +19,18 @@ impl ParallelVisitor for MarkdownLintVisitor {
         &mut self,
         either_entry: std::result::Result<ignore::DirEntry, ignore::Error>,
     ) -> WalkState {
-        let entry = either_entry.unwrap();
-        let path = entry.path();
-        if path.is_file() && path.extension() == Some("md".as_ref()) {
-            let violations = self.linter.check(path).unwrap();
-            self.tx.send(violations).unwrap();
+        match either_entry {
+            Ok(entry) => {
+                // TODO: Handle errors
+                let path = entry.path();
+                if path.is_file() && path.extension() == Some("md".as_ref()) {
+                    let violations = self.linter.check(path).unwrap();
+                    self.tx.send(violations).unwrap();
+                }
+            }
+            Err(err) => {
+                println!("{}", err);
+            }
         }
 
         WalkState::Continue
