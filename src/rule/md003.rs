@@ -212,4 +212,27 @@ Setext style H2
         let expected = vec![];
         assert_eq!(actual, expected);
     }
+
+    #[test]
+    fn check_no_errors_with_front_matter() {
+        let text = r#"---
+author: "John Smith"
+---
+
+# Header 1"#;
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let mut options = Options::default();
+        options.extension.front_matter_delimiter = Some("---".to_owned());
+        let ast = parse_document(&arena, text, &options);
+        let doc = Document {
+            path,
+            ast,
+            text: text.to_string(),
+        };
+        let rule = MD003::new(HeadingStyle::Consistent);
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
 }

@@ -18,11 +18,12 @@ impl<'a> Document<'a> {
     #[inline]
     pub fn open(arena: &'a Arena<AstNode<'a>>, path: &Path) -> Result<Self> {
         let text = fs::read_to_string(path).into_diagnostic()?;
-        let ast = parse_document(arena, &text, &Options::default());
+        let mut options = Options::default();
+        options.extension.front_matter_delimiter = Some("---".to_owned());
+        let ast = parse_document(arena, &text, &options);
 
         Ok(Self {
             path: path.to_path_buf(),
-            // ast: None,
             ast,
             text,
         })
