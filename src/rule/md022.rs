@@ -59,7 +59,10 @@ impl Rule for MD022 {
                         }
                     }
                     (_, NodeValue::Heading(_)) => {
-                        if position.start.line == prev_position.end.line + 1 {
+                        // NOTE: Ignore column 0, as the List may end on the next line
+                        if position.start.line == prev_position.end.line + 1
+                            && prev_position.end.column != 0
+                        {
                             let violation = self.to_violation(doc.path.clone(), position);
                             violations.push(violation);
                         }
@@ -171,6 +174,28 @@ Some code block
 
 Setext style H2
 ---------------";
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, text, &Options::default());
+        let doc = Document {
+            path,
+            ast,
+            text: text.to_string(),
+        };
+        let rule = MD022::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_for_list() {
+        let text = "# Header 1
+
+- Some list item
+- Some more list item
+
+## Header 2";
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let ast = parse_document(&arena, text, &Options::default());
