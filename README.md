@@ -19,6 +19,7 @@ downlint check path/to/*.md
 | MD004 | :waring:           | `:sublist` style does not support.    |
 | MD005 | :white_check_mark: |                                       |
 | MD006 | :white_check_mark: |                                       |
+| MD007 | :white_check_mark: |                                       |
 | MD009 | :white_check_mark: |                                       |
 | MD010 | :white_check_mark: |                                       |
 | MD012 | :white_check_mark: |                                       |
