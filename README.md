@@ -16,7 +16,7 @@ downlint check path/to/*.md
 | MD001 | :white_check_mark: |                                                                                      |
 | MD002 | :white_check_mark: |                                                                                      |
 | MD003 | :waring:           | `:atx_closed` style does not support.                                                |
-| MD004 | :x:                | [mdast](https://github.com/syntax-tree/mdast) does not support list styles.          |
+| MD004 | :waring:           | `:sublist` style does not support.                                                   |
 | MD005 | :white_check_mark: |                                                                                      |
 | MD009 | :white_check_mark: |                                                                                      |
 | MD010 | :white_check_mark: |                                                                                      |

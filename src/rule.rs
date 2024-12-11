@@ -8,6 +8,7 @@ use crate::{violation::Violation, Document};
 mod md001;
 mod md002;
 mod md003;
+mod md004;
 mod md005;
 mod md009;
 mod md010;
@@ -35,6 +36,7 @@ pub trait Rule: Send {
 pub use md001::MD001;
 pub use md002::MD002;
 pub use md003::MD003;
+pub use md004::MD004;
 pub use md005::MD005;
 pub use md009::MD009;
 pub use md010::MD010;
