@@ -16,31 +16,37 @@ pub struct Violation {
 }
 
 impl Violation {
+    #[inline]
+    #[must_use]
     pub fn new(path: PathBuf, name: String, description: String, position: Sourcepos) -> Self {
         Self {
             path,
-            position,
             name,
             description,
+            position,
         }
     }
 
     #[inline]
+    #[must_use]
     pub fn path(&self) -> PathBuf {
         self.path.clone()
     }
 
     #[inline]
+    #[must_use]
     pub fn name(&self) -> String {
         self.name.clone()
     }
 
     #[inline]
+    #[must_use]
     pub fn description(&self) -> String {
         self.description.clone()
     }
 
     #[inline]
+    #[must_use]
     pub fn position(&self) -> Sourcepos {
         self.position
     }

@@ -20,6 +20,7 @@ pub struct MD003 {
 
 impl MD003 {
     #[inline]
+    #[must_use]
     pub fn new(style: HeadingStyle) -> Self {
         Self { style }
     }

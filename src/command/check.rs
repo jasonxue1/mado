@@ -35,7 +35,7 @@ impl Checker {
         if num_violations == 1 {
             println!("\nFound 1 error.");
         } else {
-            println!("\nFound {} errors.", num_violations);
+            println!("\nFound {num_violations} errors.");
         }
 
         Ok(ExitCode::FAILURE)

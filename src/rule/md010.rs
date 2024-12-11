@@ -11,6 +11,8 @@ use super::Rule;
 pub struct MD010 {}
 
 impl MD010 {
+    #[inline]
+    #[must_use]
     pub fn new() -> Self {
         Self {}
     }

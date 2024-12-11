@@ -11,6 +11,8 @@ pub struct Linter {
 }
 
 impl Linter {
+    #[inline]
+    #[must_use]
     pub fn new() -> Self {
         Self {
             rules: vec![

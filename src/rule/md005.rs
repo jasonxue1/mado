@@ -9,6 +9,8 @@ use super::Rule;
 pub struct MD005 {}
 
 impl MD005 {
+    #[inline]
+    #[must_use]
     pub fn new() -> Self {
         Self {}
     }

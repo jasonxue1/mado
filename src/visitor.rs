@@ -10,6 +10,8 @@ pub struct MarkdownLintVisitor {
 }
 
 impl MarkdownLintVisitor {
+    #[inline]
+    #[must_use]
     pub fn new(linter: Linter, tx: Sender<Vec<Violation>>) -> Self {
         Self { linter, tx }
     }
@@ -32,11 +34,11 @@ impl ParallelVisitor for MarkdownLintVisitor {
                             let violations = self.linter.check(doc).unwrap();
                             self.tx.send(violations).unwrap();
                         }
-                        Err(err) => println!("{}", err),
+                        Err(err) => println!("{err}"),
                     }
                 }
             }
-            Err(err) => println!("{}", err),
+            Err(err) => println!("{err}"),
         }
 
         WalkState::Continue

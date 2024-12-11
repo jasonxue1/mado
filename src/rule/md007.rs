@@ -10,6 +10,8 @@ pub struct MD007 {
 }
 
 impl MD007 {
+    #[inline]
+    #[must_use]
     pub fn new(indent: usize) -> Self {
         Self { indent }
     }

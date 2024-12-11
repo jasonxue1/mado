@@ -20,6 +20,7 @@ pub struct MD004 {
 
 impl MD004 {
     #[inline]
+    #[must_use]
     pub fn new(style: ListStyle) -> Self {
         Self { style }
     }

@@ -12,6 +12,7 @@ pub struct MD002 {
 
 impl MD002 {
     #[inline]
+    #[must_use]
     pub fn new(depth: u8) -> Self {
         Self { depth }
     }

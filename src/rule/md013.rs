@@ -10,6 +10,8 @@ pub struct MD013 {
 }
 
 impl MD013 {
+    #[inline]
+    #[must_use]
     pub fn new(line_length: usize) -> Self {
         Self { line_length }
     }

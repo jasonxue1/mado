@@ -14,6 +14,8 @@ pub struct ParallelLintRunner {
 }
 
 impl ParallelLintRunner {
+    #[inline]
+    #[must_use]
     pub fn new(walker: WalkParallel, capacity: usize) -> Self {
         Self { walker, capacity }
     }
