@@ -5,8 +5,9 @@ use crate::{violation::Violation, Document};
 
 use super::Rule;
 
-#[derive(Default)]
-pub struct MD005 {}
+#[derive(Default, Debug, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub struct MD005;
 
 impl MD005 {
     #[inline]
@@ -19,28 +20,29 @@ impl MD005 {
 impl Rule for MD005 {
     #[inline]
     fn name(&self) -> String {
-        "MD005".to_string()
+        "MD005".to_owned()
     }
 
     #[inline]
     fn description(&self) -> String {
-        "Inconsistent indentation for list items at the same level".to_string()
+        "Inconsistent indentation for list items at the same level".to_owned()
     }
 
     #[inline]
     fn tags(&self) -> Vec<String> {
         vec![
-            "bullet".to_string(),
-            "ul".to_string(),
-            "indentation".to_string(),
+            "bullet".to_owned(),
+            "ul".to_owned(),
+            "indentation".to_owned(),
         ]
     }
 
     #[inline]
     fn aliases(&self) -> Vec<String> {
-        vec!["list-indent".to_string()]
+        vec!["list-indent".to_owned()]
     }
 
+    #[inline]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let mut violations = vec![];
 

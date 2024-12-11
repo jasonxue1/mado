@@ -11,12 +11,14 @@ pub struct Checker {
 }
 
 impl Checker {
+    #[inline]
     pub fn new(patterns: &[PathBuf]) -> Result<Self> {
         let walker = MarkdownWalker::new(patterns)?;
 
         Ok(Self { walker })
     }
 
+    #[inline]
     pub fn check(self) -> Result<ExitCode> {
         let walker = self.walker.walker;
         let runner = ParallelLintRunner::new(walker, 100);

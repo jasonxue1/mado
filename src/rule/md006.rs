@@ -5,8 +5,9 @@ use crate::{violation::Violation, Document};
 
 use super::Rule;
 
-#[derive(Default)]
-pub struct MD006 {}
+#[derive(Default, Debug, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub struct MD006;
 
 impl MD006 {
     #[inline]
@@ -19,28 +20,29 @@ impl MD006 {
 impl Rule for MD006 {
     #[inline]
     fn name(&self) -> String {
-        "MD006".to_string()
+        "MD006".to_owned()
     }
 
     #[inline]
     fn description(&self) -> String {
-        "Consider starting bulleted lists at the beginning of the line".to_string()
+        "Consider starting bulleted lists at the beginning of the line".to_owned()
     }
 
     #[inline]
     fn tags(&self) -> Vec<String> {
         vec![
-            "bullet".to_string(),
-            "ul".to_string(),
-            "indentation".to_string(),
+            "bullet".to_owned(),
+            "ul".to_owned(),
+            "indentation".to_owned(),
         ]
     }
 
     #[inline]
     fn aliases(&self) -> Vec<String> {
-        vec!["ul-start-left".to_string()]
+        vec!["ul-start-left".to_owned()]
     }
 
+    #[inline]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let mut violations = vec![];
 

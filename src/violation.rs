@@ -1,10 +1,8 @@
-use std::{
-    cmp::Ordering,
-    fmt::{Display, Error},
-    path::PathBuf,
-};
+use core::cmp::Ordering;
+use core::fmt::{Display, Error, Formatter, Result};
+use std::path::PathBuf;
 
-use colored::Colorize;
+use colored::Colorize as _;
 use comrak::nodes::Sourcepos;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -60,6 +58,7 @@ impl PartialOrd for Violation {
 }
 
 impl Ord for Violation {
+    #[inline]
     fn cmp(&self, other: &Self) -> Ordering {
         match self.position().start.line.cmp(&other.position().start.line) {
             Ordering::Equal => self.name.cmp(&other.name),
@@ -69,7 +68,8 @@ impl Ord for Violation {
 }
 
 impl Display for Violation {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    #[inline]
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         let path = self.path.to_str().ok_or(Error)?;
         write!(
             f,

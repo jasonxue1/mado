@@ -6,6 +6,7 @@ use crate::Document;
 
 use super::Rule;
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum HeadingStyle {
     Consistent,
     Atx,
@@ -14,6 +15,8 @@ pub enum HeadingStyle {
     SetextWithAtx,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[non_exhaustive]
 pub struct MD003 {
     style: HeadingStyle,
 }
@@ -38,24 +41,25 @@ impl Default for MD003 {
 impl Rule for MD003 {
     #[inline]
     fn name(&self) -> String {
-        "MD003".to_string()
+        "MD003".to_owned()
     }
 
     #[inline]
     fn description(&self) -> String {
-        "Header style".to_string()
+        "Header style".to_owned()
     }
 
     #[inline]
     fn tags(&self) -> Vec<String> {
-        vec!["headers".to_string()]
+        vec!["headers".to_owned()]
     }
 
     #[inline]
     fn aliases(&self) -> Vec<String> {
-        vec!["header-style".to_string()]
+        vec!["header-style".to_owned()]
     }
 
+    #[inline]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let mut violations = vec![];
         let mut maybe_first_heading_style = None;

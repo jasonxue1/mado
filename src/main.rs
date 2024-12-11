@@ -1,3 +1,5 @@
+#![warn(clippy::pedantic)]
+
 use std::process::ExitCode;
 
 use clap::Parser;
@@ -15,6 +17,6 @@ fn main() -> Result<ExitCode> {
             let checker = Checker::new(files)?;
             checker.check()
         }
-        None => Ok(ExitCode::FAILURE),
+        _ => Ok(ExitCode::FAILURE),
     }
 }

@@ -1,3 +1,5 @@
+use core::result::Result;
+
 use comrak::Arena;
 use crossbeam_channel::Sender;
 use ignore::{ParallelVisitor, ParallelVisitorBuilder, WalkState};
@@ -18,10 +20,9 @@ impl MarkdownLintVisitor {
 }
 
 impl ParallelVisitor for MarkdownLintVisitor {
-    fn visit(
-        &mut self,
-        either_entry: std::result::Result<ignore::DirEntry, ignore::Error>,
-    ) -> WalkState {
+    // TODO: Don't use unwrap
+    #![allow(clippy::unwrap_used)]
+    fn visit(&mut self, either_entry: Result<ignore::DirEntry, ignore::Error>) -> WalkState {
         match either_entry {
             Ok(entry) => {
                 // TODO: Handle errors
@@ -31,7 +32,7 @@ impl ParallelVisitor for MarkdownLintVisitor {
                     let either_doc = Document::open(&arena, path);
                     match either_doc {
                         Ok(doc) => {
-                            let violations = self.linter.check(doc).unwrap();
+                            let violations = self.linter.check(&doc).unwrap();
                             self.tx.send(violations).unwrap();
                         }
                         Err(err) => println!("{err}"),

@@ -5,8 +5,9 @@ use crate::{violation::Violation, Document};
 
 use super::Rule;
 
-#[derive(Default)]
-pub struct MD001 {}
+#[derive(Default, Debug, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub struct MD001;
 
 impl MD001 {
     #[inline]
@@ -19,24 +20,25 @@ impl MD001 {
 impl Rule for MD001 {
     #[inline]
     fn name(&self) -> String {
-        "MD001".to_string()
+        "MD001".to_owned()
     }
 
     #[inline]
     fn description(&self) -> String {
-        "Header levels should only increment by one level at a time".to_string()
+        "Header levels should only increment by one level at a time".to_owned()
     }
 
     #[inline]
     fn tags(&self) -> Vec<String> {
-        vec!["headers".to_string()]
+        vec!["headers".to_owned()]
     }
 
     #[inline]
     fn aliases(&self) -> Vec<String> {
-        vec!["header-increment".to_string()]
+        vec!["header-increment".to_owned()]
     }
 
+    #[inline]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let mut violations = vec![];
         let mut maybe_prev_level = None;

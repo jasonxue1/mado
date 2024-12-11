@@ -5,8 +5,9 @@ use crate::{violation::Violation, Document};
 
 use super::Rule;
 
-#[derive(Default)]
-pub struct MD022 {}
+#[derive(Default, Debug, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub struct MD022;
 
 impl MD022 {
     #[inline]
@@ -19,24 +20,25 @@ impl MD022 {
 impl Rule for MD022 {
     #[inline]
     fn name(&self) -> String {
-        "MD022".to_string()
+        "MD022".to_owned()
     }
 
     #[inline]
     fn description(&self) -> String {
-        "Headers should be surrounded by blank lines".to_string()
+        "Headers should be surrounded by blank lines".to_owned()
     }
 
     #[inline]
     fn tags(&self) -> Vec<String> {
-        vec!["headers".to_string(), "blank_lines".to_string()]
+        vec!["headers".to_owned(), "blank_lines".to_owned()]
     }
 
     #[inline]
     fn aliases(&self) -> Vec<String> {
-        vec!["blanks-around-headers".to_string()]
+        vec!["blanks-around-headers".to_owned()]
     }
 
+    #[inline]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let mut violations = vec![];
         let mut maybe_prev_node: Option<&AstNode> = None;

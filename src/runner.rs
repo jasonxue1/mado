@@ -1,9 +1,10 @@
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
+use std::sync::Mutex;
 use std::thread;
 
 use ignore::WalkParallel;
 use miette::miette;
-use miette::{IntoDiagnostic, Result};
+use miette::{IntoDiagnostic as _, Result};
 
 use crate::visitor::MarkdownLintVisitorFactory;
 use crate::Violation;
@@ -20,11 +21,15 @@ impl ParallelLintRunner {
         Self { walker, capacity }
     }
 
+    #[inline]
+    // TODO: Don't use expect
+    #[expect(clippy::expect_used)]
+    #[expect(clippy::unwrap_in_result)]
     pub fn run(self) -> Result<Vec<Violation>> {
         let mutex_violations: Arc<Mutex<Vec<Violation>>> = Arc::new(Mutex::new(vec![]));
         let (tx, rx) = crossbeam_channel::bounded::<Vec<Violation>>(self.capacity);
 
-        let local_mutex_violations = mutex_violations.clone();
+        let local_mutex_violations = Arc::clone(&mutex_violations);
         let thread = thread::spawn(move || {
             for violations in rx {
                 let mut acquired_violations = local_mutex_violations

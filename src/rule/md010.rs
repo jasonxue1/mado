@@ -1,14 +1,16 @@
 use comrak::nodes::Sourcepos;
-use miette::IntoDiagnostic;
+use miette::IntoDiagnostic as _;
 use miette::Result;
 use regex::Regex;
 
-use crate::{violation::Violation, Document};
+use crate::violation::Violation;
+use crate::Document;
 
 use super::Rule;
 
-#[derive(Default)]
-pub struct MD010 {}
+#[derive(Default, Debug, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub struct MD010;
 
 impl MD010 {
     #[inline]
@@ -21,24 +23,25 @@ impl MD010 {
 impl Rule for MD010 {
     #[inline]
     fn name(&self) -> String {
-        "MD010".to_string()
+        "MD010".to_owned()
     }
 
     #[inline]
     fn description(&self) -> String {
-        "Hard tabs".to_string()
+        "Hard tabs".to_owned()
     }
 
     #[inline]
     fn tags(&self) -> Vec<String> {
-        vec!["whitespace".to_string(), "hard_tab".to_string()]
+        vec!["whitespace".to_owned(), "hard_tab".to_owned()]
     }
 
     #[inline]
     fn aliases(&self) -> Vec<String> {
-        vec!["no-hard-tabs".to_string()]
+        vec!["no-hard-tabs".to_owned()]
     }
 
+    #[inline]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let re = Regex::new("\t").into_diagnostic()?;
 

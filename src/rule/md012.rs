@@ -5,8 +5,9 @@ use crate::{violation::Violation, Document};
 
 use super::Rule;
 
-#[derive(Default)]
-pub struct MD012 {}
+#[derive(Default, Debug, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub struct MD012;
 
 impl MD012 {
     #[inline]
@@ -19,24 +20,25 @@ impl MD012 {
 impl Rule for MD012 {
     #[inline]
     fn name(&self) -> String {
-        "MD012".to_string()
+        "MD012".to_owned()
     }
 
     #[inline]
     fn description(&self) -> String {
-        "Multiple consecutive blank lines".to_string()
+        "Multiple consecutive blank lines".to_owned()
     }
 
     #[inline]
     fn tags(&self) -> Vec<String> {
-        vec!["whitespace".to_string(), "blank_lines".to_string()]
+        vec!["whitespace".to_owned(), "blank_lines".to_owned()]
     }
 
     #[inline]
     fn aliases(&self) -> Vec<String> {
-        vec!["no-multiple-blanks".to_string()]
+        vec!["no-multiple-blanks".to_owned()]
     }
 
+    #[inline]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let mut violations = vec![];
         let mut maybe_prev_line: Option<&str> = None;

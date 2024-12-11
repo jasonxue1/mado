@@ -5,6 +5,8 @@ use crate::{violation::Violation, Document};
 
 use super::Rule;
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[non_exhaustive]
 pub struct MD013 {
     line_length: usize,
 }
@@ -18,6 +20,7 @@ impl MD013 {
 }
 
 impl Default for MD013 {
+    #[inline]
     fn default() -> Self {
         Self { line_length: 80 }
     }
@@ -26,24 +29,25 @@ impl Default for MD013 {
 impl Rule for MD013 {
     #[inline]
     fn name(&self) -> String {
-        "MD013".to_string()
+        "MD013".to_owned()
     }
 
     #[inline]
     fn description(&self) -> String {
-        "Line length".to_string()
+        "Line length".to_owned()
     }
 
     #[inline]
     fn tags(&self) -> Vec<String> {
-        vec!["line_length".to_string()]
+        vec!["line_length".to_owned()]
     }
 
     #[inline]
     fn aliases(&self) -> Vec<String> {
-        vec!["line-length".to_string()]
+        vec!["line-length".to_owned()]
     }
 
+    #[inline]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let mut violations = vec![];
 

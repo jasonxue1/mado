@@ -5,6 +5,8 @@ use crate::{violation::Violation, Document};
 
 use super::Rule;
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[non_exhaustive]
 pub struct MD007 {
     indent: usize,
 }
@@ -18,6 +20,7 @@ impl MD007 {
 }
 
 impl Default for MD007 {
+    #[inline]
     fn default() -> Self {
         Self { indent: 4 }
     }
@@ -26,28 +29,29 @@ impl Default for MD007 {
 impl Rule for MD007 {
     #[inline]
     fn name(&self) -> String {
-        "MD007".to_string()
+        "MD007".to_owned()
     }
 
     #[inline]
     fn description(&self) -> String {
-        "Unordered list indentation".to_string()
+        "Unordered list indentation".to_owned()
     }
 
     #[inline]
     fn tags(&self) -> Vec<String> {
         vec![
-            "bullet".to_string(),
-            "ul".to_string(),
-            "indentation".to_string(),
+            "bullet".to_owned(),
+            "ul".to_owned(),
+            "indentation".to_owned(),
         ]
     }
 
     #[inline]
     fn aliases(&self) -> Vec<String> {
-        vec!["ul-indent".to_string()]
+        vec!["ul-indent".to_owned()]
     }
 
+    #[inline]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let mut violations = vec![];
 
@@ -57,7 +61,6 @@ impl Rule for MD007 {
                 let position = node.data.borrow().sourcepos;
                 let indent = position.start.column - 1;
                 if indent % self.indent != 0 {
-                    let position = node.data.borrow().sourcepos;
                     let violation = self.to_violation(doc.path.clone(), position);
                     violations.push(violation);
                 }

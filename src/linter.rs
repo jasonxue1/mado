@@ -32,11 +32,12 @@ impl Linter {
         }
     }
 
-    pub fn check(&self, doc: Document) -> Result<Vec<Violation>> {
+    #[inline]
+    pub fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         // Iterate rules while unrolling Vec<Result<Vec<..>>> to Result<Vec<..>>
         let either_violations: Result<Vec<Violation>> =
             self.rules.iter().try_fold(vec![], |mut unrolled, rule| {
-                let result = rule.check(&doc);
+                let result = rule.check(doc);
                 unrolled.extend(result?);
                 Ok(unrolled)
             });

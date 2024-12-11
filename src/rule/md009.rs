@@ -1,5 +1,5 @@
 use comrak::nodes::Sourcepos;
-use miette::IntoDiagnostic;
+use miette::IntoDiagnostic as _;
 use miette::Result;
 use regex::Regex;
 
@@ -8,7 +8,8 @@ use crate::{violation::Violation, Document};
 use super::Rule;
 
 #[derive(Default)]
-pub struct MD009 {}
+#[non_exhaustive]
+pub struct MD009;
 
 impl MD009 {
     #[inline]
@@ -21,24 +22,25 @@ impl MD009 {
 impl Rule for MD009 {
     #[inline]
     fn name(&self) -> String {
-        "MD009".to_string()
+        "MD009".to_owned()
     }
 
     #[inline]
     fn description(&self) -> String {
-        "Trailing spaces".to_string()
+        "Trailing spaces".to_owned()
     }
 
     #[inline]
     fn tags(&self) -> Vec<String> {
-        vec!["whitespace".to_string()]
+        vec!["whitespace".to_owned()]
     }
 
     #[inline]
     fn aliases(&self) -> Vec<String> {
-        vec!["no-trailing-spaces".to_string()]
+        vec!["no-trailing-spaces".to_owned()]
     }
 
+    #[inline]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let re = Regex::new(" +$").into_diagnostic()?;
 

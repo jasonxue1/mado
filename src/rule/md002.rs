@@ -6,6 +6,8 @@ use crate::Document;
 
 use super::Rule;
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[non_exhaustive]
 pub struct MD002 {
     depth: u8,
 }
@@ -28,24 +30,25 @@ impl Default for MD002 {
 impl Rule for MD002 {
     #[inline]
     fn name(&self) -> String {
-        "MD002".to_string()
+        "MD002".to_owned()
     }
 
     #[inline]
     fn description(&self) -> String {
-        "First header should be a top level header".to_string()
+        "First header should be a top level header".to_owned()
     }
 
     #[inline]
     fn tags(&self) -> Vec<String> {
-        vec!["headers".to_string()]
+        vec!["headers".to_owned()]
     }
 
     #[inline]
     fn aliases(&self) -> Vec<String> {
-        vec!["first-header-h1".to_string()]
+        vec!["first-header-h1".to_owned()]
     }
 
+    #[inline]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         for node in doc.ast.children() {
             if let NodeValue::Heading(heading) = node.data.borrow().value {

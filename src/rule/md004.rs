@@ -6,6 +6,7 @@ use crate::Document;
 
 use super::Rule;
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ListStyle {
     Consistent,
     Asterisk,
@@ -14,6 +15,8 @@ pub enum ListStyle {
     // Sublist, // TODO
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[non_exhaustive]
 pub struct MD004 {
     style: ListStyle,
 }
@@ -38,24 +41,25 @@ impl Default for MD004 {
 impl Rule for MD004 {
     #[inline]
     fn name(&self) -> String {
-        "MD004".to_string()
+        "MD004".to_owned()
     }
 
     #[inline]
     fn description(&self) -> String {
-        "Unordered list style".to_string()
+        "Unordered list style".to_owned()
     }
 
     #[inline]
     fn tags(&self) -> Vec<String> {
-        vec!["bullet".to_string(), "ul".to_string()]
+        vec!["bullet".to_owned(), "ul".to_owned()]
     }
 
     #[inline]
     fn aliases(&self) -> Vec<String> {
-        vec!["ul-style".to_string()]
+        vec!["ul-style".to_owned()]
     }
 
+    #[inline]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let mut violations = vec![];
         let mut maybe_first_list_style = None;

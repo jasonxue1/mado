@@ -11,6 +11,7 @@ use crate::Command;
     long_about = None,
     arg_required_else_help = true
 )]
+#[non_exhaustive]
 pub struct Cli {
     #[command(subcommand)]
     pub command: Option<Command>,
