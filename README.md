@@ -28,6 +28,7 @@ downlint check path/to/*.md
 | MD018 | :white_check_mark: |                                       |
 | MD019 | :white_check_mark: |                                       |
 | MD022 | :white_check_mark: |                                       |
+| MD023 | :white_check_mark: |                                       |
 
 ## Development
 
