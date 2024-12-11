@@ -18,6 +18,7 @@ mod md012;
 mod md013;
 mod md014;
 mod md018;
+mod md019;
 mod md022;
 
 pub trait Rule: Send {
@@ -50,4 +51,5 @@ pub use md012::MD012;
 pub use md013::MD013;
 pub use md014::MD014;
 pub use md018::MD018;
+pub use md019::MD019;
 pub use md022::MD022;
