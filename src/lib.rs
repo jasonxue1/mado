@@ -15,6 +15,7 @@
 #![warn(clippy::clone_on_ref_ptr)]
 #![warn(clippy::missing_inline_in_public_items)]
 #![warn(clippy::shadow_unrelated)]
+#![warn(clippy::std_instead_of_alloc)]
 #![warn(clippy::std_instead_of_core)]
 #![warn(clippy::str_to_string)]
 #![warn(clippy::unused_trait_names)]
@@ -28,7 +29,6 @@
 #![allow(clippy::missing_panics_doc)]
 #![allow(clippy::missing_docs_in_private_items)]
 #![allow(clippy::print_stdout)]
-#![allow(clippy::std_instead_of_alloc)]
 
 mod cli;
 pub mod command;

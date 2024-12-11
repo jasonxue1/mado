@@ -1,4 +1,6 @@
-use std::sync::Arc;
+extern crate alloc;
+
+use alloc::sync::Arc;
 use std::sync::Mutex;
 use std::thread;
 
