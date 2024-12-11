@@ -48,8 +48,6 @@ impl Rule for MD022 {
                 let prev_position = prev_node.data.borrow().sourcepos;
                 let position = node.data.borrow().sourcepos;
 
-                println!("{}, {}", prev_position, position);
-
                 match (
                     prev_node.data.borrow().value.clone(),
                     node.data.borrow().value.clone(),
