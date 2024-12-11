@@ -18,6 +18,7 @@ downlint check path/to/*.md
 | MD003 | :waring:           | `:atx_closed` style does not support.                                                |
 | MD004 | :waring:           | `:sublist` style does not support.                                                   |
 | MD005 | :white_check_mark: |                                                                                      |
+| MD006 | :white_check_mark: |                                                                                      |
 | MD009 | :white_check_mark: |                                                                                      |
 | MD010 | :white_check_mark: |                                                                                      |
 | MD012 | :white_check_mark: |                                                                                      |
