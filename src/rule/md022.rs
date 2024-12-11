@@ -48,18 +48,20 @@ impl Rule for MD022 {
                 let prev_position = prev_node.data.borrow().sourcepos;
                 let position = node.data.borrow().sourcepos;
 
+                println!("{}, {}", prev_position, position);
+
                 match (
                     prev_node.data.borrow().value.clone(),
                     node.data.borrow().value.clone(),
                 ) {
                     (NodeValue::Heading(_), _) => {
-                        if position.start.line == prev_position.start.line + 1 {
+                        if position.start.line == prev_position.end.line + 1 {
                             let violation = self.to_violation(doc.path.clone(), prev_position);
                             violations.push(violation);
                         }
                     }
                     (_, NodeValue::Heading(_)) => {
-                        if position.start.line == prev_position.start.line + 1 {
+                        if position.start.line == prev_position.end.line + 1 {
                             let violation = self.to_violation(doc.path.clone(), position);
                             violations.push(violation);
                         }
@@ -84,7 +86,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_errors() {
+    fn check_errors_for_atx() {
         let text = "# Header 1
 Some text
 
@@ -108,6 +110,34 @@ Some more text
     }
 
     #[test]
+    fn check_errors_for_setext() {
+        let text = "Setext style H1
+===============
+Some text
+
+```
+Some code block
+```
+Setext style H2
+---------------";
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text: text.to_string(),
+        };
+        let rule = MD022::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![
+            rule.to_violation(path.clone(), Sourcepos::from((1, 1, 2, 15))),
+            rule.to_violation(path, Sourcepos::from((8, 1, 9, 15))),
+        ];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
     fn check_no_errors() {
         let text = "# Header 1
 
@@ -116,6 +146,33 @@ Some text
 Some more text
 
 ## Header 2";
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, text, &Options::default());
+        let doc = Document {
+            path,
+            ast,
+            text: text.to_string(),
+        };
+        let rule = MD022::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_for_setext() {
+        let text = "Setext style H1
+===============
+
+Some text
+
+```
+Some code block
+```
+
+Setext style H2
+---------------";
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let ast = parse_document(&arena, text, &Options::default());
