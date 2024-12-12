@@ -30,6 +30,7 @@ downlint check path/to/*.md
 | MD022 | :white_check_mark: |                                              |
 | MD023 | :white_check_mark: |                                              |
 | MD024 | :warning:          | `allow_different_nesting` does not support.  |
+| MD025 | :white_check_mark: |                                              |
 
 ## Development
 
