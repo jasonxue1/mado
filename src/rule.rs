@@ -5,6 +5,7 @@ use miette::Result;
 
 use crate::{violation::Violation, Document};
 
+mod helper;
 mod md001;
 mod md002;
 mod md003;
@@ -21,6 +22,7 @@ mod md018;
 mod md019;
 mod md022;
 mod md023;
+mod md024;
 
 pub trait Rule: Send {
     fn name(&self) -> String;
@@ -55,3 +57,4 @@ pub use md018::MD018;
 pub use md019::MD019;
 pub use md022::MD022;
 pub use md023::MD023;
+pub use md024::MD024;

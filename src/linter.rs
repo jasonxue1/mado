@@ -32,6 +32,7 @@ impl Linter {
                 Box::new(rule::MD019::new()),
                 Box::new(rule::MD022::new()),
                 Box::new(rule::MD023::new()),
+                Box::new(rule::MD024::new()),
             ],
         }
     }
