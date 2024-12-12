@@ -5,7 +5,7 @@ pub fn inline_text_of<'a>(root: &'a AstNode<'a>) -> String {
         .descendants()
         .filter_map(|node| match node.data.borrow().value.clone() {
             NodeValue::Text(text) => Some(text),
-            NodeValue::Code(code) => Some(code.literal),
+            NodeValue::Code(code) => Some(format!("`{}`", code.literal)),
             _ => None,
         })
         .collect();
@@ -27,7 +27,7 @@ mod tests {
         let ast = parse_document(&arena, text, &Options::default());
         let heading = ast.first_child().unwrap();
         let actual = inline_text_of(heading);
-        let expected = "Heading with code, link and bold";
+        let expected = "Heading with `code`, link and bold";
         assert_eq!(actual, expected);
     }
 }
