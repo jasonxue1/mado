@@ -1,6 +1,7 @@
 # downlint
 
 A fast Markdown linter, written in Rust.
+Compliant with [CommonMark](https://commonmark.org) and [GFM](https://github.github.com/gfm/).
 
 ## Usage
 
@@ -10,6 +11,8 @@ downlint check path/to/*.md
 ```
 
 ## Rules
+
+Several [markdownlint](https://github.com/markdownlint/markdownlint) rules are currently supported.
 
 | Rule  | Support            | Note                                         |
 |-------|--------------------|----------------------------------------------|
