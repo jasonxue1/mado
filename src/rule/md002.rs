@@ -9,21 +9,21 @@ use super::Rule;
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct MD002 {
-    depth: u8,
+    level: u8,
 }
 
 impl MD002 {
     #[inline]
     #[must_use]
-    pub fn new(depth: u8) -> Self {
-        Self { depth }
+    pub fn new(level: u8) -> Self {
+        Self { level }
     }
 }
 
 impl Default for MD002 {
     #[inline]
     fn default() -> Self {
-        Self { depth: 1 }
+        Self { level: 1 }
     }
 }
 
@@ -52,7 +52,7 @@ impl Rule for MD002 {
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         for node in doc.ast.children() {
             if let NodeValue::Heading(heading) = node.data.borrow().value {
-                if heading.level != self.depth {
+                if heading.level != self.level {
                     let position = node.data.borrow().sourcepos;
                     let violation = self.to_violation(doc.path.clone(), position);
 
