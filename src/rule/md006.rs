@@ -1,4 +1,4 @@
-use comrak::nodes::NodeValue;
+use comrak::nodes::{ListType, NodeValue};
 use miette::Result;
 
 use crate::{violation::Violation, Document};
@@ -47,7 +47,11 @@ impl Rule for MD006 {
         let mut violations = vec![];
 
         for node in doc.ast.children() {
-            if let NodeValue::List(_) = node.data.borrow().value {
+            if let NodeValue::List(list) = node.data.borrow().value {
+                if list.list_type != ListType::Bullet {
+                    continue;
+                }
+
                 for item_node in node.children() {
                     if let NodeValue::Item(item) = item_node.data.borrow().value {
                         if item.marker_offset > 0 {
@@ -101,6 +105,26 @@ mod tests {
 
 * List item
 * List item";
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text: text.to_string(),
+        };
+        let rule = MD006::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_with_ordered_list() {
+        let text = "Some test
+
+ 1. Ordered list item
+ 2. Ordered list item";
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let ast = parse_document(&arena, text, &Options::default());
