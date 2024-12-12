@@ -24,6 +24,7 @@ mod md022;
 mod md023;
 mod md024;
 mod md025;
+mod md026;
 
 pub trait Rule: Send {
     fn name(&self) -> String;
@@ -60,3 +61,4 @@ pub use md022::MD022;
 pub use md023::MD023;
 pub use md024::MD024;
 pub use md025::MD025;
+pub use md026::MD026;

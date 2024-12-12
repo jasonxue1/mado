@@ -34,6 +34,7 @@ Several [markdownlint](https://github.com/markdownlint/markdownlint) rules are c
 | MD023 | :white_check_mark: |                                              |
 | MD024 | :warning:          | `allow_different_nesting` does not support.  |
 | MD025 | :white_check_mark: |                                              |
+| MD026 | :white_check_mark: |                                              |
 
 ## Development
 
