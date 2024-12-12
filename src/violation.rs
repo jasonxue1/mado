@@ -48,6 +48,11 @@ impl Violation {
     pub fn position(&self) -> Sourcepos {
         self.position
     }
+
+    #[inline]
+    pub fn update_position(&mut self, position: Sourcepos) {
+        self.position = position;
+    }
 }
 
 impl PartialOrd for Violation {
