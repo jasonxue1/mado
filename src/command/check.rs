@@ -3,20 +3,24 @@ use std::process::ExitCode;
 
 use miette::Result;
 
-use crate::output::Concise;
+use crate::output::{Concise, Format, Mdl};
 use crate::runner::ParallelLintRunner;
 use crate::MarkdownWalker;
 
 pub struct Checker {
     walker: MarkdownWalker,
+    output_format: Format,
 }
 
 impl Checker {
     #[inline]
-    pub fn new(patterns: &[PathBuf]) -> Result<Self> {
+    pub fn new(patterns: &[PathBuf], output_format: Format) -> Result<Self> {
         let walker = MarkdownWalker::new(patterns)?;
 
-        Ok(Self { walker })
+        Ok(Self {
+            walker,
+            output_format,
+        })
     }
 
     #[inline]
@@ -32,7 +36,10 @@ impl Checker {
 
         let num_violations = violations.len();
         for violation in violations {
-            println!("{}", Concise::new(violation));
+            match self.output_format {
+                Format::Concise => println!("{}", Concise::new(violation)),
+                Format::Mdl => println!("{}", Mdl::new(violation)),
+            }
         }
 
         if num_violations == 1 {

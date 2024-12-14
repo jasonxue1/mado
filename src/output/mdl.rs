@@ -9,8 +9,6 @@ pub struct Mdl {
     violation: Violation,
 }
 
-// TODO
-#[allow(unused)]
 impl Mdl {
     pub fn new(violation: Violation) -> Self {
         Self { violation }

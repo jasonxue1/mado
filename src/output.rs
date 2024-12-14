@@ -1,14 +1,11 @@
 mod concise;
 mod mdl;
 
-#[allow(unused)]
+#[derive(Debug, Clone, PartialEq, Eq, clap::ValueEnum)]
 pub enum Format {
     Concise,
     Mdl,
 }
 
-// TODO
-#[allow(unused_imports)]
 pub use concise::Concise;
-#[allow(unused_imports)]
 pub use mdl::Mdl;

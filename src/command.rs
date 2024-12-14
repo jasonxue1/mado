@@ -2,6 +2,8 @@ use std::path::PathBuf;
 
 use clap::Subcommand;
 
+use crate::output::Format;
+
 pub mod check;
 
 #[derive(Subcommand)]
@@ -12,5 +14,8 @@ pub enum Command {
         /// List of files or directories to check
         #[arg(required = true)]
         files: Vec<PathBuf>,
+
+        #[arg(value_enum, long = "output-format", default_value_t = Format::Concise)]
+        output_format: Format,
     },
 }
