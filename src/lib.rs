@@ -34,6 +34,7 @@ mod cli;
 pub mod command;
 mod document;
 mod linter;
+mod output;
 pub mod rule;
 pub mod runner;
 mod violation;

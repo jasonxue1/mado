@@ -3,6 +3,7 @@ use std::process::ExitCode;
 
 use miette::Result;
 
+use crate::output::Concise;
 use crate::runner::ParallelLintRunner;
 use crate::MarkdownWalker;
 
@@ -31,7 +32,7 @@ impl Checker {
 
         let num_violations = violations.len();
         for violation in violations {
-            println!("{violation}");
+            println!("{}", Concise::new(violation));
         }
 
         if num_violations == 1 {
