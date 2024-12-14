@@ -22,7 +22,7 @@ impl MD007 {
 impl Default for MD007 {
     #[inline]
     fn default() -> Self {
-        Self { indent: 4 }
+        Self { indent: 3 }
     }
 }
 
