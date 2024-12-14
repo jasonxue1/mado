@@ -212,4 +212,24 @@ mod tests {
         let expected = vec![];
         assert_eq!(actual, expected);
     }
+
+    // NOTE: This test case is marked as a violation in markdownlint
+    #[test]
+    fn check_errors_with_blockquote() {
+        let text = ">- Item 1
+>- Item 2
+>- Item 3";
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text: text.to_string(),
+        };
+        let rule = MD004::default();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
 }
