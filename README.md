@@ -18,8 +18,8 @@ Several [markdownlint](https://github.com/markdownlint/markdownlint) rules are c
 |-------|--------------------|----------------------------------------------|
 | MD001 | :white_check_mark: |                                              |
 | MD002 | :white_check_mark: |                                              |
-| MD003 | :waring:           | `:atx_closed` style does not support.        |
-| MD004 | :waring:           | `:sublist` style does not support.           |
+| MD003 | :warning:          | `:atx_closed` style does not support.        |
+| MD004 | :warning:          | `:sublist` style does not support.           |
 | MD005 | :white_check_mark: |                                              |
 | MD006 | :white_check_mark: |                                              |
 | MD007 | :white_check_mark: |                                              |
