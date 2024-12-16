@@ -87,7 +87,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn hoge() {
+    fn check_with_front_matter() {
         let text = "---
 comments: false
 description: Some text
