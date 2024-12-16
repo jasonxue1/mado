@@ -12,7 +12,7 @@ pub enum Command {
     /// Check markdown on the given files or directories
     Check {
         /// List of files or directories to check
-        #[arg(required = true)]
+        #[arg(default_value = ".")]
         files: Vec<PathBuf>,
 
         #[arg(value_enum, long = "output-format", default_value_t = Format::Concise)]
