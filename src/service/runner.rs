@@ -8,7 +8,7 @@ use ignore::WalkParallel;
 use miette::miette;
 use miette::{IntoDiagnostic as _, Result};
 
-use crate::visitor::MarkdownLintVisitorFactory;
+use super::visitor::MarkdownLintVisitorFactory;
 use crate::Violation;
 
 pub struct ParallelLintRunner {

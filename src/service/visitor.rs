@@ -4,7 +4,8 @@ use comrak::Arena;
 use crossbeam_channel::Sender;
 use ignore::{ParallelVisitor, ParallelVisitorBuilder, WalkState};
 
-use crate::{Document, Linter, Violation};
+use super::Linter;
+use crate::{Document, Violation};
 
 pub struct MarkdownLintVisitor {
     linter: Linter,

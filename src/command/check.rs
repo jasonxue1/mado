@@ -4,8 +4,8 @@ use std::process::ExitCode;
 use miette::Result;
 
 use crate::output::{Concise, Format, Mdl};
-use crate::runner::ParallelLintRunner;
-use crate::MarkdownWalker;
+use crate::service::runner::ParallelLintRunner;
+use crate::service::MarkdownWalker;
 
 pub struct Checker {
     walker: MarkdownWalker,
