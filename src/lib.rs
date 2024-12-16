@@ -31,6 +31,7 @@
 #![allow(clippy::print_stdout)]
 
 mod cli;
+pub mod collection;
 pub mod command;
 mod document;
 mod linter;
