@@ -23,6 +23,7 @@ impl MarkdownLintVisitor {
 impl ParallelVisitor for MarkdownLintVisitor {
     // TODO: Don't use unwrap
     #![allow(clippy::unwrap_used)]
+    #[inline]
     fn visit(&mut self, either_entry: Result<ignore::DirEntry, ignore::Error>) -> WalkState {
         match either_entry {
             Ok(entry) => {
@@ -52,12 +53,15 @@ pub struct MarkdownLintVisitorFactory {
 }
 
 impl MarkdownLintVisitorFactory {
+    #[inline]
+    #[must_use]
     pub fn new(tx: Sender<Vec<Violation>>) -> Self {
         Self { tx }
     }
 }
 
 impl<'s> ParallelVisitorBuilder<'s> for MarkdownLintVisitorFactory {
+    #[inline]
     fn build(&mut self) -> Box<dyn ParallelVisitor + 's> {
         let linter = Linter::new();
         Box::new(MarkdownLintVisitor::new(linter, self.tx.clone()))
