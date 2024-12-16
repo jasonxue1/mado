@@ -37,6 +37,7 @@ Several [markdownlint](https://github.com/markdownlint/markdownlint) rules are c
 | MD026 | :white_check_mark: |                                              |
 | MD027 | :warning:          | The behaviour of markdownlint is different.  |
 | MD028 | :white_check_mark: |                                              |
+| MD029 | :white_check_mark: |                                              |
 
 ## Development
 
