@@ -104,6 +104,31 @@ Some more text here";
         assert_eq!(actual, expected);
     }
 
+    // TODO: Fix front matter checks
+    //     #[test]
+    //     fn check_errors_with_front_matter() {
+    //         let text = r#"---
+    // foo:
+    // ---
+    //
+    //
+    // Some text"#;
+    //         let path = Path::new("test.md").to_path_buf();
+    //         let arena = Arena::new();
+    //         let mut options = Options::default();
+    //         options.extension.front_matter_delimiter = Some("---".to_owned());
+    //         let ast = parse_document(&arena, text, &options);
+    //         let doc = Document {
+    //             path: path.clone(),
+    //             ast,
+    //             text: text.to_string(),
+    //         };
+    //         let rule = MD012::new();
+    //         let actual = rule.check(&doc).unwrap();
+    //         let expected = vec![rule.to_violation(path, Sourcepos::from((5, 1, 5, 1)))];
+    //         assert_eq!(actual, expected);
+    //     }
+
     #[test]
     fn check_no_errors() {
         let text = "Some text here
@@ -150,7 +175,7 @@ Some more text here";
     }
 
     #[test]
-    fn check_no_errors_with_link_test() {
+    fn check_no_errors_with_front_matter_and_code_block() {
         let text = r#"---
 foo:
 bar:
