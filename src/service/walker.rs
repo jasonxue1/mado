@@ -6,14 +6,11 @@ use miette::miette;
 use miette::Result;
 
 #[non_exhaustive]
-pub struct MarkdownWalker {
-    // TODO: Don't export walker
-    pub walker: WalkParallel,
-}
+pub struct WalkParallelBuilder;
 
-impl MarkdownWalker {
+impl WalkParallelBuilder {
     #[inline]
-    pub fn new(patterns: &[PathBuf]) -> Result<Self> {
+    pub fn build(patterns: &[PathBuf]) -> Result<WalkParallel> {
         let (head_pattern, tail_patterns) = patterns
             .split_first()
             .ok_or(miette!("files must be non-empty"))?;
@@ -22,8 +19,6 @@ impl MarkdownWalker {
             builder.add(pattern);
         }
 
-        Ok(Self {
-            walker: builder.build_parallel(),
-        })
+        Ok(builder.build_parallel())
     }
 }

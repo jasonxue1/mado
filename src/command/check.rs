@@ -1,21 +1,22 @@
 use std::path::PathBuf;
 use std::process::ExitCode;
 
+use ignore::WalkParallel;
 use miette::Result;
 
 use crate::output::{Concise, Format, Mdl};
 use crate::service::runner::ParallelLintRunner;
-use crate::service::MarkdownWalker;
+use crate::service::walker::WalkParallelBuilder;
 
 pub struct Checker {
-    walker: MarkdownWalker,
+    walker: WalkParallel,
     output_format: Format,
 }
 
 impl Checker {
     #[inline]
     pub fn new(patterns: &[PathBuf], output_format: Format) -> Result<Self> {
-        let walker = MarkdownWalker::new(patterns)?;
+        let walker = WalkParallelBuilder::build(patterns)?;
 
         Ok(Self {
             walker,
@@ -25,8 +26,7 @@ impl Checker {
 
     #[inline]
     pub fn check(self) -> Result<ExitCode> {
-        let walker = self.walker.walker;
-        let runner = ParallelLintRunner::new(walker, 100);
+        let runner = ParallelLintRunner::new(self.walker, 100);
         let violations = runner.run()?;
 
         if violations.is_empty() {
