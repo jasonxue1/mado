@@ -52,3 +52,13 @@ cargo test
 ```bash
 cargo clippy --all
 ```
+
+### Benchark
+
+```bash
+# Download markdown dataset
+./scripts/benchmarks/setup.sh
+
+# Run downlint, mdl and markdownlint-cli with hyperfine
+./scripts/benchmarks/comparison.sh
+```
