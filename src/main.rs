@@ -2,7 +2,7 @@
 
 use std::process::ExitCode;
 
-use clap::Parser;
+use clap::Parser as _;
 use miette::Result;
 
 use downlint::command::check::Checker;
