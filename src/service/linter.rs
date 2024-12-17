@@ -1,4 +1,3 @@
-use comrak::nodes::Sourcepos;
 use miette::Result;
 
 use crate::rule;
@@ -54,26 +53,6 @@ impl Linter {
             });
 
         either_violations.map(|mut violations| {
-            // NOTE: Change Sourcepos to a value that takes front matter into account,
-            //       as comrak's sourcepos does not include front matter.
-            if let Some(front_matter) = doc.front_matter() {
-                let len = front_matter.lines().count();
-                violations = violations
-                    .into_iter()
-                    .map(|mut violation| {
-                        let position = violation.position();
-                        let new_position = Sourcepos::from((
-                            position.start.line + len,
-                            position.start.column,
-                            position.end.line + len,
-                            position.end.column,
-                        ));
-                        violation.update_position(new_position);
-                        violation
-                    })
-                    .collect();
-            }
-
             violations.sort();
             violations
         })
@@ -84,7 +63,7 @@ impl Linter {
 mod tests {
     use std::path::Path;
 
-    use comrak::{parse_document, Arena, Options};
+    use comrak::{nodes::Sourcepos, parse_document, Arena, Options};
     use rule::MD026;
 
     use super::*;

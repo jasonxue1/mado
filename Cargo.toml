@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.5.23", features = ["derive"] }
 colored = "2.2.0"
-comrak = "0.31.0"
+comrak = "0.32.0"
 crossbeam-channel = "0.5.14"
 ignore = "0.4.23"
 miette = { version = "7.4.0", features = ["fancy"] }

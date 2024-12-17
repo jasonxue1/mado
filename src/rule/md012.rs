@@ -52,13 +52,8 @@ impl Rule for MD012 {
                 code_block_ranges.insert(range);
             }
         }
-
-        let front_matter_offset = match doc.front_matter() {
-            Some(front_matter) => front_matter.lines().count(),
-            None => 0,
-        };
         let lines: Vec<_> = doc.text.lines().collect();
-        for (i, line) in lines[front_matter_offset..].iter().enumerate() {
+        for (i, line) in lines.iter().enumerate() {
             let lineno = i + 1;
 
             if let Some(prev_line) = maybe_prev_line {
@@ -105,30 +100,30 @@ Some more text here"
         assert_eq!(actual, expected);
     }
 
-    // TODO: Fix front matter checks
-    //     #[test]
-    //     fn check_errors_with_front_matter() {
-    //         let text = "---
-    // foo:
-    // ---
-    //
-    //
-    // Some text".to_owned();
-    //         let path = Path::new("test.md").to_path_buf();
-    //         let arena = Arena::new();
-    //         let mut options = Options::default();
-    //         options.extension.front_matter_delimiter = Some("---".to_owned());
-    //         let ast = parse_document(&arena, &text, &options);
-    //         let doc = Document {
-    //             path: path.clone(),
-    //             ast,
-    //             text,
-    //         };
-    //         let rule = MD012::new();
-    //         let actual = rule.check(&doc).unwrap();
-    //         let expected = vec![rule.to_violation(path, Sourcepos::from((5, 1, 5, 1)))];
-    //         assert_eq!(actual, expected);
-    //     }
+    #[test]
+    fn check_errors_with_front_matter() {
+        let text = "---
+foo:
+---
+
+
+Some text"
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let mut options = Options::default();
+        options.extension.front_matter_delimiter = Some("---".to_owned());
+        let ast = parse_document(&arena, &text, &options);
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD012::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![rule.to_violation(path, Sourcepos::from((5, 1, 5, 1)))];
+        assert_eq!(actual, expected);
+    }
 
     #[test]
     fn check_no_errors() {
