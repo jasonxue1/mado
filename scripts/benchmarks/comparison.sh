@@ -2,12 +2,13 @@
 
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
 DATA_ROOT=$SCRIPT_DIR/data
+DOC_PATH=$DATA_ROOT/gitlab/doc
 
 if [ -z ./target/release/downlint ]; then
   cargo build --release
 fi
 
-hyperfine --ignore-failure --warmup 5 \
-  "./target/release/downlint check $DATA_ROOT/gitlab" \
-  "mdl --config $SCRIPT_DIR/.mdlrc $DATA_ROOT/gitlab" \
-  "$SCRIPT_DIR/node_modules/.bin/markdownlint --config $SCRIPT_DIR/.markdownlint.jsonc $DATA_ROOT/gitlab"
+hyperfine --ignore-failure --warmup 10 \
+  "./target/release/downlint check $DOC_PATH" \
+  "mdl --config $SCRIPT_DIR/.mdlrc $DOC_PATH" \
+  "$SCRIPT_DIR/node_modules/.bin/markdownlint --config $SCRIPT_DIR/.markdownlint.jsonc $DOC_PATH"
