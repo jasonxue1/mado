@@ -7,7 +7,7 @@ edition = "2021"
 clap = { version = "4.5.23", features = ["derive"] }
 colored = "2.1.0"
 comrak = "0.31.0"
-crossbeam-channel = "0.5.13"
+crossbeam-channel = "0.5.14"
 ignore = "0.4.23"
 miette = { version = "7.4.0", features = ["fancy"] }
 regex = "1.11.1"
