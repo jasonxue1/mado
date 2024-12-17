@@ -7,6 +7,7 @@ use comrak::nodes::Sourcepos;
 pub struct Violation {
     path: PathBuf,
     name: String,
+    alias: String,
     description: String,
     position: Sourcepos,
 }
@@ -14,10 +15,17 @@ pub struct Violation {
 impl Violation {
     #[inline]
     #[must_use]
-    pub fn new(path: PathBuf, name: String, description: String, position: Sourcepos) -> Self {
+    pub fn new(
+        path: PathBuf,
+        name: String,
+        alias: String,
+        description: String,
+        position: Sourcepos,
+    ) -> Self {
         Self {
             path,
             name,
+            alias,
             description,
             position,
         }
@@ -33,6 +41,12 @@ impl Violation {
     #[must_use]
     pub fn name(&self) -> &str {
         &self.name
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn alias(&self) -> &str {
+        &self.alias
     }
 
     #[inline]

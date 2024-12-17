@@ -5,31 +5,34 @@ use colored::Colorize as _;
 use crate::Violation;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Concise {
+pub struct Markdownlint {
     violation: Violation,
 }
 
-impl Concise {
+impl Markdownlint {
     pub fn new(violation: Violation) -> Self {
         Self { violation }
     }
 }
 
-impl Display for Concise {
+impl Display for Markdownlint {
+    // TODO: Add `expected` and `actual`
     #[inline]
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         let path = self.violation.path().to_str().ok_or(Error)?;
         write!(
             f,
-            "{}{}{}{}{}{} {} {}",
-            path.bold(),
-            ":".blue(),
-            self.violation.position().start.line,
-            ":".blue(),
-            self.violation.position().start.column,
-            ":".blue(),
-            self.violation.name().red().bold(),
-            self.violation.description()
+            "{}",
+            format!(
+                "{}:{}:{} {}/{} {}",
+                path,
+                self.violation.position().start.line,
+                self.violation.position().start.column,
+                self.violation.name(),
+                self.violation.alias(),
+                self.violation.description()
+            )
+            .red()
         )
     }
 }
@@ -53,8 +56,8 @@ mod tests {
             "description".to_string(),
             position,
         );
-        let actual = Concise::new(violation).to_string();
-        let expected = "\u{1b}[1mfile.md\u{1b}[0m\u{1b}[34m:\u{1b}[0m0\u{1b}[34m:\u{1b}[0m1\u{1b}[34m:\u{1b}[0m \u{1b}[1;31mname\u{1b}[0m description";
+        let actual = Markdownlint::new(violation).to_string();
+        let expected = "\u{1b}[31mfile.md:0:1 name/alias description\u{1b}[0m";
         assert_eq!(actual, expected);
     }
 }

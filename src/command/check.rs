@@ -4,7 +4,7 @@ use std::process::ExitCode;
 use ignore::WalkParallel;
 use miette::Result;
 
-use crate::output::{Concise, Format, Mdl};
+use crate::output::{Concise, Format, Markdownlint, Mdl};
 use crate::service::runner::ParallelLintRunner;
 use crate::service::walker::WalkParallelBuilder;
 
@@ -39,6 +39,7 @@ impl Checker {
             match self.output_format {
                 Format::Concise => println!("{}", Concise::new(violation)),
                 Format::Mdl => println!("{}", Mdl::new(violation)),
+                Format::Markdownlint => println!("{}", Markdownlint::new(violation)),
             }
         }
 

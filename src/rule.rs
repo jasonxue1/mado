@@ -42,7 +42,13 @@ pub trait Rule: Send {
 
     #[inline]
     fn to_violation(&self, path: PathBuf, position: Sourcepos) -> Violation {
-        Violation::new(path, self.name(), self.description(), position)
+        Violation::new(
+            path,
+            self.name(),
+            self.aliases()[0].clone(),
+            self.description(),
+            position,
+        )
     }
 }
 

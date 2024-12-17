@@ -47,6 +47,7 @@ mod tests {
         let violation = Violation::new(
             path,
             "name".to_string(),
+            "alias".to_string(),
             "description".to_string(),
             position,
         );
