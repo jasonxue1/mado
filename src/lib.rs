@@ -1,3 +1,6 @@
+#[cfg(test)]
+extern crate pretty_assertions;
+
 mod cli;
 pub mod collection;
 pub mod command;

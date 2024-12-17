@@ -16,6 +16,7 @@ pub fn inline_text_of<'a>(root: &'a AstNode<'a>) -> String {
 #[cfg(test)]
 mod tests {
     use comrak::{parse_document, Arena, Options};
+    use pretty_assertions::assert_eq;
 
     use super::*;
 

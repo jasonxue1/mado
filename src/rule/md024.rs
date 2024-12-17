@@ -68,6 +68,7 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, parse_document, Arena, Options};
+    use pretty_assertions::assert_eq;
 
     use super::*;
 

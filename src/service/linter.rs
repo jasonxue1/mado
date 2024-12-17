@@ -64,9 +64,10 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, parse_document, Arena, Options};
-    use rule::MD026;
+    use pretty_assertions::assert_eq;
 
     use super::*;
+    use rule::MD026;
 
     #[test]
     fn check_with_front_matter() {

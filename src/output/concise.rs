@@ -39,6 +39,7 @@ mod tests {
     use std::path::Path;
 
     use comrak::nodes::Sourcepos;
+    use pretty_assertions::assert_eq;
 
     use super::*;
 
