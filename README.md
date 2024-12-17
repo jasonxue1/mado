@@ -3,6 +3,27 @@
 A fast Markdown linter, written in Rust.
 Compliant with [CommonMark](https://commonmark.org) and [GFM](https://github.github.com/gfm/).
 
+```mermaid
+---
+config:
+    xyChart:
+        height: 200
+        titleFontSize: 14
+        chartOrientation: horizontal
+        xAxis:
+            labelFontSize: 12
+            titleFontSize: 14
+        yAxis:
+            labelFontSize: 12
+            titleFontSize: 14
+---
+xychart-beta
+    title "Linting the GitLab documents from scratch (Lower is faster)"
+    x-axis ["downlint (rust)", "mdl (ruby)", "markdownlint-cli (node)"]
+    y-axis "Time (seconds)" 0 --> 10
+    bar [0.164, 6.373, 6.805]
+```
+
 ## Usage
 
 ```bash
