@@ -82,14 +82,15 @@ mod tests {
     #[test]
     fn check_errors() {
         let text = "* List item
-   * Nested list item indented by 3 spaces";
+   * Nested list item indented by 3 spaces"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
+        let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
-            text: text.to_string(),
+            text,
         };
         let rule = MD007::default();
         let actual = rule.check(&doc).unwrap();
@@ -101,33 +102,30 @@ mod tests {
     // #[test]
     // fn check_errors_for_multiple_indentation() {
     //     let text = "* List item
-    // * Nested list item indented by 4 spaces";
+    // * Nested list item indented by 4 spaces".to_owned();
     //     let path = Path::new("test.md").to_path_buf();
     //     let arena = Arena::new();
-    //     let ast = parse_document(&arena, text, &Options::default());
+    //     let ast = parse_document(&arena, &text, &Options::default());
     //     let doc = Document {
     //         path: path.clone(),
     //         ast,
-    //         text: text.to_string(),
+    //         text,
     //     };
     //     let rule = MD007::new(2);
     //     let actual = rule.check(&doc).unwrap();
-    //     let expected = vec![rule.to_violation(path.clone(), Sourcepos::from((2, 5, 2, 43)))];
+    //     let expected = vec![rule.to_violation(path, Sourcepos::from((2, 5, 2, 43)))];
     //     assert_eq!(actual, expected);
     // }
 
     #[test]
     fn check_no_errors() {
         let text = "* List item
-    * Nested list item indented by 4 spaces";
+    * Nested list item indented by 4 spaces"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD007::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

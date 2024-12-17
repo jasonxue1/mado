@@ -76,14 +76,15 @@ mod tests {
     fn check_errors() {
         let text = "#  Header 1
 
-##  Header 2";
+##  Header 2"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
+        let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
-            text: text.to_string(),
+            text,
         };
         let rule = MD019::default();
         let actual = rule.check(&doc).unwrap();
@@ -96,14 +97,14 @@ mod tests {
 
     #[test]
     fn check_no_errors_for_multiple_children_nodes() {
-        let text = "# Header with `code` and text";
+        let text = "# Header with `code` and text".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
+        let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
-            text: text.to_string(),
+            text,
         };
         let rule = MD019::default();
         let actual = rule.check(&doc).unwrap();
@@ -115,15 +116,12 @@ mod tests {
     fn check_no_errors() {
         let text = "# Header 1
 
-## Header 2";
+## Header 2"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD019::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

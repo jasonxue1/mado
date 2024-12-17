@@ -71,7 +71,7 @@ cargo test
 ### Linting
 
 ```bash
-cargo clippy --all
+cargo clippy --all-targets --all-features --workspace -- -D warnings
 ```
 
 ### Benchark

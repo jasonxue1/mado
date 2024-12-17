@@ -100,14 +100,15 @@ mod tests {
         let text = "* Item 1
     * Nested item 1
     * Nested item 2
-   * A misaligned item";
+   * A misaligned item"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
+        let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
-            text: text.to_string(),
+            text,
         };
         let rule = MD005::new();
         let actual = rule.check(&doc).unwrap();
@@ -120,14 +121,15 @@ mod tests {
         let text = "*
     *
     *
-   *";
+   *"
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
+        let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
-            text: text.to_string(),
+            text,
         };
         let rule = MD005::new();
         let actual = rule.check(&doc).unwrap();
@@ -145,14 +147,15 @@ Some text
 
 1. List 2
    1. A misaligned item
-   1. More misaligned item";
+   1. More misaligned item"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
+        let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
-            text: text.to_string(),
+            text,
         };
         let rule = MD005::new();
         let actual = rule.check(&doc).unwrap();
@@ -173,14 +176,15 @@ Some text
 1. List 2
    Text in list
    * item 3
-   * item 4";
+   * item 4"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
+        let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
-            text: text.to_string(),
+            text,
         };
         let rule = MD005::new();
         let actual = rule.check(&doc).unwrap();
@@ -196,15 +200,12 @@ Some text
         let text = "* Item 1
     * Nested item 1
     * Nested item 2
-    * Nested item 3";
+    * Nested item 3"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD005::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -221,15 +222,12 @@ Some text
 
 * List 2
     1. item 3
-    2. item 4";
+    2. item 4"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD005::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

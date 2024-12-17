@@ -71,14 +71,15 @@ mod tests {
 $ ls
 $ cat foo
 $ less bar
-```";
+```"
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
+        let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
-            text: text.to_string(),
+            text,
         };
         let rule = MD014::default();
         let actual = rule.check(&doc).unwrap();
@@ -92,15 +93,12 @@ $ less bar
 ls
 cat foo
 less bar
-```";
+```"
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD014::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -116,15 +114,12 @@ $ cat foo
 Hello world
 $ cat bar
 baz
-```";
+```"
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD014::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

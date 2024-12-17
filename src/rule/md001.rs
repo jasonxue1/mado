@@ -75,14 +75,15 @@ mod tests {
 
 ### Header 3
 
-We skipped out a 2nd level header in this document";
+We skipped out a 2nd level header in this document"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
+        let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
-            text: text.to_string(),
+            text,
         };
         let rule = MD001::new();
         let actual = rule.check(&doc).unwrap();
@@ -102,15 +103,12 @@ We skipped out a 2nd level header in this document";
 
 ## Another Header 2
 
-### Another Header 3";
+### Another Header 3"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD001::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -119,15 +117,11 @@ We skipped out a 2nd level header in this document";
 
     #[test]
     fn check_no_errors_no_top_level() {
-        let text = "## This isn't a H1 header";
+        let text = "## This isn't a H1 header".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD001::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

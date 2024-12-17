@@ -81,14 +81,15 @@ mod tests {
         let text = "Some text
 
   * List item
-  * List item";
+  * List item"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
+        let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
-            text: text.to_string(),
+            text,
         };
         let rule = MD006::new();
         let actual = rule.check(&doc).unwrap();
@@ -104,15 +105,12 @@ mod tests {
         let text = "Some test
 
 * List item
-* List item";
+* List item"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD006::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -124,15 +122,12 @@ mod tests {
         let text = "Some test
 
  1. Ordered list item
- 2. Ordered list item";
+ 2. Ordered list item"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD006::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

@@ -75,14 +75,15 @@ mod tests {
 > which is immediately followed by
 
 > this blockquote. Unfortunately
-> In some parsers, these are treated as the same blockquote.";
+> In some parsers, these are treated as the same blockquote."
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
+        let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
-            text: text.to_string(),
+            text,
         };
         let rule = MD028::new();
         let actual = rule.check(&doc).unwrap();
@@ -94,15 +95,12 @@ mod tests {
     fn check_no_errors() {
         let text = "> This is a blockquote.
 >
-> This is the same blockquote.";
+> This is the same blockquote."
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD028::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -115,15 +113,12 @@ mod tests {
 
 And Jimmy also said:
 
-> This too is a blockquote.";
+> This too is a blockquote."
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD028::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

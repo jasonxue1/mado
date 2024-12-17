@@ -92,14 +92,15 @@ mod tests {
 Some text
 
 Some more text
-## Header 2";
+## Header 2"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
+        let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
-            text: text.to_string(),
+            text,
         };
         let rule = MD022::new();
         let actual = rule.check(&doc).unwrap();
@@ -120,14 +121,15 @@ Some text
 Some code block
 ```
 Setext style H2
----------------";
+---------------"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
+        let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
-            text: text.to_string(),
+            text,
         };
         let rule = MD022::new();
         let actual = rule.check(&doc).unwrap();
@@ -146,15 +148,12 @@ Some text
 
 Some more text
 
-## Header 2";
+## Header 2"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD022::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -173,15 +172,12 @@ Some code block
 ```
 
 Setext style H2
----------------";
+---------------"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD022::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -195,15 +191,12 @@ Setext style H2
 - Some list item
 - Some more list item
 
-## Header 2";
+## Header 2"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD022::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

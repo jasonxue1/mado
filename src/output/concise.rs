@@ -48,9 +48,9 @@ mod tests {
         let position = Sourcepos::from((0, 1, 3, 5));
         let violation = Violation::new(
             path,
-            "name".to_string(),
-            "alias".to_string(),
-            "description".to_string(),
+            "name".to_owned(),
+            "alias".to_owned(),
+            "description".to_owned(),
             position,
         );
         let actual = Concise::new(violation).to_string();

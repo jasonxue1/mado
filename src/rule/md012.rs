@@ -89,14 +89,15 @@ mod tests {
         let text = "Some text here
 
 
-Some more text here";
+Some more text here"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
+        let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
-            text: text.to_string(),
+            text,
         };
         let rule = MD012::new();
         let actual = rule.check(&doc).unwrap();
@@ -107,21 +108,21 @@ Some more text here";
     // TODO: Fix front matter checks
     //     #[test]
     //     fn check_errors_with_front_matter() {
-    //         let text = r#"---
+    //         let text = "---
     // foo:
     // ---
     //
     //
-    // Some text"#;
+    // Some text".to_owned();
     //         let path = Path::new("test.md").to_path_buf();
     //         let arena = Arena::new();
     //         let mut options = Options::default();
     //         options.extension.front_matter_delimiter = Some("---".to_owned());
-    //         let ast = parse_document(&arena, text, &options);
+    //         let ast = parse_document(&arena, &text, &options);
     //         let doc = Document {
     //             path: path.clone(),
     //             ast,
-    //             text: text.to_string(),
+    //             text,
     //         };
     //         let rule = MD012::new();
     //         let actual = rule.check(&doc).unwrap();
@@ -133,15 +134,12 @@ Some more text here";
     fn check_no_errors() {
         let text = "Some text here
 
-Some more text here";
+Some more text here"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD012::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -159,15 +157,12 @@ This is a code block
 Some code here
 ```
 
-Some more text here";
+Some more text here"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD012::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -176,7 +171,7 @@ Some more text here";
 
     #[test]
     fn check_no_errors_with_front_matter_and_code_block() {
-        let text = r#"---
+        let text = "---
 foo:
 bar:
 baz:
@@ -192,17 +187,14 @@ This is a code block
 Some code here
 ```
 
-Some more text here"#;
+Some more text here"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let mut options = Options::default();
         options.extension.front_matter_delimiter = Some("---".to_owned());
-        let ast = parse_document(&arena, text, &options);
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &options);
+        let doc = Document { path, ast, text };
         let rule = MD012::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

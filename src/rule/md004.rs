@@ -119,14 +119,15 @@ mod tests {
     fn check_errors_for_consistent() {
         let text = "* Item 1
 + Item 2
-- Item 3";
+- Item 3"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
+        let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
-            text: text.to_string(),
+            text,
         };
         let rule = MD004::default();
         let actual = rule.check(&doc).unwrap();
@@ -141,15 +142,12 @@ mod tests {
     fn check_no_errors_for_consistent() {
         let text = "* Item 1
 * Item 2
-* Item 3";
+* Item 3"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD004::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -160,15 +158,12 @@ mod tests {
     fn check_no_errors_for_asterisk() {
         let text = "* Item 1
 * Item 2
-* Item 3";
+* Item 3"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD004::new(ListStyle::Asterisk);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -179,15 +174,12 @@ mod tests {
     fn check_no_errors_for_plus() {
         let text = "+ Item 1
 + Item 2
-+ Item 3";
++ Item 3"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD004::new(ListStyle::Plus);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -198,15 +190,12 @@ mod tests {
     fn check_no_errors_for_dash() {
         let text = "- Item 1
 - Item 2
-- Item 3";
+- Item 3"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD004::new(ListStyle::Dash);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -218,14 +207,15 @@ mod tests {
     fn check_errors_with_blockquote() {
         let text = ">- Item 1
 >- Item 2
->- Item 3";
+>- Item 3"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
+        let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
-            text: text.to_string(),
+            text,
         };
         let rule = MD004::default();
         let actual = rule.check(&doc).unwrap();

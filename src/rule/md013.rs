@@ -77,14 +77,15 @@ mod tests {
     #[test]
     fn check_errors() {
         let text =
-            "This is a very very very very very very very very very very very very very long line";
+            "This is a very very very very very very very very very very very very very long line"
+                .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
+        let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
-            text: text.to_string(),
+            text,
         };
         let rule = MD013::default();
         let actual = rule.check(&doc).unwrap();
@@ -94,15 +95,11 @@ mod tests {
 
     #[test]
     fn check_no_errors() {
-        let text = "This is a short line";
+        let text = "This is a short line".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD013::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

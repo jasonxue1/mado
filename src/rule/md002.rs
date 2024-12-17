@@ -79,14 +79,15 @@ mod tests {
     fn check_errors() {
         let text = "## This isn't a H1 header
 
-### Another header";
+### Another header"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
+        let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
-            text: text.to_string(),
+            text,
         };
         let rule = MD002::default();
         let actual = rule.check(&doc).unwrap();
@@ -98,15 +99,12 @@ mod tests {
     fn check_no_errors() {
         let text = "# Start with a H1 header
 
-## Then use a H2 for subsections";
+## Then use a H2 for subsections"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD002::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

@@ -116,14 +116,15 @@ mod tests {
 ## Closed ATX style H2 ##
 
 Setext style H1
-===============";
+==============="
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
+        let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
-            text: text.to_string(),
+            text,
         };
         let rule = MD003::default();
         let actual = rule.check(&doc).unwrap();
@@ -135,15 +136,12 @@ Setext style H1
     fn check_no_errors_for_consistent() {
         let text = "# ATX style H1
 
-## ATX style H2";
+## ATX style H2"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD003::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -154,15 +152,12 @@ Setext style H1
     fn check_no_errors_for_atx() {
         let text = "# ATX style H1
 
-## ATX style H2";
+## ATX style H2"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD003::new(HeadingStyle::Atx);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -175,15 +170,12 @@ Setext style H1
 ===============
 
 Setext style H2
----------------";
+---------------"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD003::new(HeadingStyle::Setext);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -198,15 +190,12 @@ Setext style H2
 Setext style H2
 ---------------
 
-### ATX style H3";
+### ATX style H3"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD003::new(HeadingStyle::SetextWithAtx);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -219,17 +208,14 @@ Setext style H2
 author: "John Smith"
 ---
 
-# Header 1"#;
+# Header 1"#
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let mut options = Options::default();
         options.extension.front_matter_delimiter = Some("---".to_owned());
-        let ast = parse_document(&arena, text, &options);
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &options);
+        let doc = Document { path, ast, text };
         let rule = MD003::new(HeadingStyle::Consistent);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

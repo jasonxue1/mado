@@ -116,14 +116,15 @@ mod tests {
     fn check_errors_one() {
         let text = "1. Do this.
 2. Do that.
-3. Done.";
+3. Done."
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
+        let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
-            text: text.to_string(),
+            text,
         };
         let rule = MD029::default();
         let actual = rule.check(&doc).unwrap();
@@ -139,14 +140,15 @@ mod tests {
         let text = "* Parent list
     1. Do this.
     2. Do that.
-    3. Done.";
+    3. Done."
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
+        let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
-            text: text.to_string(),
+            text,
         };
         let rule = MD029::default();
         let actual = rule.check(&doc).unwrap();
@@ -161,14 +163,15 @@ mod tests {
     fn check_errors_ordered() {
         let text = "1. Do this.
 1. Do that.
-1. Done.";
+1. Done."
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
+        let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document {
             path: path.clone(),
             ast,
-            text: text.to_string(),
+            text,
         };
         let rule = MD029::new(OrderedListStyle::Ordered);
         let actual = rule.check(&doc).unwrap();
@@ -183,15 +186,12 @@ mod tests {
     fn check_no_errors_one() {
         let text = "1. Do this.
 1. Do that.
-1. Done.";
+1. Done."
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD029::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -202,15 +202,12 @@ mod tests {
     fn check_no_errors_ordered() {
         let text = "1. Do this.
 2. Do that.
-3. Done.";
+3. Done."
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD029::new(OrderedListStyle::Ordered);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -222,15 +219,12 @@ mod tests {
         let text = "* Parent list
     1. Do this.
     1. Do that.
-    1. Done.";
+    1. Done."
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, text, &Options::default());
-        let doc = Document {
-            path,
-            ast,
-            text: text.to_string(),
-        };
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD029::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
