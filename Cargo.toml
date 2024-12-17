@@ -11,3 +11,6 @@ crossbeam-channel = "0.5.13"
 ignore = "0.4.23"
 miette = { version = "7.4.0", features = ["fancy"] }
 regex = "1.11.1"
+
+[profile.release]
+lto = "thin"
