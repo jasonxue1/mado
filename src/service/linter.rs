@@ -53,6 +53,7 @@ impl Linter {
                         config.lint.md030.ol_multi,
                     )),
                     Rule::MD031 => Box::new(rule::MD031::new()),
+                    Rule::MD032 => Box::new(rule::MD032::new()),
                 };
                 boxed
             })
