@@ -8,51 +8,15 @@ use miette::IntoDiagnostic as _;
 use miette::Result;
 use serde::Deserialize;
 
-use crate::{output::Format, Rule};
+mod lint;
+mod md002;
+
+pub use lint::Lint;
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Default)]
 #[serde(default)]
 pub struct Config {
     pub lint: Lint,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
-#[serde(default, rename_all = "kebab-case")]
-pub struct Lint {
-    pub output_format: Format,
-    pub rules: Vec<Rule>,
-}
-
-impl Default for Lint {
-    fn default() -> Self {
-        Self {
-            output_format: Format::Concise,
-            rules: vec![
-                Rule::MD001,
-                Rule::MD002,
-                Rule::MD003,
-                Rule::MD004,
-                Rule::MD005,
-                Rule::MD006,
-                Rule::MD007,
-                Rule::MD009,
-                Rule::MD010,
-                Rule::MD012,
-                Rule::MD013,
-                Rule::MD014,
-                Rule::MD018,
-                Rule::MD019,
-                Rule::MD022,
-                Rule::MD023,
-                Rule::MD024,
-                Rule::MD025,
-                Rule::MD026,
-                Rule::MD027,
-                Rule::MD028,
-                Rule::MD029,
-            ],
-        }
-    }
 }
 
 pub fn load<P: AsRef<Path>>(path: P) -> Result<Config> {
@@ -91,17 +55,24 @@ pub fn resolve() -> Result<Config> {
 mod tests {
     use super::*;
 
+    use crate::{output::Format, Rule};
+    use md002::MD002;
+
     #[test]
     fn deserialize() {
         let text = r#"[lint]
 output-format = "mdl"
 rules = ["MD027"]
+
+[lint.md002]
+level = 1
 "#;
         let actual: Config = toml::from_str(text).unwrap();
         let expected = Config {
             lint: Lint {
                 output_format: Format::Mdl,
                 rules: vec![Rule::MD027],
+                md002: MD002 { level: 1 },
             },
         };
         assert_eq!(actual, expected);

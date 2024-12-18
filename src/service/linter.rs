@@ -23,7 +23,7 @@ impl Linter {
             .map(|rule| {
                 let boxed: Box<dyn RuleLike> = match rule {
                     Rule::MD001 => Box::new(rule::MD001::new()),
-                    Rule::MD002 => Box::new(rule::MD002::default()),
+                    Rule::MD002 => Box::new(rule::MD002::new(config.lint.md002.level)),
                     Rule::MD003 => Box::new(rule::MD003::default()),
                     Rule::MD004 => Box::new(rule::MD004::default()),
                     Rule::MD005 => Box::new(rule::MD005::new()),
@@ -76,8 +76,6 @@ mod tests {
     use comrak::{nodes::Sourcepos, parse_document, Arena, Options};
     use pretty_assertions::assert_eq;
 
-    use crate::{config::Lint, output::Format};
-
     use super::*;
     use rule::MD026;
 
@@ -102,12 +100,8 @@ description: Some text
         };
         let md026 = MD026::default();
         let rules = vec![Rule::MD026];
-        let config = Config {
-            lint: Lint {
-                output_format: Format::Concise,
-                rules,
-            },
-        };
+        let mut config = Config::default();
+        config.lint.rules = rules;
         let linter = Linter::new(&config);
         let actual = linter.check(&doc).unwrap();
         let expected = vec![md026.to_violation(path, Sourcepos::from((6, 1, 6, 19)))];

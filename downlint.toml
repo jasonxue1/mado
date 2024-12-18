@@ -24,3 +24,6 @@ rules = [
   "MD028",
   "MD029",
 ]
+
+[lint.md002]
+level = 1
