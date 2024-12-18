@@ -42,3 +42,6 @@ line-length = 80
 
 [lint.md025]
 level = 1
+
+[lint.md026]
+punctuation = ".,;:!?"
