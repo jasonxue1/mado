@@ -6,7 +6,7 @@ use regex::Regex;
 use crate::violation::Violation;
 use crate::Document;
 
-use super::Rule;
+use super::RuleLike;
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -20,7 +20,7 @@ impl MD010 {
     }
 }
 
-impl Rule for MD010 {
+impl RuleLike for MD010 {
     #[inline]
     fn name(&self) -> String {
         "MD010".to_owned()

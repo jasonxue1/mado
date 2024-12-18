@@ -5,7 +5,7 @@ use miette::Result;
 
 use crate::{violation::Violation, Document};
 
-use super::{helper::inline_text_of, Rule};
+use super::{helper::inline_text_of, RuleLike};
 
 // TODO: Support allow_different_nesting
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
@@ -20,7 +20,7 @@ impl MD024 {
     }
 }
 
-impl Rule for MD024 {
+impl RuleLike for MD024 {
     #[inline]
     fn name(&self) -> String {
         "MD024".to_owned()

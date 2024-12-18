@@ -5,7 +5,7 @@ use miette::Result;
 
 use crate::{violation::Violation, Document};
 
-use super::Rule;
+use super::RuleLike;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum OrderedListStyle {
@@ -73,7 +73,7 @@ impl Default for MD029 {
     }
 }
 
-impl Rule for MD029 {
+impl RuleLike for MD029 {
     #[inline]
     fn name(&self) -> String {
         "MD029".to_owned()

@@ -1,13 +1,13 @@
 use miette::Result;
 
 use crate::rule;
+use crate::rule::RuleLike;
 use crate::violation::Violation;
 use crate::Document;
-use crate::Rule;
 
 #[derive(Default)]
 pub struct Linter {
-    rules: Vec<Box<dyn Rule>>,
+    rules: Vec<Box<dyn RuleLike>>,
 }
 
 impl Linter {

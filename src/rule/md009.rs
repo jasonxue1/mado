@@ -5,7 +5,7 @@ use regex::Regex;
 
 use crate::{violation::Violation, Document};
 
-use super::Rule;
+use super::RuleLike;
 
 #[derive(Default)]
 #[non_exhaustive]
@@ -19,7 +19,7 @@ impl MD009 {
     }
 }
 
-impl Rule for MD009 {
+impl RuleLike for MD009 {
     #[inline]
     fn name(&self) -> String {
         "MD009".to_owned()

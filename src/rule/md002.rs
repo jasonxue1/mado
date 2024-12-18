@@ -4,7 +4,7 @@ use miette::Result;
 use crate::violation::Violation;
 use crate::Document;
 
-use super::Rule;
+use super::RuleLike;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -27,7 +27,7 @@ impl Default for MD002 {
     }
 }
 
-impl Rule for MD002 {
+impl RuleLike for MD002 {
     #[inline]
     fn name(&self) -> String {
         "MD002".to_owned()

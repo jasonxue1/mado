@@ -29,7 +29,7 @@ mod md027;
 mod md028;
 mod md029;
 
-pub trait Rule: Send {
+pub trait RuleLike: Send {
     fn name(&self) -> String;
 
     fn description(&self) -> String;

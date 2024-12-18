@@ -4,7 +4,7 @@ use miette::Result;
 use crate::violation::Violation;
 use crate::Document;
 
-use super::Rule;
+use super::RuleLike;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum HeadingStyle {
@@ -38,7 +38,7 @@ impl Default for MD003 {
     }
 }
 
-impl Rule for MD003 {
+impl RuleLike for MD003 {
     #[inline]
     fn name(&self) -> String {
         "MD003".to_owned()
