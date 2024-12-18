@@ -10,7 +10,7 @@ mod helper;
 mod md001;
 mod md002;
 pub mod md003;
-mod md004;
+pub mod md004;
 mod md005;
 mod md006;
 mod md007;

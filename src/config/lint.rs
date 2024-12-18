@@ -4,6 +4,7 @@ use crate::{output::Format, Rule};
 
 use super::md002::MD002;
 use super::md003::MD003;
+use super::md004::MD004;
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 #[serde(default, rename_all = "kebab-case")]
@@ -12,6 +13,7 @@ pub struct Lint {
     pub rules: Vec<Rule>,
     pub md002: MD002,
     pub md003: MD003,
+    pub md004: MD004,
 }
 
 impl Default for Lint {
@@ -44,6 +46,7 @@ impl Default for Lint {
             ],
             md002: MD002::default(),
             md003: MD003::default(),
+            md004: MD004::default(),
         }
     }
 }

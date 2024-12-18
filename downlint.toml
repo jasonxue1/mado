@@ -30,3 +30,6 @@ level = 1
 
 [lint.md003]
 style = "consistent"
+
+[lint.md004]
+style = "consistent"

@@ -11,6 +11,7 @@ use serde::Deserialize;
 mod lint;
 mod md002;
 mod md003;
+mod md004;
 
 pub use lint::Lint;
 

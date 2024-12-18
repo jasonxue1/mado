@@ -1,12 +1,15 @@
 use comrak::nodes::{ListType, NodeList, NodeValue};
 use miette::Result;
+use serde::Deserialize;
 
 use crate::violation::Violation;
 use crate::Document;
 
 use super::RuleLike;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "lowercase")]
+#[non_exhaustive]
 pub enum ListStyle {
     Consistent,
     Asterisk,
