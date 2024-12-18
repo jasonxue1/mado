@@ -36,3 +36,6 @@ style = "consistent"
 
 [lint.md007]
 indent = 4
+
+[lint.md013]
+line-length = 80
