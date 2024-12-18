@@ -1,12 +1,10 @@
-use std::fs;
-use std::path::Path;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
 use ignore::WalkParallel;
-use miette::IntoDiagnostic as _;
 use miette::Result;
 
+use crate::config;
 use crate::config::Config;
 use crate::output::{Concise, Format, Markdownlint, Mdl};
 use crate::service::runner::ParallelLintRunner;
@@ -22,12 +20,10 @@ pub struct Options {
 impl Options {
     #[inline]
     pub fn to_config(self) -> Result<Config> {
-        // TODO: Find config
-        let path = self
-            .config_path
-            .unwrap_or(Path::new("downlint.toml").to_path_buf());
-        let config_text = fs::read_to_string(path).into_diagnostic()?;
-        let mut config: Config = toml::from_str(&config_text).into_diagnostic()?;
+        let mut config = match self.config_path {
+            Some(config_path) => config::load(&config_path)?,
+            None => config::resolve()?,
+        };
 
         if let Some(format) = self.output_format {
             config.lint.output_format = format;
