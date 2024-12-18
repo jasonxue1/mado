@@ -60,14 +60,17 @@ pub fn load<P: AsRef<Path>>(path: P) -> Result<Config> {
     toml::from_str(&config_text).map_err(|err| miette!(err))
 }
 
+const FILE_NAME: &str = "downlint.toml";
+const HIDDEN_FILE_NAME: &str = ".downlint.toml";
+
 pub fn resolve() -> Result<Config> {
-    let local_path = Path::new("downlint.toml");
+    let local_path = Path::new(FILE_NAME);
     let exists_local = fs::exists(local_path).into_diagnostic()?;
     if exists_local {
         return load(local_path);
     }
 
-    let hidden_local_path = Path::new(".downlint.toml");
+    let hidden_local_path = Path::new(HIDDEN_FILE_NAME);
     let exists_hidden_local = fs::exists(hidden_local_path).into_diagnostic()?;
     if exists_hidden_local {
         return load(hidden_local_path);
@@ -75,7 +78,7 @@ pub fn resolve() -> Result<Config> {
 
     let strategy = choose_base_strategy().into_diagnostic()?;
     let mut config_path = strategy.config_dir();
-    config_path.push("downlint.toml");
+    config_path.push(FILE_NAME);
     let exists_config = fs::exists(&config_path).into_diagnostic()?;
     if exists_config {
         return load(&config_path);
