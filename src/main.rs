@@ -32,7 +32,7 @@ fn main() -> Result<ExitCode> {
             files,
             output_format,
         }) => {
-            let checker = Checker::new(files, output_format.clone())?;
+            let checker = Checker::new(files, cli.config, output_format.clone())?;
             checker.check()
         }
         _ => Ok(ExitCode::FAILURE),

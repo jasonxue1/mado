@@ -1,4 +1,5 @@
 use std::fs;
+use std::path::Path;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
@@ -19,11 +20,16 @@ pub struct Checker {
 
 impl Checker {
     #[inline]
-    pub fn new(patterns: &[PathBuf], output_format: Format) -> Result<Self> {
+    pub fn new(
+        patterns: &[PathBuf],
+        config_path: Option<PathBuf>,
+        output_format: Format,
+    ) -> Result<Self> {
         let walker = WalkParallelBuilder::build(patterns)?;
 
         // TODO: Find config
-        let config_text = fs::read_to_string("downlint.toml").into_diagnostic()?;
+        let path = config_path.unwrap_or(Path::new("downlint.toml").to_path_buf());
+        let config_text = fs::read_to_string(path).into_diagnostic()?;
         let config = toml::from_str(&config_text).into_diagnostic()?;
 
         Ok(Self {
