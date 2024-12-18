@@ -27,3 +27,6 @@ rules = [
 
 [lint.md002]
 level = 1
+
+[lint.md003]
+style = "consistent"

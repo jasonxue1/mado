@@ -10,6 +10,7 @@ use serde::Deserialize;
 
 mod lint;
 mod md002;
+mod md003;
 
 pub use lint::Lint;
 
@@ -65,16 +66,13 @@ output-format = "mdl"
 rules = ["MD027"]
 
 [lint.md002]
-level = 1
+level = 2
 "#;
         let actual: Config = toml::from_str(text).unwrap();
-        let expected = Config {
-            lint: Lint {
-                output_format: Format::Mdl,
-                rules: vec![Rule::MD027],
-                md002: MD002 { level: 1 },
-            },
-        };
+        let mut expected = Config::default();
+        expected.lint.output_format = Format::Mdl;
+        expected.lint.rules = vec![Rule::MD027];
+        expected.lint.md002 = MD002 { level: 2 };
         assert_eq!(actual, expected);
     }
 }

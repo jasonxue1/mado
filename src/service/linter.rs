@@ -24,7 +24,7 @@ impl Linter {
                 let boxed: Box<dyn RuleLike> = match rule {
                     Rule::MD001 => Box::new(rule::MD001::new()),
                     Rule::MD002 => Box::new(rule::MD002::new(config.lint.md002.level)),
-                    Rule::MD003 => Box::new(rule::MD003::default()),
+                    Rule::MD003 => Box::new(rule::MD003::new(config.lint.md003.style.clone())),
                     Rule::MD004 => Box::new(rule::MD004::default()),
                     Rule::MD005 => Box::new(rule::MD005::new()),
                     Rule::MD006 => Box::new(rule::MD006::new()),

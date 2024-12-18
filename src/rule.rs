@@ -9,7 +9,7 @@ use crate::{violation::Violation, Document};
 mod helper;
 mod md001;
 mod md002;
-mod md003;
+pub mod md003;
 mod md004;
 mod md005;
 mod md006;
