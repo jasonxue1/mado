@@ -17,9 +17,8 @@ pub struct Config {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
-#[serde(default)]
+#[serde(default, rename_all = "kebab-case")]
 pub struct Lint {
-    #[serde(rename = "output-format")]
     pub output_format: Format,
     pub rules: Vec<Rule>,
 }
@@ -83,4 +82,25 @@ pub fn resolve() -> Result<Config> {
     }
 
     Ok(Config::default())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn deserialize() {
+        let text = r#"[lint]
+output-format = "mdl"
+rules = ["MD027"]
+"#;
+        let actual: Config = toml::from_str(text).unwrap();
+        let expected = Config {
+            lint: Lint {
+                output_format: Format::Mdl,
+                rules: vec![Rule::MD027],
+            },
+        };
+        assert_eq!(actual, expected);
+    }
 }
