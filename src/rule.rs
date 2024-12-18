@@ -28,7 +28,7 @@ mod md025;
 mod md026;
 mod md027;
 mod md028;
-mod md029;
+pub mod md029;
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 #[non_exhaustive]
