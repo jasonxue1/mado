@@ -2,9 +2,13 @@ use serde::Deserialize;
 
 use crate::{output::Format, Rule};
 
-use super::md002::MD002;
-use super::md003::MD003;
-use super::md004::MD004;
+mod md002;
+mod md003;
+mod md004;
+
+pub use md002::MD002;
+pub use md003::MD003;
+pub use md004::MD004;
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 #[serde(default, rename_all = "kebab-case")]

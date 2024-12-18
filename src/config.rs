@@ -9,9 +9,6 @@ use miette::Result;
 use serde::Deserialize;
 
 mod lint;
-mod md002;
-mod md003;
-mod md004;
 
 pub use lint::Lint;
 
@@ -58,7 +55,7 @@ mod tests {
     use super::*;
 
     use crate::{output::Format, Rule};
-    use md002::MD002;
+    use lint::MD002;
 
     #[test]
     fn deserialize() {
