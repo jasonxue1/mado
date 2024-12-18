@@ -90,7 +90,7 @@ mod tests {
         let rule = MD027::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
-            // TODO: Support multiple erros
+            // TODO: Support multiple errors
             rule.to_violation(path.clone(), Sourcepos::from((1, 4, 2, 28))),
             // rule.to_violation(path.clone(), Sourcepos::from((1, 4, 1, 45))),
             // rule.to_violation(path, Sourcepos::from((2, 4, 2, 28))),
