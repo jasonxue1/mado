@@ -23,18 +23,19 @@ impl Checker {
     pub fn new(
         patterns: &[PathBuf],
         config_path: Option<PathBuf>,
-        output_format: Format,
+        output_format: Option<Format>,
     ) -> Result<Self> {
         let walker = WalkParallelBuilder::build(patterns)?;
 
         // TODO: Find config
         let path = config_path.unwrap_or(Path::new("downlint.toml").to_path_buf());
         let config_text = fs::read_to_string(path).into_diagnostic()?;
-        let config = toml::from_str(&config_text).into_diagnostic()?;
+        let config: Config = toml::from_str(&config_text).into_diagnostic()?;
+        let format = output_format.unwrap_or(config.lint.output_format.clone());
 
         Ok(Self {
             walker,
-            output_format,
+            output_format: format,
             config,
         })
     }
