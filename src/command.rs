@@ -15,6 +15,7 @@ pub enum Command {
         #[arg(default_value = ".")]
         files: Vec<PathBuf>,
 
+        // TODO: Use config
         #[arg(value_enum, long = "output-format", default_value_t = Format::Concise)]
         output_format: Format,
     },

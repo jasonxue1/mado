@@ -5,7 +5,7 @@ use crossbeam_channel::Sender;
 use ignore::{ParallelVisitor, ParallelVisitorBuilder, WalkState};
 
 use super::Linter;
-use crate::{Document, Violation};
+use crate::{config::Config, Document, Violation};
 
 pub struct MarkdownLintVisitor {
     linter: Linter,
@@ -49,21 +49,22 @@ impl ParallelVisitor for MarkdownLintVisitor {
 }
 
 pub struct MarkdownLintVisitorFactory {
+    config: Config,
     tx: Sender<Vec<Violation>>,
 }
 
 impl MarkdownLintVisitorFactory {
     #[inline]
     #[must_use]
-    pub fn new(tx: Sender<Vec<Violation>>) -> Self {
-        Self { tx }
+    pub fn new(config: Config, tx: Sender<Vec<Violation>>) -> Self {
+        Self { config, tx }
     }
 }
 
 impl<'s> ParallelVisitorBuilder<'s> for MarkdownLintVisitorFactory {
     #[inline]
     fn build(&mut self) -> Box<dyn ParallelVisitor + 's> {
-        let linter = Linter::new();
+        let linter = Linter::new(&self.config);
         Box::new(MarkdownLintVisitor::new(linter, self.tx.clone()))
     }
 }

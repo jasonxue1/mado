@@ -1,9 +1,11 @@
 use miette::Result;
 
+use crate::config::Config;
 use crate::rule;
 use crate::rule::RuleLike;
 use crate::violation::Violation;
 use crate::Document;
+use crate::Rule;
 
 #[derive(Default)]
 pub struct Linter {
@@ -13,33 +15,40 @@ pub struct Linter {
 impl Linter {
     #[inline]
     #[must_use]
-    pub fn new() -> Self {
-        Self {
-            rules: vec![
-                Box::new(rule::MD001::new()),
-                Box::new(rule::MD002::default()),
-                Box::new(rule::MD003::default()),
-                Box::new(rule::MD004::default()),
-                Box::new(rule::MD005::new()),
-                Box::new(rule::MD006::new()),
-                Box::new(rule::MD007::default()),
-                Box::new(rule::MD009::new()),
-                Box::new(rule::MD010::new()),
-                Box::new(rule::MD012::new()),
-                Box::new(rule::MD013::default()),
-                Box::new(rule::MD014::new()),
-                Box::new(rule::MD018::new()),
-                Box::new(rule::MD019::new()),
-                Box::new(rule::MD022::new()),
-                Box::new(rule::MD023::new()),
-                Box::new(rule::MD024::new()),
-                Box::new(rule::MD025::default()),
-                Box::new(rule::MD026::default()),
-                Box::new(rule::MD027::new()),
-                Box::new(rule::MD028::new()),
-                Box::new(rule::MD029::default()),
-            ],
-        }
+    pub fn new(config: &Config) -> Self {
+        let rules: Vec<_> = config
+            .rules
+            .iter()
+            .map(|rule| {
+                let boxed: Box<dyn RuleLike> = match rule {
+                    Rule::MD001 => Box::new(rule::MD001::new()),
+                    Rule::MD002 => Box::new(rule::MD002::default()),
+                    Rule::MD003 => Box::new(rule::MD003::default()),
+                    Rule::MD004 => Box::new(rule::MD004::default()),
+                    Rule::MD005 => Box::new(rule::MD005::new()),
+                    Rule::MD006 => Box::new(rule::MD006::new()),
+                    Rule::MD007 => Box::new(rule::MD007::default()),
+                    Rule::MD009 => Box::new(rule::MD009::new()),
+                    Rule::MD010 => Box::new(rule::MD010::new()),
+                    Rule::MD012 => Box::new(rule::MD012::new()),
+                    Rule::MD013 => Box::new(rule::MD013::default()),
+                    Rule::MD014 => Box::new(rule::MD014::new()),
+                    Rule::MD018 => Box::new(rule::MD018::new()),
+                    Rule::MD019 => Box::new(rule::MD019::new()),
+                    Rule::MD022 => Box::new(rule::MD022::new()),
+                    Rule::MD023 => Box::new(rule::MD023::new()),
+                    Rule::MD024 => Box::new(rule::MD024::new()),
+                    Rule::MD025 => Box::new(rule::MD025::default()),
+                    Rule::MD026 => Box::new(rule::MD026::default()),
+                    Rule::MD027 => Box::new(rule::MD027::new()),
+                    Rule::MD028 => Box::new(rule::MD028::new()),
+                    Rule::MD029 => Box::new(rule::MD029::default()),
+                };
+                boxed
+            })
+            .collect();
+
+        Self { rules }
     }
 
     #[inline]
@@ -89,7 +98,9 @@ description: Some text
             text,
         };
         let md026 = MD026::default();
-        let linter = Linter::new();
+        let rules = vec![Rule::MD026];
+        let config = Config { rules };
+        let linter = Linter::new(&config);
         let actual = linter.check(&doc).unwrap();
         let expected = vec![md026.to_violation(path, Sourcepos::from((6, 1, 6, 19)))];
         assert_eq!(actual, expected);

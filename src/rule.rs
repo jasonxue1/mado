@@ -2,6 +2,7 @@ use std::path::PathBuf;
 
 use comrak::nodes::Sourcepos;
 use miette::Result;
+use serde::Deserialize;
 
 use crate::{violation::Violation, Document};
 
@@ -28,6 +29,33 @@ mod md026;
 mod md027;
 mod md028;
 mod md029;
+
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+#[non_exhaustive]
+pub enum Rule {
+    MD001,
+    MD002,
+    MD003,
+    MD004,
+    MD005,
+    MD006,
+    MD007,
+    MD009,
+    MD010,
+    MD012,
+    MD013,
+    MD014,
+    MD018,
+    MD019,
+    MD022,
+    MD023,
+    MD024,
+    MD025,
+    MD026,
+    MD027,
+    MD028,
+    MD029,
+}
 
 pub trait RuleLike: Send {
     fn name(&self) -> String;

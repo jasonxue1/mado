@@ -9,18 +9,24 @@ use miette::miette;
 use miette::{IntoDiagnostic as _, Result};
 
 use super::visitor::MarkdownLintVisitorFactory;
+use crate::config::Config;
 use crate::Violation;
 
 pub struct ParallelLintRunner {
     walker: WalkParallel,
+    config: Config,
     capacity: usize,
 }
 
 impl ParallelLintRunner {
     #[inline]
     #[must_use]
-    pub fn new(walker: WalkParallel, capacity: usize) -> Self {
-        Self { walker, capacity }
+    pub fn new(walker: WalkParallel, config: Config, capacity: usize) -> Self {
+        Self {
+            walker,
+            config,
+            capacity,
+        }
     }
 
     #[inline]
@@ -41,7 +47,7 @@ impl ParallelLintRunner {
             }
         });
 
-        let mut builder = MarkdownLintVisitorFactory::new(tx);
+        let mut builder = MarkdownLintVisitorFactory::new(self.config, tx);
         self.walker.visit(&mut builder);
 
         // Wait for the completion
