@@ -26,6 +26,7 @@ rules = [
   "MD030",
   "MD031",
   "MD032",
+  "MD033",
 ]
 
 [lint.md002]
@@ -57,3 +58,6 @@ ul_single = 1
 ol_single = 1
 ul_multi = 1
 ol_multi = 1
+
+[lint.md033]
+allowed-elements = []
