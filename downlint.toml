@@ -23,6 +23,7 @@ rules = [
   "MD027",
   "MD028",
   "MD029",
+  "MD030",
 ]
 
 [lint.md002]
@@ -48,3 +49,9 @@ punctuation = ".,;:!?"
 
 [lint.md029]
 style = "one"
+
+[lint.md030]
+ul_single = 1
+ol_single = 1
+ul_multi = 1
+ol_multi = 1
