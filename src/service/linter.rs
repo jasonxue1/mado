@@ -39,7 +39,7 @@ impl Linter {
                     Rule::MD022 => Box::new(rule::MD022::new()),
                     Rule::MD023 => Box::new(rule::MD023::new()),
                     Rule::MD024 => Box::new(rule::MD024::new()),
-                    Rule::MD025 => Box::new(rule::MD025::default()),
+                    Rule::MD025 => Box::new(rule::MD025::new(config.lint.md025.level)),
                     Rule::MD026 => Box::new(rule::MD026::default()),
                     Rule::MD027 => Box::new(rule::MD027::new()),
                     Rule::MD028 => Box::new(rule::MD028::new()),
