@@ -33,3 +33,6 @@ style = "consistent"
 
 [lint.md004]
 style = "consistent"
+
+[lint.md007]
+indent = 4

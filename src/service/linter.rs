@@ -28,7 +28,7 @@ impl Linter {
                     Rule::MD004 => Box::new(rule::MD004::new(config.lint.md004.style.clone())),
                     Rule::MD005 => Box::new(rule::MD005::new()),
                     Rule::MD006 => Box::new(rule::MD006::new()),
-                    Rule::MD007 => Box::new(rule::MD007::default()),
+                    Rule::MD007 => Box::new(rule::MD007::new(config.lint.md007.indent)),
                     Rule::MD009 => Box::new(rule::MD009::new()),
                     Rule::MD010 => Box::new(rule::MD010::new()),
                     Rule::MD012 => Box::new(rule::MD012::new()),
