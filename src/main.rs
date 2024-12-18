@@ -18,6 +18,7 @@ static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
 use std::process::ExitCode;
 
 use clap::Parser as _;
+use downlint::command::check::Options;
 use miette::Result;
 
 use downlint::command::check::Checker;
@@ -32,7 +33,12 @@ fn main() -> Result<ExitCode> {
             files,
             output_format,
         }) => {
-            let checker = Checker::new(files, cli.config, output_format.clone())?;
+            let options = Options {
+                output_format: output_format.clone(),
+                config_path: cli.config,
+            };
+            let config = options.to_config()?;
+            let checker = Checker::new(files, config)?;
             checker.check()
         }
         _ => Ok(ExitCode::FAILURE),
