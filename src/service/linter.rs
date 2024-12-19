@@ -65,6 +65,7 @@ impl Linter {
                     Rule::MD040 => Box::new(rule::MD040::new()),
                     Rule::MD041 => Box::new(rule::MD041::new(config.lint.md041.level)),
                     Rule::MD046 => Box::new(rule::MD046::new(config.lint.md046.style.clone())),
+                    Rule::MD047 => Box::new(rule::MD047::new()),
                 };
                 boxed
             })
