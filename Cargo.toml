@@ -8,6 +8,12 @@ license = "Apache-2.0"
 authors = ["Akiomi Kamakura <akiomik@gmail.com>"]
 keywords = ["markdown", "lint"]
 categories = ["command-line-utilities", "development-tools"]
+readme = "README.md"
+exclude = [
+    "/scripts/*",
+    ".node-version",
+    ".ruby-version"
+]
 
 [dependencies]
 clap = { version = "4.5.23", features = ["derive"] }
