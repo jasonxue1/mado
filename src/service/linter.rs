@@ -63,6 +63,7 @@ impl Linter {
                     Rule::MD038 => Box::new(rule::MD038::new()),
                     Rule::MD039 => Box::new(rule::MD039::new()),
                     Rule::MD040 => Box::new(rule::MD040::new()),
+                    Rule::MD041 => Box::new(rule::MD041::new(config.lint.md041.level)),
                 };
                 boxed
             })

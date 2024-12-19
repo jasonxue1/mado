@@ -33,6 +33,7 @@ rules = [
   "MD038",
   "MD039",
   "MD040",
+  "MD041",
 ]
 
 [lint.md002]
@@ -70,3 +71,6 @@ allowed-elements = []
 
 [lint.md036]
 punctuation = ".,;:!?"
+
+[lint.md041]
+level = 1
