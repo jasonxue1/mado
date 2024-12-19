@@ -34,6 +34,7 @@ rules = [
   "MD039",
   "MD040",
   "MD041",
+  "MD046",
 ]
 
 [lint.md002]
@@ -74,3 +75,6 @@ punctuation = ".,;:!?"
 
 [lint.md041]
 level = 1
+
+[lint.md046]
+style = "consistent"
