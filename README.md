@@ -3,6 +3,19 @@
 A fast Markdown linter, written in Rust.
 Compliant with [CommonMark](https://commonmark.org) and [GFM](https://github.github.com/gfm/).
 
+## Usage
+
+```bash
+downlint check .
+downlint check path/to/*.md
+```
+
+## Performance
+
+35x faster than existing linters
+([markdownlint (ruby)](https://github.com/markdownlint/markdownlint) and
+ [markdownlint-cli (node.js)](https://github.com/igorshubovych/markdownlint-cli)).
+
 ```mermaid
 ---
 config:
@@ -19,17 +32,12 @@ config:
 ---
 xychart-beta
     title "Linting the GitLab documents from scratch (Lower is faster)"
-    x-axis ["downlint (rust)", "mdl (ruby)", "markdownlint-cli (node)"]
+    x-axis ["downlint", "markdownlint", "markdownlint-cli"]
     y-axis "Time (seconds)" 0 --> 10
     bar [0.181, 6.448, 6.405]
 ```
 
-## Usage
-
-```bash
-downlint check .
-downlint check path/to/*.md
-```
+This benchmark was run on a MacBook Pro (2021, M1 Max) using [hyperfine](https://github.com/sharkdp/hyperfine).
 
 ## Rules
 
@@ -93,7 +101,7 @@ cargo test
 cargo clippy --all-targets --all-features --workspace -- -D warnings
 ```
 
-### Benchark
+### Benchmark
 
 ```bash
 # Download markdown dataset
