@@ -45,7 +45,8 @@ impl RuleLike for MD037 {
     #[allow(clippy::cast_possible_wrap)]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let mut violations = vec![];
-        let re = Regex::new(r"(\*\*? *[^*]+ *\*?\*|\_\_? *[^_]+ *\_?\_)").into_diagnostic()?;
+        let re = Regex::new(r"(\*\*?( +[^*]+ *| *[^*]+ +)\*?\*|\_\_?( +[^_]+ *| *[^_]+ +)\_?\_)")
+            .into_diagnostic()?;
 
         for node in doc.ast.descendants() {
             if let NodeValue::Text(text) = &node.data.borrow().value {
@@ -161,6 +162,19 @@ Here is some __ more __bold__ text __ .
 
 Here is some _ more _italic_ text _ ."
             .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD037::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_with_emoji() {
+        let text = "This is an emoji :white_check_mark:".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let ast = parse_document(&arena, &text, &Options::default());
