@@ -18,6 +18,7 @@ etcetera = "0.8.0"
 ignore = "0.4.23"
 miette = { version = "7.4.0", features = ["fancy"] }
 regex = "1.11.1"
+scraper = "0.22.0"
 serde = { version = "1.0", features = ["derive"]  }
 toml = "0.8.19"
 
