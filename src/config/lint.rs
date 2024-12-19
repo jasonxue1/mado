@@ -77,6 +77,7 @@ impl Default for Lint {
                 Rule::MD033,
                 Rule::MD034,
                 Rule::MD036,
+                Rule::MD037,
             ],
             md002: MD002::default(),
             md003: MD003::default(),

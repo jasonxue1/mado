@@ -71,6 +71,7 @@ Several [markdownlint](https://github.com/markdownlint/markdownlint) rules are c
 | MD034 | :white_check_mark: |                                              |
 | MD035 | :x:                | comrak does not support line styles.         |
 | MD036 | :hammer:           |                                              |
+| MD037 | :hammer:           |                                              |
 
 ## Development
 
