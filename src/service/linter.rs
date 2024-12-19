@@ -60,6 +60,7 @@ impl Linter {
                         Box::new(rule::MD036::new(config.lint.md036.punctuation.clone()))
                     }
                     Rule::MD037 => Box::new(rule::MD037::new()),
+                    Rule::MD038 => Box::new(rule::MD038::new()),
                 };
                 boxed
             })
