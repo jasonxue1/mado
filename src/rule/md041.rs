@@ -107,4 +107,17 @@ This is a file with a top level header"
         let expected = vec![];
         assert_eq!(actual, expected);
     }
+
+    #[test]
+    fn check_no_errors_with_empty_text() {
+        let text = String::new();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD041::default();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
 }
