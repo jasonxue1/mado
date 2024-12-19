@@ -35,6 +35,11 @@ downlint check path/to/*.md
 
 Several [markdownlint](https://github.com/markdownlint/markdownlint) rules are currently supported.
 
+* :white_check_mark: The rule is stable.
+* :hammer: The rule is unstable.
+* :warning: The rule has unsupported option(s).
+* :x: The rule is unsupported.
+
 | Rule  | Support            | Note                                         |
 |-------|--------------------|----------------------------------------------|
 | MD001 | :white_check_mark: |                                              |
@@ -43,29 +48,29 @@ Several [markdownlint](https://github.com/markdownlint/markdownlint) rules are c
 | MD004 | :warning:          | `:sublist` style does not support.           |
 | MD005 | :white_check_mark: |                                              |
 | MD006 | :white_check_mark: |                                              |
-| MD007 | :white_check_mark: |                                              |
+| MD007 | :hammer:           |                                              |
 | MD009 | :white_check_mark: |                                              |
 | MD010 | :white_check_mark: |                                              |
 | MD012 | :white_check_mark: |                                              |
-| MD013 | :white_check_mark: |                                              |
+| MD013 | :hammer:           |                                              |
 | MD014 | :white_check_mark: |                                              |
 | MD018 | :white_check_mark: |                                              |
 | MD019 | :white_check_mark: |                                              |
 | MD022 | :white_check_mark: |                                              |
 | MD023 | :white_check_mark: |                                              |
-| MD024 | :warning:          | `allow_different_nesting` does not support.  |
+| MD024 | :warning: :hammer: | `allow_different_nesting` does not support.  |
 | MD025 | :white_check_mark: |                                              |
-| MD026 | :white_check_mark: |                                              |
-| MD027 | :warning:          | The behaviour of markdownlint is different.  |
+| MD026 | :hammer:           |                                              |
+| MD027 | :hammer:           |                                              |
 | MD028 | :white_check_mark: |                                              |
 | MD029 | :white_check_mark: |                                              |
 | MD030 | :white_check_mark: |                                              |
 | MD031 | :white_check_mark: |                                              |
 | MD032 | :white_check_mark: |                                              |
-| MD033 | :white_check_mark: |                                              |
+| MD033 | :hammer:           |                                              |
 | MD034 | :white_check_mark: |                                              |
 | MD035 | :x:                | comrak does not support line styles.         |
-| MD036 | :white_check_mark: |                                              |
+| MD036 | :hammer:           |                                              |
 
 ## Development
 
