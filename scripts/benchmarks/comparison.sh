@@ -5,7 +5,7 @@ PROJECT_ROOT=($SCRIPT_DIR/../../)
 DATA_ROOT=$SCRIPT_DIR/data
 DOC_PATH=$DATA_ROOT/gitlab/doc
 
-if [ -z ./target/release/downlint ]; then
+if [ ! -e $PROJECT_ROOT/target/release/downlint ]; then
   cargo build --release
 fi
 
