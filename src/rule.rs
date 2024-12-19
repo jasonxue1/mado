@@ -37,6 +37,7 @@ mod md034;
 mod md036;
 mod md037;
 mod md038;
+mod md039;
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 #[non_exhaustive]
@@ -71,6 +72,7 @@ pub enum Rule {
     MD036,
     MD037,
     MD038,
+    MD039,
 }
 
 pub trait RuleLike: Send {
@@ -126,3 +128,4 @@ pub use md034::MD034;
 pub use md036::MD036;
 pub use md037::MD037;
 pub use md038::MD038;
+pub use md039::MD039;

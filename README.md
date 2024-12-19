@@ -73,6 +73,7 @@ Several [markdownlint](https://github.com/markdownlint/markdownlint) rules are c
 | MD036 | :hammer:           |                                              |
 | MD037 | :hammer:           |                                              |
 | MD038 | :white_check_mark: |                                              |
+| MD039 | :white_check_mark: |                                              |
 
 ## Development
 
