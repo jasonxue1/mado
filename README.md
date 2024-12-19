@@ -63,6 +63,7 @@ Several [markdownlint](https://github.com/markdownlint/markdownlint) rules are c
 | MD031 | :white_check_mark: |                                              |
 | MD032 | :white_check_mark: |                                              |
 | MD033 | :white_check_mark: |                                              |
+| MD034 | :white_check_mark: |                                              |
 
 ## Development
 

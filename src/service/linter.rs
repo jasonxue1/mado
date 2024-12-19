@@ -55,6 +55,7 @@ impl Linter {
                     Rule::MD031 => Box::new(rule::MD031::new()),
                     Rule::MD032 => Box::new(rule::MD032::new()),
                     Rule::MD033 => Box::new(rule::MD033::new(&config.lint.md033.allowed_elements)),
+                    Rule::MD034 => Box::new(rule::MD034::new()),
                 };
                 boxed
             })
