@@ -44,7 +44,7 @@ impl RuleLike for MD018 {
         let mut violations = vec![];
 
         for node in doc.ast.descendants() {
-            if let NodeValue::Text(text) = node.data.borrow().value.clone() {
+            if let NodeValue::Text(text) = &node.data.borrow().value {
                 let position = node.data.borrow().sourcepos;
                 if position.start.column == 1 && text.starts_with('#') {
                     let violation = self.to_violation(doc.path.clone(), position);

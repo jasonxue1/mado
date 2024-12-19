@@ -47,7 +47,7 @@ impl RuleLike for MD001 {
             if let NodeValue::Heading(heading) = node.data.borrow().value {
                 if let Some(prev_level) = maybe_prev_level {
                     if heading.level > prev_level + 1 {
-                        let position = node.data.clone().borrow().sourcepos;
+                        let position = node.data.borrow().sourcepos;
                         let violation = self.to_violation(doc.path.clone(), position);
                         violations.push(violation);
                     }

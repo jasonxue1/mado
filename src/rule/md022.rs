@@ -48,10 +48,7 @@ impl RuleLike for MD022 {
                 let prev_position = prev_node.data.borrow().sourcepos;
                 let position = node.data.borrow().sourcepos;
 
-                match (
-                    prev_node.data.borrow().value.clone(),
-                    node.data.borrow().value.clone(),
-                ) {
+                match (&prev_node.data.borrow().value, &node.data.borrow().value) {
                     (NodeValue::Heading(_), _) => {
                         if position.start.line == prev_position.end.line + 1 {
                             let violation = self.to_violation(doc.path.clone(), prev_position);

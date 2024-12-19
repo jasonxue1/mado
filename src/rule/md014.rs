@@ -43,7 +43,7 @@ impl RuleLike for MD014 {
         let mut violations = vec![];
 
         for node in doc.ast.children() {
-            if let NodeValue::CodeBlock(code) = node.data.borrow().value.clone() {
+            if let NodeValue::CodeBlock(code) = &node.data.borrow().value {
                 let mut lines = code.literal.lines();
                 if lines.all(|line| line.starts_with("$ ")) {
                     let position = node.data.borrow().sourcepos;

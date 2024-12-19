@@ -44,7 +44,7 @@ impl RuleLike for MD019 {
         let mut violations = vec![];
 
         for node in doc.ast.children() {
-            if let NodeValue::Heading(heading) = node.data.borrow().value.clone() {
+            if let NodeValue::Heading(heading) = &node.data.borrow().value {
                 if let Some(text_node) = node.first_child() {
                     if let NodeValue::Text(_) = text_node.data.borrow().value {
                         let heading_position = node.data.borrow().sourcepos;
