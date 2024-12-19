@@ -43,11 +43,11 @@ impl RuleLike for MD039 {
         let mut violations = vec![];
 
         for node in doc.ast.descendants() {
-            if let NodeValue::Text(text) = &node.data.borrow().value {
-                if let Some(parent_node) = node.parent() {
-                    if let NodeValue::Link(_) = parent_node.data.borrow().value {
+            if let NodeValue::Link(_) = node.data.borrow().value {
+                if let Some(text_node) = node.first_child() {
+                    if let NodeValue::Text(text) = &text_node.data.borrow().value {
                         if text.trim() != text {
-                            let position = node.data.borrow().sourcepos;
+                            let position = text_node.data.borrow().sourcepos;
                             let violation = self.to_violation(doc.path.clone(), position);
                             violations.push(violation);
                         }
