@@ -21,7 +21,7 @@ xychart-beta
     title "Linting the GitLab documents from scratch (Lower is faster)"
     x-axis ["downlint (rust)", "mdl (ruby)", "markdownlint-cli (node)"]
     y-axis "Time (seconds)" 0 --> 10
-    bar [0.144, 5.251, 6.199]
+    bar [0.181, 6.448, 6.405]
 ```
 
 ## Usage
