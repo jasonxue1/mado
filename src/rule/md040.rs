@@ -35,7 +35,7 @@ impl RuleLike for MD040 {
 
     #[inline]
     fn aliases(&self) -> Vec<String> {
-        vec!["no-space-in-links".to_owned()]
+        vec!["fenced-code-language".to_owned()]
     }
 
     #[inline]
@@ -44,7 +44,7 @@ impl RuleLike for MD040 {
 
         for node in doc.ast.descendants() {
             if let NodeValue::CodeBlock(code) = &node.data.borrow().value {
-                if code.info.is_empty() {
+                if code.fenced && code.info.is_empty() {
                     let position = node.data.borrow().sourcepos;
                     let violation = self.to_violation(doc.path.clone(), position);
                     violations.push(violation);
@@ -93,6 +93,24 @@ echo Hello world
 echo Hello world
 ```"
         .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD040::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_with_indented() {
+        let text = "Some text
+
+    Code block
+
+Some more text"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let ast = parse_document(&arena, &text, &Options::default());
