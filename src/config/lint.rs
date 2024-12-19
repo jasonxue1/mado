@@ -12,6 +12,7 @@ mod md026;
 mod md029;
 mod md030;
 mod md033;
+mod md036;
 
 pub use md002::MD002;
 pub use md003::MD003;
@@ -23,6 +24,7 @@ pub use md026::MD026;
 pub use md029::MD029;
 pub use md030::MD030;
 pub use md033::MD033;
+pub use md036::MD036;
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 #[serde(default, rename_all = "kebab-case")]
@@ -39,6 +41,7 @@ pub struct Lint {
     pub md029: MD029,
     pub md030: MD030,
     pub md033: MD033,
+    pub md036: MD036,
 }
 
 impl Default for Lint {
@@ -73,6 +76,7 @@ impl Default for Lint {
                 Rule::MD032,
                 Rule::MD033,
                 Rule::MD034,
+                Rule::MD036,
             ],
             md002: MD002::default(),
             md003: MD003::default(),
@@ -84,6 +88,7 @@ impl Default for Lint {
             md029: MD029::default(),
             md030: MD030::default(),
             md033: MD033::default(),
+            md036: MD036::default(),
         }
     }
 }
