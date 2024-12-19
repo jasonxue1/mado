@@ -12,9 +12,8 @@ downlint check path/to/*.md
 
 ## Performance
 
-35x faster than existing linters
-([markdownlint (ruby)](https://github.com/markdownlint/markdownlint) and
- [markdownlint-cli (node.js)](https://github.com/igorshubovych/markdownlint-cli)).
+36-44x faster than existing linters
+(like [markdownlint](https://github.com/markdownlint/markdownlint)).
 
 ```mermaid
 ---
@@ -32,16 +31,20 @@ config:
 ---
 xychart-beta
     title "Linting the GitLab documents from scratch (Lower is faster)"
-    x-axis ["downlint", "markdownlint", "markdownlint-cli"]
+    x-axis ["downlint (rust)", "markdownlint-cli (node.js)", "markdownlint (ruby)", "markdownlint-cli2 (node.js)"]
     y-axis "Time (seconds)" 0 --> 10
-    bar [0.181, 6.448, 6.405]
+    bar [0.177, 6.372, 6.464, 7.776]
 ```
 
-This benchmark was run on a MacBook Pro (2021, M1 Max) using [hyperfine](https://github.com/sharkdp/hyperfine).
+This benchmark was run on a MacBook Pro (2021, M1 Max)
+using [hyperfine](https://github.com/sharkdp/hyperfine),
+and [the GitLab documentation](https://gitlab.com/gitlab-org/gitlab/-/tree/7d6a4025a0346f1f50d2825c85742e5a27b39a8b/doc)
+is used (1,500 Markdown files).
 
 ## Rules
 
-Several [markdownlint](https://github.com/markdownlint/markdownlint) rules are currently supported.
+Several [markdownlint](https://github.com/markdownlint/markdownlint) rules are
+currently supported.
 
 * :white_check_mark: The rule is stable.
 * :hammer: The rule is unstable.
