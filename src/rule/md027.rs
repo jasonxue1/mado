@@ -46,12 +46,11 @@ impl RuleLike for MD027 {
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let mut violations = vec![];
 
-        for node in doc.ast.children() {
+        for node in doc.ast.descendants() {
             if let NodeValue::BlockQuote = node.data.borrow().value {
-                let block_quote_position = node.data.borrow().sourcepos;
-
-                for child in node.children() {
-                    let child_position = child.data.borrow().sourcepos;
+                if let Some(child_node) = node.first_child() {
+                    let block_quote_position = node.data.borrow().sourcepos;
+                    let child_position = child_node.data.borrow().sourcepos;
 
                     if child_position.start.column > block_quote_position.start.column + 2 {
                         let violation = self.to_violation(doc.path.clone(), child_position);
@@ -99,63 +98,43 @@ mod tests {
     }
 
     // NOTE: This case is not an error in markdownlint
-    // #[test]
-    // fn check_errors_with_nested_block_quotes() {
-    //     let text = ">>>  This is multiple blockquote with bad indentation.".to_owned();
-    //     let path = Path::new("test.md").to_path_buf();
-    //     let arena = Arena::new();
-    //     let ast = parse_document(&arena, &text, &Options::default());
-    //     let doc = Document {
-    //         path: path.clone(),
-    //         ast,
-    //         text,
-    //     };
-    //     let rule = MD027::new();
-    //     let actual = rule.check(&doc).unwrap();
-    //     let expected = vec![rule.to_violation(path.clone(), Sourcepos::from((1, 6, 1, 49)))];
-    //     assert_eq!(actual, expected);
-    // }
+    #[test]
+    fn check_errors_with_nested_block_quotes() {
+        let text = ">>>  This is multiple blockquote with bad indentation.".to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD027::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![rule.to_violation(path.clone(), Sourcepos::from((1, 6, 1, 54)))];
+        assert_eq!(actual, expected);
+    }
 
-    // NOTE: This case is not an error in markdownlint
-    // #[test]
-    // fn check_errors_with_nested_block_quotes2() {
-    //     let text = ">>> This is multiple blockquote with bad
-    // indentation.".to_owned();
-    //     let path = Path::new("test.md").to_path_buf();
-    //     let arena = Arena::new();
-    //     let ast = parse_document(&arena, &text, &Options::default());
-    //     let doc = Document {
-    //         path: path.clone(),
-    //         ast,
-    //         text,
-    //     };
-    //     let rule = MD027::new();
-    //     let actual = rule.check(&doc).unwrap();
-    //     let expected = vec![rule.to_violation(path.clone(), Sourcepos::from((2, 5, 2, 17)))];
-    //     assert_eq!(actual, expected);
-    // }
-
-    // TODO: Support this case
-    // #[test]
-    // fn check_errors_with_nested_block_quotes3() {
-    //     let text = ">  >  >  This is multiple blockquote with bad indentation.".to_owned();
-    //     let path = Path::new("test.md").to_path_buf();
-    //     let arena = Arena::new();
-    //     let ast = parse_document(&arena, &text, &Options::default());
-    //     let doc = Document {
-    //         path: path.clone(),
-    //         ast,
-    //         text,
-    //     };
-    //     let rule = MD027::new();
-    //     let actual = rule.check(&doc).unwrap();
-    //     let expected = vec![
-    //         rule.to_violation(path.clone(), Sourcepos::from((1, 4, 1, 58))),
-    //         rule.to_violation(path.clone(), Sourcepos::from((1, 7, 1, 58))),
-    //         rule.to_violation(path, Sourcepos::from((1, 10, 1, 58))),
-    //     ];
-    //     assert_eq!(actual, expected);
-    // }
+    #[test]
+    fn check_errors_with_nested_block_quotes2() {
+        let text = ">  >  >  This is multiple blockquote with bad indentation.".to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD027::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![
+            rule.to_violation(path.clone(), Sourcepos::from((1, 4, 1, 58))),
+            rule.to_violation(path.clone(), Sourcepos::from((1, 7, 1, 58))),
+            rule.to_violation(path, Sourcepos::from((1, 10, 1, 58))),
+        ];
+        assert_eq!(actual, expected);
+    }
 
     #[test]
     fn check_no_errors() {
@@ -187,6 +166,25 @@ mod tests {
 
     #[test]
     fn check_no_errors_with_nested_block_quotes2() {
+        let text = ">>> This is multiple blockquote with bad
+    indentation."
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD027::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_with_nested_block_quotes3() {
         let text = "> > > This is multiple blockquote with correct indentation.".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
