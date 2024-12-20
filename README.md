@@ -71,7 +71,7 @@ are currently supported.
 | MD023 | :white_check_mark: |                                              |
 | MD024 | :warning: :hammer: | `allow_different_nesting` does not support.  |
 | MD025 | :white_check_mark: |                                              |
-| MD026 | :hammer:           |                                              |
+| MD026 | :white_check_mark: |                                              |
 | MD027 | :hammer:           |                                              |
 | MD028 | :white_check_mark: |                                              |
 | MD029 | :white_check_mark: |                                              |

@@ -3,7 +3,7 @@ use miette::Result;
 
 use crate::{violation::Violation, Document};
 
-use super::{helper::inline_text_of, RuleLike};
+use super::RuleLike;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -55,12 +55,15 @@ impl RuleLike for MD026 {
 
         for node in doc.ast.children() {
             if let NodeValue::Heading(_) = node.data.borrow().value {
-                let text = inline_text_of(node);
-                if let Some(last_char) = text.chars().last() {
-                    if self.punctuation.contains(last_char) {
-                        let position = node.data.borrow().sourcepos;
-                        let violation = self.to_violation(doc.path.clone(), position);
-                        violations.push(violation);
+                if let Some(child) = node.last_child() {
+                    if let NodeValue::Text(text) = &child.data.borrow().value {
+                        if let Some(last_char) = text.chars().last() {
+                            if self.punctuation.contains(last_char) {
+                                let position = node.data.borrow().sourcepos;
+                                let violation = self.to_violation(doc.path.clone(), position);
+                                violations.push(violation);
+                            }
+                        }
                     }
                 }
             }
@@ -97,8 +100,98 @@ mod tests {
     }
 
     #[test]
+    fn check_errors_with_link() {
+        let text = "# [This is a header](http://example.com).".to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD026::default();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![rule.to_violation(path.clone(), Sourcepos::from((1, 1, 1, 41)))];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_errors_with_code() {
+        let text = "# `This is a header`.".to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD026::default();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![rule.to_violation(path.clone(), Sourcepos::from((1, 1, 1, 21)))];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_errors_with_emph() {
+        let text = "# *This is a header*.".to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD026::default();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![rule.to_violation(path.clone(), Sourcepos::from((1, 1, 1, 21)))];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
     fn check_no_errors() {
         let text = "# This is a header".to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD026::default();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_with_link() {
+        let text = "# [This is a header.](http://example.com)".to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD026::default();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_with_code() {
+        let text = "# `This is a header.`".to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD026::default();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_with_emph() {
+        let text = "# *This is a header.*".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let ast = parse_document(&arena, &text, &Options::default());
