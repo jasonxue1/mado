@@ -54,15 +54,15 @@ impl RuleLike for MD036 {
         let mut violations = vec![];
 
         for node in doc.ast.descendants() {
-            if let NodeValue::Text(text) = &node.data.borrow().value {
-                if let Some(parent_node) = node.parent() {
-                    if let (NodeValue::Emph | NodeValue::Strong, Some(last_char)) =
-                        (&parent_node.data.borrow().value, text.chars().last())
-                    {
-                        let position = parent_node.data.borrow().sourcepos;
-                        if !self.punctuation.contains(last_char) && position.start.column == 1 {
-                            let violation = self.to_violation(doc.path.clone(), position);
-                            violations.push(violation);
+            if let NodeValue::Emph | NodeValue::Strong = &node.data.borrow().value {
+                for child_node in node.children() {
+                    if let NodeValue::Text(text) = &child_node.data.borrow().value {
+                        if let Some(last_char) = text.chars().last() {
+                            let position = node.data.borrow().sourcepos;
+                            if !self.punctuation.contains(last_char) && position.start.column == 1 {
+                                let violation = self.to_violation(doc.path.clone(), position);
+                                violations.push(violation);
+                            }
                         }
                     }
                 }
@@ -169,6 +169,19 @@ Consectetur adipiscing elit, sed do eiusmod."
     #[test]
     fn check_no_errors_with_indent() {
         let text = " **My document**".to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD036::default();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_with_code() {
+        let text = "**`My document`**".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let ast = parse_document(&arena, &text, &Options::default());
