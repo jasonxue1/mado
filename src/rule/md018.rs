@@ -43,12 +43,16 @@ impl RuleLike for MD018 {
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let mut violations = vec![];
 
-        for node in doc.ast.descendants() {
-            if let NodeValue::Text(text) = &node.data.borrow().value {
-                let position = node.data.borrow().sourcepos;
-                if position.start.column == 1 && text.starts_with('#') {
-                    let violation = self.to_violation(doc.path.clone(), position);
-                    violations.push(violation);
+        for node in doc.ast.children() {
+            if let NodeValue::Paragraph = node.data.borrow().value {
+                for child_node in node.children() {
+                    if let NodeValue::Text(text) = &child_node.data.borrow().value {
+                        let position = node.data.borrow().sourcepos;
+                        if position.start.column == 1 && text.starts_with('#') {
+                            let violation = self.to_violation(doc.path.clone(), position);
+                            violations.push(violation);
+                        }
+                    }
                 }
             }
         }
@@ -111,6 +115,19 @@ mod tests {
 
 See [#4649](https://example.com) for details."
             .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD018::default();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_with_list() {
+        let text = "* # Header 1".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let ast = parse_document(&arena, &text, &Options::default());
