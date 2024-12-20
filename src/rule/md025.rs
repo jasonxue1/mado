@@ -100,6 +100,26 @@ mod tests {
     }
 
     #[test]
+    fn check_errors_with_level() {
+        let text = "## Top level header
+
+## Another top level header"
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD025::new(2);
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![rule.to_violation(path.clone(), Sourcepos::from((3, 1, 3, 27)))];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
     fn check_no_errors() {
         let text = "# Title
 
@@ -112,6 +132,24 @@ mod tests {
         let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document { path, ast, text };
         let rule = MD025::default();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_with_level() {
+        let text = "## Title
+
+### Header
+
+### Another header"
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD025::new(2);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
         assert_eq!(actual, expected);
