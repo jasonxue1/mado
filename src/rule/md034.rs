@@ -44,10 +44,10 @@ impl RuleLike for MD034 {
     #[allow(clippy::cast_possible_wrap)]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let mut violations = vec![];
+        let finder = LinkFinder::new();
 
         for node in doc.ast.descendants() {
             if let NodeValue::Text(text) = &node.data.borrow().value {
-                let finder = LinkFinder::new();
                 for link in finder.links(text) {
                     if let Some(parent) = node.parent() {
                         if let NodeValue::Link(_) = parent.data.borrow().value {
@@ -113,6 +113,19 @@ mod tests {
     fn check_no_errors_with_link() {
         let text = "For more information, see [http://www.example.com/](http://www.example.com/)."
             .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD034::default();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_with_code() {
+        let text = "For more information, see `http://www.example.com/`.".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let ast = parse_document(&arena, &text, &Options::default());
