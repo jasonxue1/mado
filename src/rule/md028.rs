@@ -125,4 +125,27 @@ And Jimmy also said:
         let expected = vec![];
         assert_eq!(actual, expected);
     }
+
+    #[test]
+    fn check_no_errors_nested() {
+        let text = "* List
+    > This is a blockquote
+    > which is immediately followed by
+
+    > this blockquote. Unfortunately
+    > In some parsers, these are treated as the same blockquote."
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD028::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
 }
