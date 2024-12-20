@@ -30,16 +30,24 @@ impl MD033 {
         position: &Sourcepos,
         violations: &mut Vec<Violation>,
     ) {
-        // NOTE: `scraper::Html` automatically creates `<html>` as the root element
-        let fragment = Html::parse_fragment(html);
-        for element in fragment.root_element().child_elements() {
-            let is_allowed = self
-                .allowed_elements
-                .contains(&element.value().name().to_owned());
+        // NOTE: `Html::parse_fragment` automatically adds `<html>` as the root element,
+        //        so we need to check if `<html>` is allowed as a string
+        if html.starts_with("<html") && !self.allowed_elements.contains(&"html".to_owned()) {
+            let violation = self.to_violation(path.to_path_buf(), *position);
+            violations.push(violation);
+            return;
+        }
 
-            if !is_allowed {
+        let fragment = Html::parse_fragment(html);
+        for element in fragment.root_element().descendent_elements() {
+            let name = element.value().name();
+            let is_allowed = self.allowed_elements.contains(&name.to_owned());
+
+            // NOTE: Skip <html> root
+            if !is_allowed && name != "html" {
                 let violation = self.to_violation(path.to_path_buf(), *position);
                 violations.push(violation);
+                break;
             }
         }
     }
@@ -121,6 +129,23 @@ mod tests {
     }
 
     #[test]
+    fn check_errors_nested() {
+        let text = r##"<h1><a href="#">Inline HTML header</a></h1>"##.to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD033::default();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![rule.to_violation(path, Sourcepos::from((1, 1, 1, 43)))];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
     fn check_errors_with_allowed_tag() {
         let text = "<p>h1</p>".to_owned();
         let path = Path::new("test.md").to_path_buf();
@@ -154,24 +179,22 @@ mod tests {
         assert_eq!(actual, expected);
     }
 
-    // TODO: Cannot handle this case because the implicit `<html>` tag
-    //       owned by `scraper::html` must be skipped.
-    // #[test]
-    // fn check_errors_with_html() {
-    //     let text = "<html>text</html>".to_owned();
-    //     let path = Path::new("test.md").to_path_buf();
-    //     let arena = Arena::new();
-    //     let ast = parse_document(&arena, &text, &Options::default());
-    //     let doc = Document {
-    //         path: path.clone(),
-    //         ast,
-    //         text,
-    //     };
-    //     let rule = MD033::default();
-    //     let actual = rule.check(&doc).unwrap();
-    //     let expected = vec![rule.to_violation(path, Sourcepos::from((1, 1, 0, 0)))];
-    //     assert_eq!(actual, expected);
-    // }
+    #[test]
+    fn check_errors_with_html() {
+        let text = "<html>text</html>".to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD033::default();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![rule.to_violation(path, Sourcepos::from((1, 1, 1, 17)))];
+        assert_eq!(actual, expected);
+    }
 
     #[test]
     fn check_errors_with_br() {
