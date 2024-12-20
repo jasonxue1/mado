@@ -148,14 +148,14 @@ Some text"
 
     #[test]
     fn check_errors_with_code_block() {
-        let text = "Some text
+        let text = "    Indented code block
 * Some
 * List
 
 1. Some
 2. List
 ```
-Some text
+Fenced code block
 ```"
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
