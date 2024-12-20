@@ -50,7 +50,7 @@ impl RuleLike for MD009 {
             let mut locs = re.capture_locations();
             re.captures_read(&mut locs, line);
             if let Some((start_column, end_column)) = locs.get(0) {
-                let position = Sourcepos::from((lineno, start_column, lineno, end_column - 1));
+                let position = Sourcepos::from((lineno, start_column + 1, lineno, end_column));
                 let violation = self.to_violation(doc.path.clone(), position);
                 violations.push(violation);
             }
@@ -85,8 +85,8 @@ And text with some trailing spaces   "
         let rule = MD009::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
-            rule.to_violation(path.clone(), Sourcepos::from((1, 26, 1, 26))),
-            rule.to_violation(path, Sourcepos::from((2, 34, 2, 36))),
+            rule.to_violation(path.clone(), Sourcepos::from((1, 27, 1, 27))),
+            rule.to_violation(path, Sourcepos::from((2, 35, 2, 37))),
         ];
         assert_eq!(actual, expected);
     }
@@ -94,6 +94,19 @@ And text with some trailing spaces   "
     #[test]
     fn check_no_errors() {
         let text = "Text with no trailing spaces".to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD009::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_full_with_space() {
+        let text = "Text with no trailing spaces　".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let ast = parse_document(&arena, &text, &Options::default());
