@@ -42,12 +42,12 @@ impl MD029 {
                 for item_node in node.children() {
                     if let NodeValue::Item(item) = item_node.data.borrow().value {
                         if list.list_type == ListType::Ordered {
-                            let is_violated = match (&self.style, maybe_prev_start) {
-                                (OrderedListStyle::One, _) => item.start != 1,
-                                (OrderedListStyle::Ordered, Some(prev_start)) => {
-                                    item.start != prev_start + 1
-                                }
-                                _ => false,
+                            let is_violated = match self.style {
+                                OrderedListStyle::One => item.start != 1,
+                                OrderedListStyle::Ordered => match maybe_prev_start {
+                                    Some(prev_start) => item.start != prev_start + 1,
+                                    None => false,
+                                },
                             };
 
                             if is_violated {
@@ -140,6 +140,29 @@ mod tests {
     }
 
     #[test]
+    fn check_errors_ordered() {
+        let text = "1. Do this.
+1. Do that.
+1. Done."
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD029::new(OrderedListStyle::Ordered);
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![
+            rule.to_violation(path.clone(), Sourcepos::from((2, 1, 2, 11))),
+            rule.to_violation(path, Sourcepos::from((3, 1, 3, 8))),
+        ];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
     fn check_errors_recursive() {
         let text = "* Parent list
     1. Do this.
@@ -159,29 +182,6 @@ mod tests {
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((3, 5, 3, 15))),
             rule.to_violation(path, Sourcepos::from((4, 5, 4, 12))),
-        ];
-        assert_eq!(actual, expected);
-    }
-
-    #[test]
-    fn check_errors_ordered() {
-        let text = "1. Do this.
-1. Do that.
-1. Done."
-            .to_owned();
-        let path = Path::new("test.md").to_path_buf();
-        let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
-        let rule = MD029::new(OrderedListStyle::Ordered);
-        let actual = rule.check(&doc).unwrap();
-        let expected = vec![
-            rule.to_violation(path.clone(), Sourcepos::from((2, 1, 2, 11))),
-            rule.to_violation(path, Sourcepos::from((3, 1, 3, 8))),
         ];
         assert_eq!(actual, expected);
     }
