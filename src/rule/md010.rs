@@ -51,7 +51,7 @@ impl RuleLike for MD010 {
             let mut locs = re.capture_locations();
             re.captures_read(&mut locs, line);
             if let Some((start_column, end_column)) = locs.get(0) {
-                let position = Sourcepos::from((lineno, start_column, lineno, end_column - 1));
+                let position = Sourcepos::from((lineno, start_column + 1, lineno, end_column));
                 let violation = self.to_violation(doc.path.clone(), position);
                 violations.push(violation);
             }
@@ -86,7 +86,7 @@ mod tests {
         };
         let rule = MD010::new();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(path, Sourcepos::from((3, 0, 3, 0)))];
+        let expected = vec![rule.to_violation(path, Sourcepos::from((3, 1, 3, 1)))];
         assert_eq!(actual, expected);
     }
 
