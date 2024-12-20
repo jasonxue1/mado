@@ -48,8 +48,9 @@ impl RuleLike for MD031 {
                 let prev_position = prev_node.data.borrow().sourcepos;
                 let position = node.data.borrow().sourcepos;
 
-                if let NodeValue::CodeBlock(_) = prev_node.data.borrow().value {
-                    if position.start.line == prev_position.end.line + 1
+                if let NodeValue::CodeBlock(code) = &prev_node.data.borrow().value {
+                    if code.fenced
+                        && position.start.line == prev_position.end.line + 1
                         && prev_position.end.column != 0
                     {
                         let violation = self.to_violation(doc.path.clone(), position);
@@ -57,8 +58,9 @@ impl RuleLike for MD031 {
                     }
                 }
 
-                if let NodeValue::CodeBlock(_) = node.data.borrow().value {
-                    if position.start.line == prev_position.end.line + 1
+                if let NodeValue::CodeBlock(code) = &node.data.borrow().value {
+                    if code.fenced
+                        && position.start.line == prev_position.end.line + 1
                         && prev_position.end.column != 0
                     {
                         let violation = self.to_violation(doc.path.clone(), position);
@@ -124,6 +126,24 @@ Code block
 Another code block
 ```
 
+Some more text"
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD031::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_indented() {
+        let text = "Some text
+    Code block
+
+    Another code block
 Some more text"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
