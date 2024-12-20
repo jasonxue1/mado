@@ -45,13 +45,14 @@ impl RuleLike for MD012 {
         let mut maybe_prev_line: Option<&str> = None;
         let mut code_block_ranges = RangeSet::new();
 
-        for node in doc.ast.children() {
+        for node in doc.ast.descendants() {
             if let NodeValue::CodeBlock(_) = node.data.borrow().value {
                 let position = node.data.borrow().sourcepos;
                 let range = position.start.line..=position.end.line;
                 code_block_ranges.insert(range);
             }
         }
+
         let lines: Vec<_> = doc.text.lines().collect();
         for (i, line) in lines.iter().enumerate() {
             let lineno = i + 1;
@@ -155,6 +156,27 @@ Some code here
 
 Some more text here"
             .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD012::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_with_nested_code_block() {
+        let text = "* List
+
+  ```
+  This is a code block
+
+
+  Some code here
+  ```"
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let ast = parse_document(&arena, &text, &Options::default());
