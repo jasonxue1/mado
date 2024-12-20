@@ -51,44 +51,44 @@ are currently supported.
 * :warning: The rule has unsupported option(s).
 * :x: The rule is unsupported.
 
-| Rule  | Support            | Note                                         |
-|-------|--------------------|----------------------------------------------|
-| MD001 | :white_check_mark: |                                              |
-| MD002 | :white_check_mark: |                                              |
-| MD003 | :warning:          | `:atx_closed` style does not support.        |
-| MD004 | :warning:          | `:sublist` style does not support.           |
-| MD005 | :white_check_mark: |                                              |
-| MD006 | :white_check_mark: |                                              |
-| MD007 | :hammer:           |                                              |
-| MD009 | :white_check_mark: |                                              |
-| MD010 | :white_check_mark: |                                              |
-| MD012 | :white_check_mark: |                                              |
-| MD013 | :hammer:           |                                              |
-| MD014 | :white_check_mark: |                                              |
-| MD018 | :white_check_mark: |                                              |
-| MD019 | :white_check_mark: |                                              |
-| MD022 | :white_check_mark: |                                              |
-| MD023 | :white_check_mark: |                                              |
-| MD024 | :warning: :hammer: | `allow_different_nesting` does not support.  |
-| MD025 | :white_check_mark: |                                              |
-| MD026 | :white_check_mark: |                                              |
-| MD027 | :hammer:           |                                              |
-| MD028 | :white_check_mark: |                                              |
-| MD029 | :white_check_mark: |                                              |
-| MD030 | :white_check_mark: |                                              |
-| MD031 | :white_check_mark: |                                              |
-| MD032 | :white_check_mark: |                                              |
-| MD033 | :hammer:           |                                              |
-| MD034 | :white_check_mark: |                                              |
-| MD035 | :x:                | comrak does not support line styles.         |
-| MD036 | :hammer:           |                                              |
-| MD037 | :hammer:           |                                              |
-| MD038 | :white_check_mark: |                                              |
-| MD039 | :white_check_mark: |                                              |
-| MD040 | :white_check_mark: |                                              |
-| MD041 | :white_check_mark: |                                              |
-| MD046 | :white_check_mark: |                                              |
-| MD047 | :white_check_mark: |                                              |
+| Rule  | Support            | Note                                          |
+|-------|--------------------|-----------------------------------------------|
+| MD001 | :white_check_mark: |                                               |
+| MD002 | :white_check_mark: |                                               |
+| MD003 | :warning:          | `:atx_closed` is not supported.               |
+| MD004 | :warning:          | `:sublist` is not supported.                  |
+| MD005 | :white_check_mark: |                                               |
+| MD006 | :white_check_mark: |                                               |
+| MD007 | :hammer:           |                                               |
+| MD009 | :white_check_mark: |                                               |
+| MD010 | :white_check_mark: |                                               |
+| MD012 | :white_check_mark: |                                               |
+| MD013 | :warning:          | `code_blocks` and `tables` are not supported. |
+| MD014 | :white_check_mark: |                                               |
+| MD018 | :white_check_mark: |                                               |
+| MD019 | :white_check_mark: |                                               |
+| MD022 | :white_check_mark: |                                               |
+| MD023 | :white_check_mark: |                                               |
+| MD024 | :warning: :hammer: | `allow_different_nesting` is not supported.   |
+| MD025 | :white_check_mark: |                                               |
+| MD026 | :white_check_mark: |                                               |
+| MD027 | :hammer:           |                                               |
+| MD028 | :white_check_mark: |                                               |
+| MD029 | :white_check_mark: |                                               |
+| MD030 | :white_check_mark: |                                               |
+| MD031 | :white_check_mark: |                                               |
+| MD032 | :white_check_mark: |                                               |
+| MD033 | :hammer:           |                                               |
+| MD034 | :white_check_mark: |                                               |
+| MD035 | :x:                | comrak does not support line styles.          |
+| MD036 | :hammer:           |                                               |
+| MD037 | :hammer:           |                                               |
+| MD038 | :white_check_mark: |                                               |
+| MD039 | :white_check_mark: |                                               |
+| MD040 | :white_check_mark: |                                               |
+| MD041 | :white_check_mark: |                                               |
+| MD046 | :white_check_mark: |                                               |
+| MD047 | :white_check_mark: |                                               |
 
 ## Development
 
