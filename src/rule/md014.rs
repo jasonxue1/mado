@@ -42,7 +42,7 @@ impl RuleLike for MD014 {
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let mut violations = vec![];
 
-        for node in doc.ast.children() {
+        for node in doc.ast.descendants() {
             if let NodeValue::CodeBlock(code) = &node.data.borrow().value {
                 let mut lines = code.literal.lines();
                 if lines.all(|line| line.starts_with("$ ")) {
@@ -89,6 +89,30 @@ $ less bar
     }
 
     #[test]
+    fn check_errors_with_list() {
+        let text = "* List
+
+  ```
+  $ ls
+  $ cat foo
+  $ less bar
+  ```"
+        .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD014::default();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![rule.to_violation(path, Sourcepos::from((3, 3, 7, 5)))];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
     fn check_no_errors_no_dollars() {
         let text = "```
 ls
@@ -107,7 +131,7 @@ less bar
     }
 
     #[test]
-    fn check_no_errors_with_showing_outputs() {
+    fn check_no_errors_showing_outputs() {
         let text = "```
 $ ls
 foo bar
@@ -116,6 +140,47 @@ Hello world
 $ cat bar
 baz
 ```"
+        .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD014::default();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_no_dollars_with_list() {
+        let text = "* List
+  ```
+  ls
+  cat foo
+  less bar
+  ```"
+        .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD014::default();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_showing_outputs_with_list() {
+        let text = "* List
+  ```
+  $ ls
+  foo bar
+  $ cat foo
+  Hello world
+  $ cat bar
+  baz
+  ```"
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
