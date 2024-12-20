@@ -43,8 +43,8 @@ is used (1,500 Markdown files).
 
 ## Rules
 
-Several [markdownlint](https://github.com/markdownlint/markdownlint) rules are
-currently supported.
+Several [markdownlint rules](https://github.com/markdownlint/markdownlint/blob/main/docs/RULES.md)
+are currently supported.
 
 * :white_check_mark: The rule is stable.
 * :hammer: The rule is unstable.
