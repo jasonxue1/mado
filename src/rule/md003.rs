@@ -1,4 +1,4 @@
-use comrak::nodes::NodeValue;
+use comrak::nodes::{NodeHeading, NodeValue};
 use miette::Result;
 use serde::Deserialize;
 
@@ -65,37 +65,27 @@ impl RuleLike for MD003 {
     #[inline]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let mut violations = vec![];
-        let mut maybe_first_heading_style = None;
+        let mut maybe_heading_style = None;
 
         for node in doc.ast.children() {
-            if let NodeValue::Heading(heading) = node.data.borrow().value {
-                match self.style {
-                    HeadingStyle::Consistent => match maybe_first_heading_style {
-                        Some(first_heading_style) => {
-                            if heading.setext != first_heading_style {
-                                let position = node.data.borrow().sourcepos;
-                                let violation = self.to_violation(doc.path.clone(), position);
-                                violations.push(violation);
-                            }
-                        }
-                        None => maybe_first_heading_style = Some(heading.setext),
-                    },
-                    HeadingStyle::Atx if heading.setext => {
-                        let position = node.data.borrow().sourcepos;
-                        let violation = self.to_violation(doc.path.clone(), position);
-                        violations.push(violation);
-                    }
-                    HeadingStyle::Setext if !heading.setext => {
-                        let position = node.data.borrow().sourcepos;
-                        let violation = self.to_violation(doc.path.clone(), position);
-                        violations.push(violation);
-                    }
-                    HeadingStyle::SetextWithAtx if heading.level < 3 && !heading.setext => {
-                        let position = node.data.borrow().sourcepos;
-                        let violation = self.to_violation(doc.path.clone(), position);
-                        violations.push(violation);
-                    }
-                    _ => {}
+            if let NodeValue::Heading(NodeHeading { level, setext, .. }) = node.data.borrow().value
+            {
+                let is_violated = match (&self.style, maybe_heading_style) {
+                    (HeadingStyle::Consistent, Some(heading_style)) => setext != heading_style,
+                    (HeadingStyle::Atx, _) => setext,
+                    (HeadingStyle::Setext, _) => !setext,
+                    (HeadingStyle::SetextWithAtx, _) => level < 3 && !setext,
+                    _ => false,
+                };
+
+                if is_violated {
+                    let position = node.data.borrow().sourcepos;
+                    let violation = self.to_violation(doc.path.clone(), position);
+                    violations.push(violation);
+                }
+
+                if maybe_heading_style.is_none() {
+                    maybe_heading_style = Some(setext);
                 }
             }
         }
@@ -114,7 +104,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_errors() {
+    fn check_errors_for_consistent() {
         let text = "# ATX style H1
 
 ## Closed ATX style H2 ##
@@ -133,6 +123,80 @@ Setext style H1
         let rule = MD003::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![rule.to_violation(path, Sourcepos::from((5, 1, 6, 15)))];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_errors_for_atx() {
+        let text = "# ATX style H1
+
+## Closed ATX style H2 ##
+
+Setext style H1
+==============="
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD003::new(HeadingStyle::Atx);
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![rule.to_violation(path, Sourcepos::from((5, 1, 6, 15)))];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_errors_for_setext() {
+        let text = "# ATX style H1
+
+## Closed ATX style H2 ##
+
+Setext style H1
+==============="
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD003::new(HeadingStyle::Setext);
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![
+            rule.to_violation(path.clone(), Sourcepos::from((1, 1, 1, 14))),
+            rule.to_violation(path.clone(), Sourcepos::from((3, 1, 3, 25))),
+        ];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_errors_for_setext_with_atx() {
+        let text = "# ATX style H1
+
+## ATX style H2
+
+### ATX style H3"
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD003::new(HeadingStyle::SetextWithAtx);
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![
+            rule.to_violation(path.clone(), Sourcepos::from((1, 1, 1, 14))),
+            rule.to_violation(path, Sourcepos::from((3, 1, 3, 15))),
+        ];
         assert_eq!(actual, expected);
     }
 
