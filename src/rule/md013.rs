@@ -1,5 +1,6 @@
+use std::sync::LazyLock;
+
 use comrak::nodes::Sourcepos;
-use miette::IntoDiagnostic as _;
 use miette::Result;
 use regex::Regex;
 
@@ -55,13 +56,17 @@ impl RuleLike for MD013 {
 
     #[inline]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
+        static RE: LazyLock<Regex> = LazyLock::new(|| {
+            #[allow(clippy::unwrap_used)]
+            Regex::new(r".*\s").unwrap()
+        });
+
         let mut violations = vec![];
-        let re = Regex::new(&format!(r#"^.{{{}}}.*\s"#, self.line_length)).into_diagnostic()?;
 
         for (i, line) in doc.text.lines().enumerate() {
             let lineno = i + 1;
 
-            if re.is_match(line) {
+            if line.len() > self.line_length && RE.is_match_at(line, self.line_length) {
                 let position = Sourcepos::from((lineno, self.line_length + 1, lineno, line.len()));
                 let violation = self.to_violation(doc.path.clone(), position);
                 violations.push(violation);

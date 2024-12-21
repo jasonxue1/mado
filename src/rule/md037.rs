@@ -1,5 +1,6 @@
+use std::sync::LazyLock;
+
 use comrak::nodes::NodeValue;
-use miette::IntoDiagnostic as _;
 use miette::Result;
 use regex::Regex;
 
@@ -44,13 +45,17 @@ impl RuleLike for MD037 {
     #[inline]
     #[allow(clippy::cast_possible_wrap)]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
+        static RE: LazyLock<Regex> = LazyLock::new(|| {
+            #[allow(clippy::unwrap_used)]
+            Regex::new(r"(\*\*?( +[^*]+ *| *[^*]+ +)\*?\*|\_\_?( +[^_]+ *| *[^_]+ +)\_?\_)")
+                .unwrap()
+        });
+
         let mut violations = vec![];
-        let re = Regex::new(r"(\*\*?( +[^*]+ *| *[^*]+ +)\*?\*|\_\_?( +[^_]+ *| *[^_]+ +)\_?\_)")
-            .into_diagnostic()?;
 
         for node in doc.ast.descendants() {
             if let NodeValue::Text(text) = &node.data.borrow().value {
-                if let Some(m) = re.find(text) {
+                if let Some(m) = RE.find(text) {
                     let mut position = node.data.borrow().sourcepos;
                     position.end = position.start.column_add(m.end() as isize - 1);
                     position.start = position.start.column_add(m.start() as isize);
