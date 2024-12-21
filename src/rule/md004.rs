@@ -65,43 +65,31 @@ impl RuleLike for MD004 {
     #[inline]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let mut violations = vec![];
-        let mut maybe_first_list_style = None;
+        let mut maybe_list_char = None;
 
         for node in doc.ast.descendants() {
-            if let NodeValue::Item(
-                item @ NodeList {
-                    list_type: ListType::Bullet,
-                    ..
-                },
-            ) = node.data.borrow().value
+            if let NodeValue::Item(NodeList {
+                list_type: ListType::Bullet,
+                bullet_char,
+                ..
+            }) = node.data.borrow().value
             {
-                match self.style {
-                    ListStyle::Consistent => match maybe_first_list_style {
-                        Some(first_list_style) => {
-                            if item.bullet_char != first_list_style {
-                                let position = node.data.borrow().sourcepos;
-                                let violation = self.to_violation(doc.path.clone(), position);
-                                violations.push(violation);
-                            }
-                        }
-                        None => maybe_first_list_style = Some(item.bullet_char),
-                    },
-                    ListStyle::Asterisk if item.bullet_char != b'*' => {
-                        let position = node.data.borrow().sourcepos;
-                        let violation = self.to_violation(doc.path.clone(), position);
-                        violations.push(violation);
-                    }
-                    ListStyle::Plus if item.bullet_char != b'+' => {
-                        let position = node.data.borrow().sourcepos;
-                        let violation = self.to_violation(doc.path.clone(), position);
-                        violations.push(violation);
-                    }
-                    ListStyle::Dash if item.bullet_char != b'-' => {
-                        let position = node.data.borrow().sourcepos;
-                        let violation = self.to_violation(doc.path.clone(), position);
-                        violations.push(violation);
-                    }
-                    _ => {}
+                let is_violated = match (&self.style, maybe_list_char) {
+                    (ListStyle::Consistent, Some(list_char)) => bullet_char != list_char,
+                    (ListStyle::Asterisk, _) => bullet_char != b'*',
+                    (ListStyle::Plus, _) => bullet_char != b'+',
+                    (ListStyle::Dash, _) => bullet_char != b'-',
+                    _ => false,
+                };
+
+                if is_violated {
+                    let position = node.data.borrow().sourcepos;
+                    let violation = self.to_violation(doc.path.clone(), position);
+                    violations.push(violation);
+                }
+
+                if maybe_list_char.is_none() {
+                    maybe_list_char = Some(bullet_char);
                 }
             }
         }
@@ -138,6 +126,75 @@ mod tests {
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((2, 1, 2, 8))),
             rule.to_violation(path, Sourcepos::from((3, 1, 3, 8))),
+        ];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_errors_for_asterisk() {
+        let text = "* Item 1
++ Item 2
+- Item 3"
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD004::new(ListStyle::Asterisk);
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![
+            rule.to_violation(path.clone(), Sourcepos::from((2, 1, 2, 8))),
+            rule.to_violation(path, Sourcepos::from((3, 1, 3, 8))),
+        ];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_errors_for_plus() {
+        let text = "* Item 1
++ Item 2
+- Item 3"
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD004::new(ListStyle::Plus);
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![
+            rule.to_violation(path.clone(), Sourcepos::from((1, 1, 1, 8))),
+            rule.to_violation(path, Sourcepos::from((3, 1, 3, 8))),
+        ];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_errors_for_dash() {
+        let text = "* Item 1
++ Item 2
+- Item 3"
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD004::new(ListStyle::Dash);
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![
+            rule.to_violation(path.clone(), Sourcepos::from((1, 1, 1, 8))),
+            rule.to_violation(path, Sourcepos::from((2, 1, 2, 8))),
         ];
         assert_eq!(actual, expected);
     }
