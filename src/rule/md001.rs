@@ -76,7 +76,9 @@ mod tests {
 
 ### Header 3
 
-We skipped out a 2nd level header in this document"
+## Another Header 2
+
+#### Header 4"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -88,7 +90,10 @@ We skipped out a 2nd level header in this document"
         };
         let rule = MD001::new();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(path, Sourcepos::from((3, 1, 3, 12)))];
+        let expected = vec![
+            rule.to_violation(path.clone(), Sourcepos::from((3, 1, 3, 12))),
+            rule.to_violation(path, Sourcepos::from((7, 1, 7, 13))),
+        ];
         assert_eq!(actual, expected);
     }
 
