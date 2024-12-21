@@ -22,6 +22,8 @@ pub struct MD046 {
 }
 
 impl MD046 {
+    pub const DEFAULT_STYLE: CodeBlockStyle = CodeBlockStyle::Fenced;
+
     #[inline]
     #[must_use]
     pub fn new(style: CodeBlockStyle) -> Self {
@@ -33,7 +35,7 @@ impl Default for MD046 {
     #[inline]
     fn default() -> Self {
         Self {
-            style: CodeBlockStyle::Fenced,
+            style: Self::DEFAULT_STYLE,
         }
     }
 }

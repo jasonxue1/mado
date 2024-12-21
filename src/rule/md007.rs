@@ -12,6 +12,8 @@ pub struct MD007 {
 }
 
 impl MD007 {
+    pub const DEFAULT_INDENT: usize = 4;
+
     #[inline]
     #[must_use]
     pub fn new(indent: usize) -> Self {
@@ -22,7 +24,9 @@ impl MD007 {
 impl Default for MD007 {
     #[inline]
     fn default() -> Self {
-        Self { indent: 4 }
+        Self {
+            indent: Self::DEFAULT_INDENT,
+        }
     }
 }
 

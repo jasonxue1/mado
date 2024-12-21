@@ -25,6 +25,8 @@ pub struct MD003 {
 }
 
 impl MD003 {
+    pub const DEFAULT_HEADING_STYLE: HeadingStyle = HeadingStyle::Consistent;
+
     #[inline]
     #[must_use]
     pub fn new(style: HeadingStyle) -> Self {
@@ -36,7 +38,7 @@ impl Default for MD003 {
     #[inline]
     fn default() -> Self {
         Self {
-            style: HeadingStyle::Consistent,
+            style: Self::DEFAULT_HEADING_STYLE,
         }
     }
 }

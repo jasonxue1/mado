@@ -9,10 +9,12 @@ use super::RuleLike;
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct MD002 {
-    level: u8,
+    pub level: u8,
 }
 
 impl MD002 {
+    pub const DEFAULT_LEVEL: u8 = 1;
+
     #[inline]
     #[must_use]
     pub fn new(level: u8) -> Self {
@@ -23,7 +25,9 @@ impl MD002 {
 impl Default for MD002 {
     #[inline]
     fn default() -> Self {
-        Self { level: 1 }
+        Self {
+            level: Self::DEFAULT_LEVEL,
+        }
     }
 }
 

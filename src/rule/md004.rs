@@ -25,6 +25,8 @@ pub struct MD004 {
 }
 
 impl MD004 {
+    pub const DEFAULT_LIST_STYLE: ListStyle = ListStyle::Consistent;
+
     #[inline]
     #[must_use]
     pub fn new(style: ListStyle) -> Self {
@@ -36,7 +38,7 @@ impl Default for MD004 {
     #[inline]
     fn default() -> Self {
         Self {
-            style: ListStyle::Consistent,
+            style: Self::DEFAULT_LIST_STYLE,
         }
     }
 }

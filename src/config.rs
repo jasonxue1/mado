@@ -14,10 +14,12 @@ pub use lint::Lint;
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Default)]
 #[serde(default)]
+#[allow(clippy::exhaustive_structs)]
 pub struct Config {
     pub lint: Lint,
 }
 
+#[inline]
 pub fn load<P: AsRef<Path>>(path: P) -> Result<Config> {
     let config_text = fs::read_to_string(path).into_diagnostic()?;
     toml::from_str(&config_text).map_err(|err| miette!(err))
@@ -26,6 +28,7 @@ pub fn load<P: AsRef<Path>>(path: P) -> Result<Config> {
 const FILE_NAME: &str = "downlint.toml";
 const HIDDEN_FILE_NAME: &str = ".downlint.toml";
 
+#[inline]
 pub fn resolve() -> Result<Config> {
     let local_path = Path::new(FILE_NAME);
     let exists_local = fs::exists(local_path).into_diagnostic()?;

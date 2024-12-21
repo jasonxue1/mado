@@ -8,13 +8,15 @@ use crate::{violation::Violation, Document};
 
 use super::RuleLike;
 
-#[derive(Debug, Default, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct MD033 {
     allowed_elements: Vec<String>,
 }
 
 impl MD033 {
+    pub const DEFAULT_ALLOWED_ELEMENTS: Vec<String> = vec![];
+
     #[inline]
     #[must_use]
     pub fn new(allowed_elements: &[String]) -> Self {
@@ -49,6 +51,15 @@ impl MD033 {
                 violations.push(violation);
                 break;
             }
+        }
+    }
+}
+
+impl Default for MD033 {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            allowed_elements: Self::DEFAULT_ALLOWED_ELEMENTS,
         }
     }
 }

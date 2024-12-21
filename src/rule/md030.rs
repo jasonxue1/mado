@@ -17,6 +17,11 @@ pub struct MD030 {
 }
 
 impl MD030 {
+    pub const DEFAULT_UL_SINGLE: usize = 1;
+    pub const DEFAULT_OL_SINGLE: usize = 1;
+    pub const DEFAULT_UL_MULTI: usize = 1;
+    pub const DEFAULT_OL_MULTI: usize = 1;
+
     #[inline]
     #[must_use]
     pub fn new(ul_single: usize, ol_single: usize, ul_multi: usize, ol_multi: usize) -> Self {
@@ -81,10 +86,10 @@ impl Default for MD030 {
     #[inline]
     fn default() -> Self {
         Self {
-            ul_single: 1,
-            ol_single: 1,
-            ul_multi: 1,
-            ol_multi: 1,
+            ul_single: Self::DEFAULT_UL_SINGLE,
+            ol_single: Self::DEFAULT_OL_SINGLE,
+            ul_multi: Self::DEFAULT_UL_MULTI,
+            ol_multi: Self::DEFAULT_OL_MULTI,
         }
     }
 }

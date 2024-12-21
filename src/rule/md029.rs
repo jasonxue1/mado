@@ -23,6 +23,8 @@ pub struct MD029 {
 }
 
 impl MD029 {
+    pub const DEFAULT_STYLE: OrderedListStyle = OrderedListStyle::One;
+
     #[inline]
     #[must_use]
     pub fn new(style: OrderedListStyle) -> Self {
@@ -71,7 +73,7 @@ impl Default for MD029 {
     #[inline]
     fn default() -> Self {
         Self {
-            style: OrderedListStyle::One,
+            style: Self::DEFAULT_STYLE,
         }
     }
 }

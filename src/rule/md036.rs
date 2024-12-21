@@ -12,6 +12,8 @@ pub struct MD036 {
 }
 
 impl MD036 {
+    pub const DEFAULT_PUNCTUATION: &str = ".,;:!?";
+
     #[inline]
     #[must_use]
     pub fn new(punctuation: String) -> Self {
@@ -23,7 +25,7 @@ impl Default for MD036 {
     #[inline]
     fn default() -> Self {
         Self {
-            punctuation: ".,;:!?".to_owned(),
+            punctuation: Self::DEFAULT_PUNCTUATION.to_owned(),
         }
     }
 }

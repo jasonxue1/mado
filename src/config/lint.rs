@@ -32,6 +32,7 @@ pub use md046::MD046;
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 #[serde(default, rename_all = "kebab-case")]
+#[allow(clippy::exhaustive_structs)]
 pub struct Lint {
     pub output_format: Format,
     pub rules: Vec<Rule>,
@@ -51,6 +52,7 @@ pub struct Lint {
 }
 
 impl Default for Lint {
+    #[inline]
     fn default() -> Self {
         Self {
             output_format: Format::Concise,

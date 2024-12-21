@@ -14,6 +14,8 @@ pub struct MD013 {
 }
 
 impl MD013 {
+    pub const DEFAULT_LINE_LENGTH: usize = 80;
+
     #[inline]
     #[must_use]
     pub fn new(line_length: usize) -> Self {
@@ -24,7 +26,9 @@ impl MD013 {
 impl Default for MD013 {
     #[inline]
     fn default() -> Self {
-        Self { line_length: 80 }
+        Self {
+            line_length: Self::DEFAULT_LINE_LENGTH,
+        }
     }
 }
 

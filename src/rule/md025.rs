@@ -12,6 +12,8 @@ pub struct MD025 {
 }
 
 impl MD025 {
+    pub const DEFAULT_LEVEL: u8 = 1;
+
     #[inline]
     #[must_use]
     pub fn new(level: u8) -> Self {
@@ -22,7 +24,9 @@ impl MD025 {
 impl Default for MD025 {
     #[inline]
     fn default() -> Self {
-        Self { level: 1 }
+        Self {
+            level: Self::DEFAULT_LEVEL,
+        }
     }
 }
 
