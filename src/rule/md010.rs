@@ -22,23 +22,23 @@ impl MD010 {
 
 impl RuleLike for MD010 {
     #[inline]
-    fn name(&self) -> String {
-        "MD010".to_owned()
+    fn name(&self) -> &'static str {
+        "MD010"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Hard tabs".to_owned()
+    fn description(&self) -> &'static str {
+        "Hard tabs"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["whitespace".to_owned(), "hard_tab".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["whitespace", "hard_tab"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["no-hard-tabs".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["no-hard-tabs"]
     }
 
     #[inline]

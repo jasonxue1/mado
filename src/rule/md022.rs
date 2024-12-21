@@ -19,23 +19,23 @@ impl MD022 {
 
 impl RuleLike for MD022 {
     #[inline]
-    fn name(&self) -> String {
-        "MD022".to_owned()
+    fn name(&self) -> &'static str {
+        "MD022"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Headers should be surrounded by blank lines".to_owned()
+    fn description(&self) -> &'static str {
+        "Headers should be surrounded by blank lines"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["headers".to_owned(), "blank_lines".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["headers", "blank_lines"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["blanks-around-headers".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["blanks-around-headers"]
     }
 
     #[inline]

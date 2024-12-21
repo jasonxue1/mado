@@ -66,23 +66,23 @@ impl Default for MD033 {
 
 impl RuleLike for MD033 {
     #[inline]
-    fn name(&self) -> String {
-        "MD033".to_owned()
+    fn name(&self) -> &'static str {
+        "MD033"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Inline HTML".to_owned()
+    fn description(&self) -> &'static str {
+        "Inline HTML"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["html".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["html"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["no-inline-html".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["no-inline-html"]
     }
 
     #[inline]

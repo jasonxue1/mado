@@ -32,23 +32,23 @@ impl Default for MD025 {
 
 impl RuleLike for MD025 {
     #[inline]
-    fn name(&self) -> String {
-        "MD025".to_owned()
+    fn name(&self) -> &'static str {
+        "MD025"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Multiple top level headers in the same document".to_owned()
+    fn description(&self) -> &'static str {
+        "Multiple top level headers in the same document"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["headers".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["headers"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["single-h1".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["single-h1"]
     }
 
     #[inline]

@@ -53,27 +53,23 @@ impl MD005 {
 
 impl RuleLike for MD005 {
     #[inline]
-    fn name(&self) -> String {
-        "MD005".to_owned()
+    fn name(&self) -> &'static str {
+        "MD005"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Inconsistent indentation for list items at the same level".to_owned()
+    fn description(&self) -> &'static str {
+        "Inconsistent indentation for list items at the same level"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec![
-            "bullet".to_owned(),
-            "ul".to_owned(),
-            "indentation".to_owned(),
-        ]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["bullet", "ul", "indentation"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["list-indent".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["list-indent"]
     }
 
     #[inline]

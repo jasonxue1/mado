@@ -20,23 +20,23 @@ impl MD034 {
 
 impl RuleLike for MD034 {
     #[inline]
-    fn name(&self) -> String {
-        "MD034".to_owned()
+    fn name(&self) -> &'static str {
+        "MD034"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Bare URL used".to_owned()
+    fn description(&self) -> &'static str {
+        "Bare URL used"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["links".to_owned(), "url".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["links", "url"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["no-bare-urls".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["no-bare-urls"]
     }
 
     // TODO: Use safe casting

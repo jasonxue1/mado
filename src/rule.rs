@@ -84,13 +84,13 @@ pub enum Rule {
 }
 
 pub trait RuleLike: Send {
-    fn name(&self) -> String;
+    fn name(&self) -> &'static str;
 
-    fn description(&self) -> String;
+    fn description(&self) -> &'static str;
 
-    fn tags(&self) -> Vec<String>;
+    fn tags(&self) -> Vec<&'static str>;
 
-    fn aliases(&self) -> Vec<String>;
+    fn aliases(&self) -> Vec<&'static str>;
 
     fn check(&self, doc: &Document) -> Result<Vec<Violation>>;
 
@@ -98,9 +98,9 @@ pub trait RuleLike: Send {
     fn to_violation(&self, path: PathBuf, position: Sourcepos) -> Violation {
         Violation::new(
             path,
-            self.name(),
-            self.aliases()[0].clone(),
-            self.description(),
+            self.name().to_owned(),
+            self.aliases()[0].to_owned(),
+            self.description().to_owned(),
             position,
         )
     }

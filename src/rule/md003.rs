@@ -45,23 +45,23 @@ impl Default for MD003 {
 
 impl RuleLike for MD003 {
     #[inline]
-    fn name(&self) -> String {
-        "MD003".to_owned()
+    fn name(&self) -> &'static str {
+        "MD003"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Header style".to_owned()
+    fn description(&self) -> &'static str {
+        "Header style"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["headers".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["headers"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["header-style".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["header-style"]
     }
 
     #[inline]

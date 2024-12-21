@@ -19,23 +19,23 @@ impl MD001 {
 
 impl RuleLike for MD001 {
     #[inline]
-    fn name(&self) -> String {
-        "MD001".to_owned()
+    fn name(&self) -> &'static str {
+        "MD001"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Header levels should only increment by one level at a time".to_owned()
+    fn description(&self) -> &'static str {
+        "Header levels should only increment by one level at a time"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["headers".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["headers"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["header-increment".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["header-increment"]
     }
 
     #[inline]

@@ -19,23 +19,23 @@ impl MD047 {
 
 impl RuleLike for MD047 {
     #[inline]
-    fn name(&self) -> String {
-        "MD047".to_owned()
+    fn name(&self) -> &'static str {
+        "MD047"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Code block style".to_owned()
+    fn description(&self) -> &'static str {
+        "Code block style"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["code".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["code"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["code-block-style".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["code-block-style"]
     }
 
     #[inline]

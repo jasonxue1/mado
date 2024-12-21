@@ -20,23 +20,23 @@ impl MD018 {
 
 impl RuleLike for MD018 {
     #[inline]
-    fn name(&self) -> String {
-        "MD018".to_owned()
+    fn name(&self) -> &'static str {
+        "MD018"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "No space after hash on atx style header".to_owned()
+    fn description(&self) -> &'static str {
+        "No space after hash on atx style header"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["headers".to_owned(), "atx".to_owned(), "spaces".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["headers", "atx", "spaces"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["no-missing-space-atx".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["no-missing-space-atx"]
     }
 
     #[inline]

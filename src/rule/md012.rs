@@ -19,23 +19,23 @@ impl MD012 {
 
 impl RuleLike for MD012 {
     #[inline]
-    fn name(&self) -> String {
-        "MD012".to_owned()
+    fn name(&self) -> &'static str {
+        "MD012"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Multiple consecutive blank lines".to_owned()
+    fn description(&self) -> &'static str {
+        "Multiple consecutive blank lines"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["whitespace".to_owned(), "blank_lines".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["whitespace", "blank_lines"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["no-multiple-blanks".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["no-multiple-blanks"]
     }
 
     // TODO: Improve codes

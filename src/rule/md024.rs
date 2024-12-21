@@ -22,23 +22,23 @@ impl MD024 {
 
 impl RuleLike for MD024 {
     #[inline]
-    fn name(&self) -> String {
-        "MD024".to_owned()
+    fn name(&self) -> &'static str {
+        "MD024"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Multiple headers with the same content".to_owned()
+    fn description(&self) -> &'static str {
+        "Multiple headers with the same content"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["headers".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["headers"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["no-duplicate-header".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["no-duplicate-header"]
     }
 
     #[inline]

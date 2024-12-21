@@ -34,23 +34,23 @@ impl Default for MD013 {
 
 impl RuleLike for MD013 {
     #[inline]
-    fn name(&self) -> String {
-        "MD013".to_owned()
+    fn name(&self) -> &'static str {
+        "MD013"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Line length".to_owned()
+    fn description(&self) -> &'static str {
+        "Line length"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["line_length".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["line_length"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["line-length".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["line-length"]
     }
 
     #[inline]

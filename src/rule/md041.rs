@@ -32,23 +32,23 @@ impl Default for MD041 {
 
 impl RuleLike for MD041 {
     #[inline]
-    fn name(&self) -> String {
-        "MD041".to_owned()
+    fn name(&self) -> &'static str {
+        "MD041"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "First line in file should be a top level header".to_owned()
+    fn description(&self) -> &'static str {
+        "First line in file should be a top level header"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["headers".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["headers"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["first-line-h1".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["first-line-h1"]
     }
 
     #[inline]

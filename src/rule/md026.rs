@@ -32,23 +32,23 @@ impl Default for MD026 {
 
 impl RuleLike for MD026 {
     #[inline]
-    fn name(&self) -> String {
-        "MD026".to_owned()
+    fn name(&self) -> &'static str {
+        "MD026"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Trailing punctuation in header".to_owned()
+    fn description(&self) -> &'static str {
+        "Trailing punctuation in header"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["headers".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["headers"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["no-trailing-punctuation".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["no-trailing-punctuation"]
     }
 
     #[inline]

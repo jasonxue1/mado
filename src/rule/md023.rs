@@ -19,23 +19,23 @@ impl MD023 {
 
 impl RuleLike for MD023 {
     #[inline]
-    fn name(&self) -> String {
-        "MD023".to_owned()
+    fn name(&self) -> &'static str {
+        "MD023"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Headers must start at the beginning of the line".to_owned()
+    fn description(&self) -> &'static str {
+        "Headers must start at the beginning of the line"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["headers".to_owned(), "spaces".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["headers", "spaces"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["header-start-left".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["header-start-left"]
     }
 
     #[inline]

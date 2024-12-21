@@ -21,23 +21,23 @@ impl MD009 {
 
 impl RuleLike for MD009 {
     #[inline]
-    fn name(&self) -> String {
-        "MD009".to_owned()
+    fn name(&self) -> &'static str {
+        "MD009"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Trailing spaces".to_owned()
+    fn description(&self) -> &'static str {
+        "Trailing spaces"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["whitespace".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["whitespace"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["no-trailing-spaces".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["no-trailing-spaces"]
     }
 
     #[inline]

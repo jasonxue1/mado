@@ -19,23 +19,23 @@ impl MD038 {
 
 impl RuleLike for MD038 {
     #[inline]
-    fn name(&self) -> String {
-        "MD038".to_owned()
+    fn name(&self) -> &'static str {
+        "MD038"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Spaces inside code span elements".to_owned()
+    fn description(&self) -> &'static str {
+        "Spaces inside code span elements"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["whitespace".to_owned(), "code".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["whitespace", "code"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["no-space-in-code".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["no-space-in-code"]
     }
 
     #[inline]

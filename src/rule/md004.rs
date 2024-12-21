@@ -45,23 +45,23 @@ impl Default for MD004 {
 
 impl RuleLike for MD004 {
     #[inline]
-    fn name(&self) -> String {
-        "MD004".to_owned()
+    fn name(&self) -> &'static str {
+        "MD004"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Unordered list style".to_owned()
+    fn description(&self) -> &'static str {
+        "Unordered list style"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["bullet".to_owned(), "ul".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["bullet", "ul"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["ul-style".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["ul-style"]
     }
 
     #[inline]

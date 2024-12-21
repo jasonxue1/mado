@@ -80,23 +80,23 @@ impl Default for MD029 {
 
 impl RuleLike for MD029 {
     #[inline]
-    fn name(&self) -> String {
-        "MD029".to_owned()
+    fn name(&self) -> &'static str {
+        "MD029"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Ordered list item prefix".to_owned()
+    fn description(&self) -> &'static str {
+        "Ordered list item prefix"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["ol".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["ol"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["ol-prefix".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["ol-prefix"]
     }
 
     #[inline]

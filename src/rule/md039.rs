@@ -19,23 +19,23 @@ impl MD039 {
 
 impl RuleLike for MD039 {
     #[inline]
-    fn name(&self) -> String {
-        "MD039".to_owned()
+    fn name(&self) -> &'static str {
+        "MD039"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Spaces inside link text".to_owned()
+    fn description(&self) -> &'static str {
+        "Spaces inside link text"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["whitespace".to_owned(), "links".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["whitespace", "links"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["no-space-in-links".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["no-space-in-links"]
     }
 
     #[inline]

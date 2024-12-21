@@ -19,23 +19,23 @@ impl MD031 {
 
 impl RuleLike for MD031 {
     #[inline]
-    fn name(&self) -> String {
-        "MD031".to_owned()
+    fn name(&self) -> &'static str {
+        "MD031"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Fenced code blocks should be surrounded by blank lines".to_owned()
+    fn description(&self) -> &'static str {
+        "Fenced code blocks should be surrounded by blank lines"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["code".to_owned(), "blank_lines".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["code", "blank_lines"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["blanks-around-fences".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["blanks-around-fences"]
     }
 
     #[inline]

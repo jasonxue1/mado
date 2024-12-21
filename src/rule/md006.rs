@@ -19,27 +19,23 @@ impl MD006 {
 
 impl RuleLike for MD006 {
     #[inline]
-    fn name(&self) -> String {
-        "MD006".to_owned()
+    fn name(&self) -> &'static str {
+        "MD006"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Consider starting bulleted lists at the beginning of the line".to_owned()
+    fn description(&self) -> &'static str {
+        "Consider starting bulleted lists at the beginning of the line"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec![
-            "bullet".to_owned(),
-            "ul".to_owned(),
-            "indentation".to_owned(),
-        ]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["bullet", "ul", "indentation"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["ul-start-left".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["ul-start-left"]
     }
 
     #[inline]

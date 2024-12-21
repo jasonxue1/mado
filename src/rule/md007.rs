@@ -32,27 +32,23 @@ impl Default for MD007 {
 
 impl RuleLike for MD007 {
     #[inline]
-    fn name(&self) -> String {
-        "MD007".to_owned()
+    fn name(&self) -> &'static str {
+        "MD007"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Unordered list indentation".to_owned()
+    fn description(&self) -> &'static str {
+        "Unordered list indentation"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec![
-            "bullet".to_owned(),
-            "ul".to_owned(),
-            "indentation".to_owned(),
-        ]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["bullet", "ul", "indentation"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["ul-indent".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["ul-indent"]
     }
 
     #[inline]

@@ -21,23 +21,23 @@ impl MD037 {
 
 impl RuleLike for MD037 {
     #[inline]
-    fn name(&self) -> String {
-        "MD037".to_owned()
+    fn name(&self) -> &'static str {
+        "MD037"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Spaces inside emphasis markers".to_owned()
+    fn description(&self) -> &'static str {
+        "Spaces inside emphasis markers"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["whitespace".to_owned(), "emphasis".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["whitespace", "emphasis"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["no-space-in-emphasis".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["no-space-in-emphasis"]
     }
 
     // TODO: Use safe casting

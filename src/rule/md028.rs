@@ -19,23 +19,23 @@ impl MD028 {
 
 impl RuleLike for MD028 {
     #[inline]
-    fn name(&self) -> String {
-        "MD028".to_owned()
+    fn name(&self) -> &'static str {
+        "MD028"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Blank line inside blockquote".to_owned()
+    fn description(&self) -> &'static str {
+        "Blank line inside blockquote"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["blockquote".to_owned(), "whitespace".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["blockquote", "whitespace"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["no-blanks-blockquote".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["no-blanks-blockquote"]
     }
 
     #[inline]

@@ -32,23 +32,23 @@ impl Default for MD036 {
 
 impl RuleLike for MD036 {
     #[inline]
-    fn name(&self) -> String {
-        "MD036".to_owned()
+    fn name(&self) -> &'static str {
+        "MD036"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Emphasis used instead of a header".to_owned()
+    fn description(&self) -> &'static str {
+        "Emphasis used instead of a header"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["headers".to_owned(), "emphasis".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["headers", "emphasis"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["no-emphasis-as-header".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["no-emphasis-as-header"]
     }
 
     #[inline]

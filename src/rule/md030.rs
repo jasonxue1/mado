@@ -96,23 +96,23 @@ impl Default for MD030 {
 
 impl RuleLike for MD030 {
     #[inline]
-    fn name(&self) -> String {
-        "MD030".to_owned()
+    fn name(&self) -> &'static str {
+        "MD030"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Spaces after list markers".to_owned()
+    fn description(&self) -> &'static str {
+        "Spaces after list markers"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["ol".to_owned(), "ul".to_owned(), "whitespace".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["ol", "ul", "whitespace"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["list-marker-space".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["list-marker-space"]
     }
 
     #[inline]

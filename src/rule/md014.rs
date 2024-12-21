@@ -19,23 +19,23 @@ impl MD014 {
 
 impl RuleLike for MD014 {
     #[inline]
-    fn name(&self) -> String {
-        "MD014".to_owned()
+    fn name(&self) -> &'static str {
+        "MD014"
     }
 
     #[inline]
-    fn description(&self) -> String {
-        "Dollar signs used before commands without showing output".to_owned()
+    fn description(&self) -> &'static str {
+        "Dollar signs used before commands without showing output"
     }
 
     #[inline]
-    fn tags(&self) -> Vec<String> {
-        vec!["code".to_owned()]
+    fn tags(&self) -> Vec<&'static str> {
+        vec!["code"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<String> {
-        vec!["commands-show-output".to_owned()]
+    fn aliases(&self) -> Vec<&'static str> {
+        vec!["commands-show-output"]
     }
 
     #[inline]
