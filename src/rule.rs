@@ -34,6 +34,7 @@ mod md031;
 mod md032;
 mod md033;
 mod md034;
+pub mod md035;
 mod md036;
 mod md037;
 mod md038;
@@ -73,6 +74,7 @@ pub enum Rule {
     MD032,
     MD033,
     MD034,
+    MD035,
     MD036,
     MD037,
     MD038,
@@ -133,6 +135,7 @@ pub use md031::MD031;
 pub use md032::MD032;
 pub use md033::MD033;
 pub use md034::MD034;
+pub use md035::MD035;
 pub use md036::MD036;
 pub use md037::MD037;
 pub use md038::MD038;

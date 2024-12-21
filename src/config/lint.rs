@@ -12,6 +12,7 @@ mod md026;
 mod md029;
 mod md030;
 mod md033;
+mod md035;
 mod md036;
 mod md041;
 mod md046;
@@ -26,6 +27,7 @@ pub use md026::MD026;
 pub use md029::MD029;
 pub use md030::MD030;
 pub use md033::MD033;
+pub use md035::MD035;
 pub use md036::MD036;
 pub use md041::MD041;
 pub use md046::MD046;
@@ -46,6 +48,7 @@ pub struct Lint {
     pub md029: MD029,
     pub md030: MD030,
     pub md033: MD033,
+    pub md035: MD035,
     pub md036: MD036,
     pub md041: MD041,
     pub md046: MD046,
@@ -84,6 +87,7 @@ impl Default for Lint {
                 Rule::MD032,
                 Rule::MD033,
                 Rule::MD034,
+                Rule::MD035,
                 Rule::MD036,
                 Rule::MD037,
                 Rule::MD038,
@@ -103,6 +107,7 @@ impl Default for Lint {
             md029: MD029::default(),
             md030: MD030::default(),
             md033: MD033::default(),
+            md035: MD035::default(),
             md036: MD036::default(),
             md041: MD041::default(),
             md046: MD046::default(),

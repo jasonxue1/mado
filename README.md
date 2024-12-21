@@ -80,7 +80,7 @@ are currently supported.
 | MD032 | :white_check_mark: |                                               |
 | MD033 | :hammer:           |                                               |
 | MD034 | :white_check_mark: |                                               |
-| MD035 | :x:                | comrak does not support line styles.          |
+| MD035 | :white_check_mark: |                                               |
 | MD036 | :hammer:           |                                               |
 | MD037 | :hammer:           |                                               |
 | MD038 | :white_check_mark: |                                               |
