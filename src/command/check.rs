@@ -56,20 +56,25 @@ impl Checker {
             return Ok(ExitCode::SUCCESS);
         }
 
+        let mut buf = String::new();
         let num_violations = violations.len();
         for violation in violations {
             match self.config.lint.output_format {
-                Format::Concise => println!("{}", Concise::new(violation)),
-                Format::Mdl => println!("{}", Mdl::new(violation)),
-                Format::Markdownlint => println!("{}", Markdownlint::new(violation)),
+                Format::Concise => buf.push_str(&format!("{}\n", Concise::new(violation))),
+                Format::Mdl => buf.push_str(&format!("{}\n", Mdl::new(violation))),
+                Format::Markdownlint => {
+                    buf.push_str(&format!("{}\n", Markdownlint::new(violation)));
+                }
             }
         }
 
         if num_violations == 1 {
-            println!("\nFound 1 error.");
+            buf.push_str("\nFound 1 error.\n");
         } else {
-            println!("\nFound {num_violations} errors.");
+            buf.push_str(&format!("\nFound {num_violations} errors.\n"));
         }
+
+        println!("{buf}");
 
         Ok(ExitCode::FAILURE)
     }
