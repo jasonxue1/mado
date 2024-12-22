@@ -113,3 +113,18 @@ cargo clippy --all-targets --all-features --workspace -- -D warnings
 # Run downlint, mdl and markdownlint-cli with hyperfine
 ./scripts/benchmarks/comparison.sh
 ```
+
+### Profiling with cargo flamegraph
+
+Install `flamegraph` first.
+
+```bash
+cargo install flamegraph
+```
+
+Then:
+
+```bash
+# `--root` option is needed for macOS users
+cargo flamegraph --root --profile bench -- check scripts/benchmarks/data/gitlab
+```

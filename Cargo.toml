@@ -41,6 +41,9 @@ pretty_assertions = "1"
 [profile.release]
 lto = "thin"
 
+[profile.bench]
+debug = true
+
 [lints.clippy]
 cargo = { level = "warn", priority = -1 }
 complexity = { level = "warn", priority = -1 }
