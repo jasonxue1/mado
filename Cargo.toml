@@ -79,3 +79,7 @@ missing_errors_doc = "allow"
 missing_panics_doc = "allow"
 missing_docs_in_private_items = "allow"
 multiple_crate_versions = "allow"
+
+[[bench]]
+name = "trailing_space"
+harness = false
