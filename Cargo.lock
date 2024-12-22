@@ -526,6 +526,7 @@ dependencies = [
  "miette",
  "mimalloc",
  "pretty_assertions",
+ "rand",
  "regex",
  "scraper",
  "serde",
