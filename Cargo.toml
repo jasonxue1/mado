@@ -83,3 +83,7 @@ multiple_crate_versions = "allow"
 [[bench]]
 name = "trailing_space"
 harness = false
+
+[[bench]]
+name = "hard_tab_search"
+harness = false
