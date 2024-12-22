@@ -37,6 +37,7 @@ tikv-jemallocator = "0.6.0"
 
 [dev-dependencies]
 pretty_assertions = "1"
+criterion = "0.5"
 
 [profile.release]
 lto = "thin"
