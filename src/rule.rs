@@ -3,7 +3,11 @@ use std::path::PathBuf;
 use comrak::nodes::{AstNode, Sourcepos};
 use miette::Result;
 
-use crate::{matcher::Matcher, violation::Violation, Document};
+use crate::{
+    matcher::{LineMatcher, NodeValueMatcher},
+    violation::Violation,
+    Document,
+};
 
 mod helper;
 mod md001;
@@ -176,13 +180,13 @@ pub enum RuleType {
 }
 
 pub trait NodeRule: Send {
-    fn matcher(&self) -> Matcher;
+    fn matcher(&self) -> NodeValueMatcher;
 
-    fn run<'a>(&self, ctx: &NodeContext, node: &'a AstNode<'a>) -> Result<Vec<Violation>>;
+    fn run<'a>(&mut self, ctx: &NodeContext, node: &'a AstNode<'a>) -> Result<Vec<Violation>>;
 }
 
 pub trait LineRule: Send {
-    fn matcher(&self) -> Matcher;
+    fn matcher(&self) -> LineMatcher;
 
     fn run<'a>(&self, ctx: &LineContext, line: &str) -> Result<Vec<Violation>>;
 }
