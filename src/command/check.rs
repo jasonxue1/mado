@@ -1,7 +1,10 @@
+use std::io::Write as _;
+use std::io::{self, BufWriter};
 use std::path::PathBuf;
 use std::process::ExitCode;
 
 use ignore::WalkParallel;
+use miette::IntoDiagnostic as _;
 use miette::Result;
 
 use crate::config;
@@ -56,25 +59,25 @@ impl Checker {
             return Ok(ExitCode::SUCCESS);
         }
 
-        let mut buf = String::new();
+        let mut output = BufWriter::new(io::stdout().lock());
         let num_violations = violations.len();
         for violation in violations {
             match self.config.lint.output_format {
-                Format::Concise => buf.push_str(&format!("{}\n", Concise::new(violation))),
-                Format::Mdl => buf.push_str(&format!("{}\n", Mdl::new(violation))),
+                Format::Concise => {
+                    writeln!(output, "{}", Concise::new(violation)).into_diagnostic()?;
+                }
+                Format::Mdl => writeln!(output, "{}", Mdl::new(violation)).into_diagnostic()?,
                 Format::Markdownlint => {
-                    buf.push_str(&format!("{}\n", Markdownlint::new(violation)));
+                    writeln!(output, "{}", Markdownlint::new(violation)).into_diagnostic()?;
                 }
             }
         }
 
         if num_violations == 1 {
-            buf.push_str("\nFound 1 error.\n");
+            writeln!(output, "\nFound 1 error.").into_diagnostic()?;
         } else {
-            buf.push_str(&format!("\nFound {num_violations} errors.\n"));
+            writeln!(output, "\nFound {num_violations} errors.").into_diagnostic()?;
         }
-
-        println!("{buf}");
 
         Ok(ExitCode::FAILURE)
     }
