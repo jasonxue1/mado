@@ -85,5 +85,9 @@ name = "trailing_space"
 harness = false
 
 [[bench]]
+name = "node_traverse"
+harness = false
+
+[[bench]]
 name = "hard_tab_search"
 harness = false
