@@ -170,6 +170,8 @@ pub struct RuleMetadata {
 
 pub trait NewRuleLike: Send {
     fn metadata(&self) -> RuleMetadata;
+
+    fn reset(&mut self);
 }
 
 pub enum RuleType {

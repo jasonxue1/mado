@@ -76,6 +76,8 @@ impl NewRuleLike for MD018 {
             aliases: vec!["no-missing-space-atx"],
         }
     }
+
+    fn reset(&mut self) {}
 }
 
 impl NodeRule for MD018 {
