@@ -5,9 +5,7 @@ PROJECT_ROOT=($SCRIPT_DIR/../../)
 DATA_ROOT=$SCRIPT_DIR/data
 DOC_PATH=$DATA_ROOT/gitlab/doc
 
-if [ ! -e $PROJECT_ROOT/target/release/downlint ]; then
-  cargo build --release
-fi
+cargo build --release
 
 hyperfine --ignore-failure --warmup 10 \
   "$PROJECT_ROOT/target/release/downlint check $DOC_PATH" \
