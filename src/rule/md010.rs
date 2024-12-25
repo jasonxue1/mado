@@ -52,10 +52,8 @@ impl RuleLike for MD010 {
         let mut violations = vec![];
         for (i, line) in doc.text.lines().enumerate() {
             let lineno = i + 1;
-            let mut locs = RE.capture_locations();
-            RE.captures_read(&mut locs, line);
-            if let Some((start_column, end_column)) = locs.get(0) {
-                let position = Sourcepos::from((lineno, start_column + 1, lineno, end_column));
+            if let Some(m) = RE.find(line) {
+                let position = Sourcepos::from((lineno, m.start() + 1, lineno, m.end()));
                 let violation = self.to_violation(doc.path.clone(), position);
                 violations.push(violation);
             }
