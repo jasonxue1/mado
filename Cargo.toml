@@ -89,5 +89,9 @@ name = "node_traverse"
 harness = false
 
 [[bench]]
+name = "output"
+harness = false
+
+[[bench]]
 name = "hard_tab_search"
 harness = false
