@@ -21,6 +21,14 @@ fn regex_captures(s: &str) -> Option<(usize, usize)> {
     None
 }
 
+fn regex_find(s: &str) -> Option<(usize, usize)> {
+    if let Some(m) = RE.find(s) {
+        return Some((m.start() + 1, m.end()));
+    }
+
+    None
+}
+
 fn string_find(s: &str) -> Option<(usize, usize)> {
     if let Some(index) = s.find('\t') {
         let column = index + 1;
@@ -56,6 +64,10 @@ fn criterion_benchmark(c: &mut Criterion) {
 
         group.bench_with_input(BenchmarkId::new("regex_captures", i), &string, |b, s| {
             b.iter(|| regex_captures(black_box(s)));
+        });
+
+        group.bench_with_input(BenchmarkId::new("regex_find", i), &string, |b, s| {
+            b.iter(|| regex_find(black_box(s)));
         });
 
         group.bench_with_input(BenchmarkId::new("string_find", i), &string, |b, s| {
