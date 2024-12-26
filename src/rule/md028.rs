@@ -1,21 +1,35 @@
+use core::cell::RefCell;
 use std::path::PathBuf;
 
-use comrak::nodes::{AstNode, NodeValue, Sourcepos};
+use comrak::nodes::{Ast, AstNode, NodeValue, Sourcepos};
 use miette::Result;
 
 use crate::{violation::Violation, Document};
 
-use super::RuleLike;
+use super::{
+    node::{NodeContext, NodeRule, NodeValueMatcher},
+    NewRuleLike, RuleLike, RuleMetadata,
+};
 
-#[derive(Debug, Default, Clone, PartialEq, Eq)]
+#[derive(Debug, Default, Clone)]
 #[non_exhaustive]
-pub struct MD028;
+pub struct State {
+    maybe_prev_node_ref: Option<RefCell<Ast>>,
+}
+
+#[derive(Debug, Default, Clone)]
+#[non_exhaustive]
+pub struct MD028 {
+    state: State,
+}
 
 impl MD028 {
     #[inline]
     #[must_use]
     pub fn new() -> Self {
-        Self {}
+        Self {
+            state: State::default(),
+        }
     }
 
     fn check_recursive<'a>(
@@ -77,6 +91,49 @@ impl RuleLike for MD028 {
         let mut violations = vec![];
 
         self.check_recursive(doc.ast, &doc.path, &mut violations);
+
+        Ok(violations)
+    }
+}
+
+impl NewRuleLike for MD028 {
+    #[inline]
+    fn metadata(&self) -> RuleMetadata {
+        RuleMetadata {
+            name: "MD028",
+            description: "Blank line inside blockquote",
+            tags: vec!["blockquote", "whitespace"],
+            aliases: vec!["no-blanks-blockquote"],
+        }
+    }
+
+    #[inline]
+    fn reset(&mut self) {
+        self.state = State::default();
+    }
+}
+
+impl NodeRule for MD028 {
+    #[inline]
+    fn matcher(&self) -> NodeValueMatcher {
+        NodeValueMatcher::new(|_| true)
+    }
+
+    #[inline]
+    fn run<'a>(&mut self, ctx: &NodeContext, node: &'a AstNode<'a>) -> Result<Vec<Violation>> {
+        let mut violations = vec![];
+
+        if let Some(prev_node_ref) = &self.state.maybe_prev_node_ref {
+            if let (NodeValue::BlockQuote, NodeValue::BlockQuote) =
+                (&prev_node_ref.borrow().value, &node.data.borrow().value)
+            {
+                let position = node.data.borrow().sourcepos;
+                let violation = self.to_violation(ctx.path.clone(), position);
+                violations.push(violation);
+            }
+        }
+
+        self.state.maybe_prev_node_ref = Some(node.data.clone());
 
         Ok(violations)
     }
