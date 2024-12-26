@@ -48,7 +48,10 @@ impl RuleLike for MD018 {
                 for child_node in node.children() {
                     if let NodeValue::Text(text) = &child_node.data.borrow().value {
                         let position = node.data.borrow().sourcepos;
-                        if position.start.column == 1 && text.starts_with('#') {
+                        if position.start.column == 1
+                            && text.starts_with('#')
+                            && !text.ends_with('#')
+                        {
                             let violation = self.to_violation(doc.path.clone(), position);
                             violations.push(violation);
                         }
@@ -110,6 +113,24 @@ mod tests {
     }
 
     #[test]
+    fn check_no_errors_with_atx_closed() {
+        let text = "#Header 1#
+
+## Header 2##
+
+##Header 3 ##"
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD018::default();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
     fn check_no_errors_with_issue_number() {
         let text = "# Header 1
 
@@ -127,7 +148,7 @@ See [#4649](https://example.com) for details."
 
     #[test]
     fn check_no_errors_with_list() {
-        let text = "* # Header 1".to_owned();
+        let text = "* #Header 1".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let ast = parse_document(&arena, &text, &Options::default());
