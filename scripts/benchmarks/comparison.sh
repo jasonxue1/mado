@@ -8,7 +8,7 @@ DOC_PATH=$DATA_ROOT/gitlab/doc
 cargo build --release
 
 hyperfine --ignore-failure --warmup 10 \
-  "$PROJECT_ROOT/target/release/downlint check $DOC_PATH" \
+  "$PROJECT_ROOT/target/release/mado check $DOC_PATH" \
   "mdl --config $SCRIPT_DIR/.mdlrc $DOC_PATH" \
   "$SCRIPT_DIR/node_modules/.bin/markdownlint --config $SCRIPT_DIR/.markdownlint.jsonc $DOC_PATH" \
   "$SCRIPT_DIR/node_modules/.bin/markdownlint-cli2 --config $SCRIPT_DIR/.markdownlint.jsonc \"$DOC_PATH/**/*.md\""

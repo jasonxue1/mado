@@ -1,9 +1,9 @@
 [package]
-name = "downlint"
+name = "mado"
 description = "A fast Markdown linter."
 version = "0.1.0"
 edition = "2021"
-repository = "https://github.com/akiomik/downlint"
+repository = "https://github.com/akiomik/mado"
 license = "Apache-2.0"
 authors = ["Akiomi Kamakura <akiomik@gmail.com>"]
 keywords = ["markdown", "lint"]

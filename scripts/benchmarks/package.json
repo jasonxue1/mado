@@ -1,5 +1,5 @@
 {
-  "name": "downlint-benchmark",
+  "name": "mado-benchmark",
   "private": true,
   "dependencies": {
     "markdownlint-cli": "^0.43.0",

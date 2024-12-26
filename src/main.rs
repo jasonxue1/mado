@@ -18,12 +18,12 @@ static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
 use std::process::ExitCode;
 
 use clap::Parser as _;
-use downlint::command::check::Options;
+use mado::command::check::Options;
 use miette::Result;
 
-use downlint::command::check::Checker;
-use downlint::Cli;
-use downlint::Command;
+use mado::command::check::Checker;
+use mado::Cli;
+use mado::Command;
 
 fn main() -> Result<ExitCode> {
     let cli = Cli::parse();

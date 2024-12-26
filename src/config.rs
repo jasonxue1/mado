@@ -25,8 +25,8 @@ pub fn load<P: AsRef<Path>>(path: P) -> Result<Config> {
     toml::from_str(&config_text).map_err(|err| miette!(err))
 }
 
-const FILE_NAME: &str = "downlint.toml";
-const HIDDEN_FILE_NAME: &str = ".downlint.toml";
+const FILE_NAME: &str = "mado.toml";
+const HIDDEN_FILE_NAME: &str = ".mado.toml";
 
 #[inline]
 pub fn resolve() -> Result<Config> {

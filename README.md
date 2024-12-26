@@ -1,4 +1,4 @@
-# downlint
+# mado
 
 A fast Markdown linter, written in Rust.
 Compliant with [CommonMark](https://commonmark.org) and [GFM](https://github.github.com/gfm/).
@@ -6,8 +6,8 @@ Compliant with [CommonMark](https://commonmark.org) and [GFM](https://github.git
 ## Usage
 
 ```bash
-downlint check .
-downlint check path/to/*.md
+mado check .
+mado check path/to/*.md
 ```
 
 ## Performance
@@ -31,7 +31,7 @@ config:
 ---
 xychart-beta
     title "Linting the GitLab documents from scratch (Lower is faster)"
-    x-axis ["downlint (rust)", "markdownlint-cli (node.js)", "markdownlint (ruby)", "markdownlint-cli2 (node.js)"]
+    x-axis ["mado (rust)", "markdownlint-cli (node.js)", "markdownlint (ruby)", "markdownlint-cli2 (node.js)"]
     y-axis "Time (seconds)" 0 --> 10
     bar [0.1266, 6.361, 6.444, 7.872]
 ```
@@ -110,7 +110,7 @@ cargo clippy --all-targets --all-features --workspace -- -D warnings
 # Download markdown dataset
 ./scripts/benchmarks/setup.sh
 
-# Run downlint, mdl and markdownlint-cli with hyperfine
+# Run mado, mdl and markdownlint-cli with hyperfine
 ./scripts/benchmarks/comparison.sh
 ```
 

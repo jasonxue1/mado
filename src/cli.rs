@@ -6,8 +6,8 @@ use crate::Command;
 
 #[derive(Parser)]
 #[command(
-    name = "downlint",
-    bin_name = "downlint",
+    name = "mado",
+    bin_name = "mado",
     version,
     about,
     long_about = None,
