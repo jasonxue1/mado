@@ -50,16 +50,22 @@ impl RuleLike for MD019 {
                 ..
             }) = &node.data.borrow().value
             {
-                if let Some(text_node) = node.first_child() {
-                    if let NodeValue::Text(_) = text_node.data.borrow().value {
-                        let heading_position = node.data.borrow().sourcepos;
-                        let text_position = text_node.data.borrow().sourcepos;
-                        let expected_text_offset =
-                            heading_position.start.column + (*level as usize) + 1;
-                        if text_position.start.column > expected_text_offset {
-                            let violation = self.to_violation(doc.path.clone(), heading_position);
-                            violations.push(violation);
-                        }
+                if let (Some(first_node), Some(last_node)) = (node.first_child(), node.last_child())
+                {
+                    let heading_position = node.data.borrow().sourcepos;
+                    let first_position = first_node.data.borrow().sourcepos;
+                    let last_position = last_node.data.borrow().sourcepos;
+                    let is_atx = heading_position.end.column == last_position.end.column;
+
+                    let expected_offset = (*level as usize) + 1;
+                    if is_atx
+                        && ((heading_position.start.column
+                            < first_position.start.column - expected_offset)
+                            || (heading_position.end.column
+                                > last_position.end.column + expected_offset))
+                    {
+                        let violation = self.to_violation(doc.path.clone(), heading_position);
+                        violations.push(violation);
                     }
                 }
             }
@@ -106,6 +112,24 @@ mod tests {
         let text = "# Header 1
 
 ## Header 2"
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD019::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_with_atx_closed() {
+        let text = "#  Header 1  #
+
+## Header 2  ##
+
+##  Header 3 ##"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
