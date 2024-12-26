@@ -107,6 +107,7 @@ impl Linter {
             RuleType::Node(Box::new(rule::MD026::new(
                 config.lint.md026.punctuation.clone(),
             ))),
+            RuleType::Node(Box::new(rule::MD027::new())),
         ];
 
         Self { rules, new_rules }
