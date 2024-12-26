@@ -37,6 +37,7 @@ impl Linter {
                     Rule::MD018 => Box::new(rule::MD018::new()),
                     Rule::MD019 => Box::new(rule::MD019::new()),
                     Rule::MD020 => Box::new(rule::MD020::new()),
+                    Rule::MD021 => Box::new(rule::MD021::new()),
                     Rule::MD022 => Box::new(rule::MD022::new()),
                     Rule::MD023 => Box::new(rule::MD023::new()),
                     Rule::MD024 => Box::new(rule::MD024::new()),

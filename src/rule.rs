@@ -22,6 +22,7 @@ mod md014;
 mod md018;
 mod md019;
 mod md020;
+mod md021;
 mod md022;
 mod md023;
 mod md024;
@@ -63,6 +64,7 @@ pub enum Rule {
     MD018,
     MD019,
     MD020,
+    MD021,
     MD022,
     MD023,
     MD024,
@@ -125,6 +127,7 @@ pub use md014::MD014;
 pub use md018::MD018;
 pub use md019::MD019;
 pub use md020::MD020;
+pub use md021::MD021;
 pub use md022::MD022;
 pub use md023::MD023;
 pub use md024::MD024;

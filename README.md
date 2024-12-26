@@ -68,6 +68,7 @@ are currently supported.
 | MD018 | :white_check_mark: |                                               |
 | MD019 | :white_check_mark: |                                               |
 | MD020 | :white_check_mark: |                                               |
+| MD021 | :white_check_mark: |                                               |
 | MD022 | :white_check_mark: |                                               |
 | MD023 | :white_check_mark: |                                               |
 | MD024 | :warning: :hammer: | `allow_different_nesting` is not supported.   |
