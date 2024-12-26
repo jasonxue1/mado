@@ -109,6 +109,7 @@ impl Linter {
             ))),
             RuleType::Node(Box::new(rule::MD027::new())),
             RuleType::Node(Box::new(rule::MD028::new())),
+            RuleType::Node(Box::new(rule::MD029::new(config.lint.md029.style.clone()))),
         ];
 
         Self { rules, new_rules }
