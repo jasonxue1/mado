@@ -30,7 +30,7 @@ config:
             titleFontSize: 14
 ---
 xychart-beta
-    title "Linting the GitLab documents from scratch (Lower is faster)"
+    title "Linting about 1,500 markdown files (Lower is faster)"
     x-axis ["mado (rust)", "markdownlint-cli (node.js)", "markdownlint (ruby)", "markdownlint-cli2 (node.js)"]
     y-axis "Time (seconds)" 0 --> 10
     bar [0.1266, 6.361, 6.444, 7.872]
@@ -39,7 +39,7 @@ xychart-beta
 This benchmark was run on a MacBook Pro (2021, M1 Max)
 using [hyperfine](https://github.com/sharkdp/hyperfine),
 and [the GitLab documentation](https://gitlab.com/gitlab-org/gitlab/-/tree/7d6a4025a0346f1f50d2825c85742e5a27b39a8b/doc)
-is used (1,500 Markdown files).
+is used.
 
 ## Rules
 
