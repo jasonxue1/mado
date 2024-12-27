@@ -206,4 +206,22 @@ mod tests {
         let expected = vec![];
         assert_eq!(actual, expected);
     }
+
+    // TODO: This should be passed
+    //     #[test]
+    //     fn check_no_errors_with_blockquote() {
+    //         let text = "* List
+    // > * List in blockquote
+    // >* List in blockquote
+    // "
+    //         .to_owned();
+    //         let path = Path::new("test.md").to_path_buf();
+    //         let arena = Arena::new();
+    //         let ast = parse_document(&arena, &text, &Options::default());
+    //         let doc = Document { path, ast, text };
+    //         let rule = MD007::default();
+    //         let actual = rule.check(&doc).unwrap();
+    //         let expected = vec![];
+    //         assert_eq!(actual, expected);
+    //     }
 }

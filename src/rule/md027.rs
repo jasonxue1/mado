@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use comrak::nodes::NodeValue;
 use miette::Result;
 
@@ -45,12 +47,56 @@ impl RuleLike for MD027 {
         for node in doc.ast.descendants() {
             if let NodeValue::BlockQuote = node.data.borrow().value {
                 if let Some(child_node) = node.first_child() {
-                    let block_quote_position = node.data.borrow().sourcepos;
-                    let child_position = child_node.data.borrow().sourcepos;
+                    match &child_node.data.borrow().value {
+                        NodeValue::Paragraph => {
+                            let mut lines = HashSet::new();
+                            for inline_node in child_node.children() {
+                                let block_quote_position = node.data.borrow().sourcepos;
+                                let inline_position = inline_node.data.borrow().sourcepos;
+                                let lineno = inline_position.start.line;
 
-                    if child_position.start.column > block_quote_position.start.column + 2 {
-                        let violation = self.to_violation(doc.path.clone(), child_position);
-                        violations.push(violation);
+                                // NOTE: `code` pos is wrong: https://github.com/kivikakk/comrak/issues/503
+                                let is_code =
+                                    matches!(inline_node.data.borrow().value, NodeValue::Code(_));
+                                let expected_column = if is_code {
+                                    block_quote_position.start.column + 3
+                                } else {
+                                    block_quote_position.start.column + 2
+                                };
+
+                                if inline_position.start.column > expected_column
+                                    && !lines.contains(&lineno)
+                                {
+                                    let violation =
+                                        self.to_violation(doc.path.clone(), inline_position);
+                                    violations.push(violation);
+                                }
+
+                                lines.insert(lineno);
+                            }
+                        }
+                        NodeValue::List(_) => {
+                            for item_node in child_node.children() {
+                                let block_quote_position = node.data.borrow().sourcepos;
+                                let item_position = item_node.data.borrow().sourcepos;
+                                let expected_column = block_quote_position.start.column + 2;
+
+                                if item_position.start.column > expected_column {
+                                    let violation =
+                                        self.to_violation(doc.path.clone(), item_position);
+                                    violations.push(violation);
+                                }
+                            }
+                        }
+                        _ => {
+                            // TODO: Support multi-line errors
+                            let parent_position = node.data.borrow().sourcepos;
+                            let child_position = child_node.data.borrow().sourcepos;
+                            if child_position.start.column > parent_position.start.column + 2 {
+                                let violation = self.to_violation(doc.path.clone(), child_position);
+                                violations.push(violation);
+                            }
+                        }
                     }
                 }
             }
@@ -70,9 +116,14 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_errors() {
-        let text = ">  This is a block quote with bad indentation
->  there should only be one."
+    fn check_errors_paragraph() {
+        let text = ">  Indented text
+>  More indented
+> Not indented
+>  *Emph* and text
+>  **Strong** and text
+>  `code` and text
+>  [link](https://example.com) and text"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -85,35 +136,23 @@ mod tests {
         let rule = MD027::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
-            // TODO: Support multiple errors
-            rule.to_violation(path.clone(), Sourcepos::from((1, 4, 2, 28))),
-            // rule.to_violation(path.clone(), Sourcepos::from((1, 4, 1, 45))),
-            // rule.to_violation(path, Sourcepos::from((2, 4, 2, 28))),
+            rule.to_violation(path.clone(), Sourcepos::from((1, 4, 1, 16))),
+            rule.to_violation(path.clone(), Sourcepos::from((2, 4, 2, 16))),
+            rule.to_violation(path.clone(), Sourcepos::from((4, 4, 4, 9))),
+            rule.to_violation(path.clone(), Sourcepos::from((5, 4, 5, 13))),
+            rule.to_violation(path.clone(), Sourcepos::from((6, 5, 6, 8))),
+            rule.to_violation(path.clone(), Sourcepos::from((7, 4, 7, 30))),
         ];
         assert_eq!(actual, expected);
     }
 
-    // NOTE: This case is not an error in markdownlint
     #[test]
-    fn check_errors_with_nested_block_quotes() {
-        let text = ">>>  This is multiple blockquote with bad indentation.".to_owned();
-        let path = Path::new("test.md").to_path_buf();
-        let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
-        let rule = MD027::new();
-        let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(path.clone(), Sourcepos::from((1, 6, 1, 54)))];
-        assert_eq!(actual, expected);
-    }
-
-    #[test]
-    fn check_errors_with_nested_block_quotes2() {
-        let text = ">  >  >  This is multiple blockquote with bad indentation.".to_owned();
+    fn check_errors_list() {
+        let text = ">  * foo
+> * bar
+>   * baz
+>  * quz"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let ast = parse_document(&arena, &text, &Options::default());
@@ -125,17 +164,181 @@ mod tests {
         let rule = MD027::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
-            rule.to_violation(path.clone(), Sourcepos::from((1, 4, 1, 58))),
-            rule.to_violation(path.clone(), Sourcepos::from((1, 7, 1, 58))),
-            rule.to_violation(path, Sourcepos::from((1, 10, 1, 58))),
+            rule.to_violation(path.clone(), Sourcepos::from((1, 4, 1, 8))),
+            rule.to_violation(path.clone(), Sourcepos::from((4, 4, 4, 8))),
         ];
         assert_eq!(actual, expected);
     }
 
     #[test]
-    fn check_no_errors() {
-        let text = "> This is a blockquote with correct
-> indentation."
+    fn check_errors_code_block() {
+        let text = ">  ```
+>  foo
+> bar
+>  baz
+>  ```"
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD027::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![
+            rule.to_violation(path.clone(), Sourcepos::from((1, 4, 5, 6))),
+            // TODO: This results are expected
+            // rule.to_violation(path.clone(), Sourcepos::from((1, 4, 1, 6))),
+            // rule.to_violation(path.clone(), Sourcepos::from((2, 4, 1, 6))),
+            // rule.to_violation(path.clone(), Sourcepos::from((4, 4, 4, 6))),
+            // rule.to_violation(path, Sourcepos::from((5, 4, 5, 6))),
+        ];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_errors_html_block() {
+        let text = ">  <div>
+> <p>some text</p>
+>   </div>"
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD027::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![
+            rule.to_violation(path.clone(), Sourcepos::from((1, 4, 3, 10))),
+            // TODO: This results are expected
+            // rule.to_violation(path.clone(), Sourcepos::from((1, 4, 1, 8))),
+            // rule.to_violation(path, Sourcepos::from((3, 4, 3, 9))),
+        ];
+        assert_eq!(actual, expected);
+    }
+
+    // NOTE: This case is not an error in markdownlint
+    #[test]
+    fn check_errors_with_nested_block_quotes() {
+        let text = ">>>  This is multiple blockquotes with bad indentation.
+>>> More multiple blockquotes with good indentation.
+>>>  More multiple blockquotes with bad indentation."
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD027::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![
+            rule.to_violation(path.clone(), Sourcepos::from((1, 6, 1, 55))),
+            rule.to_violation(path.clone(), Sourcepos::from((3, 6, 3, 52))),
+        ];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_errors_with_nested_block_quotes2() {
+        let text = ">  >  >  This is multiple blockquote with bad indentation.
+> > > More multiple blockquote with good indentation.
+>  >  >  More multiple blockquote with bad indentation."
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD027::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![
+            rule.to_violation(path.clone(), Sourcepos::from((1, 4, 3, 55))),
+            rule.to_violation(path.clone(), Sourcepos::from((1, 7, 3, 55))),
+            rule.to_violation(path.clone(), Sourcepos::from((1, 10, 1, 58))),
+            rule.to_violation(path, Sourcepos::from((3, 10, 3, 55))),
+            // TODO: This results are expected
+            // rule.to_violation(path.clone(), Sourcepos::from((1, 4, 1, 58))),
+            // rule.to_violation(path.clone(), Sourcepos::from((1, 7, 1, 58))),
+            // rule.to_violation(path.clone(), Sourcepos::from((1, 10, 1, 58))),
+            // rule.to_violation(path.clone(), Sourcepos::from((3, 4, 3, 55))),
+            // rule.to_violation(path.clone(), Sourcepos::from((3, 7, 3, 55))),
+            // rule.to_violation(path, Sourcepos::from((3, 10, 3, 55))),
+        ];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_paragraph() {
+        let text = "> Text
+> More text
+> *Emph* and text
+> **Strong** and text
+> `code` and text
+> [link](https://example.com) and text"
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD027::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_list() {
+        let text = "> * foo
+> * bar
+>   * baz
+> * quz"
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD027::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_code_block() {
+        let text = "> ```
+> foo
+> bar
+> baz
+> ```"
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD027::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_html_block() {
+        let text = "> <div>
+> <p>some text</p>
+> </div>"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -149,7 +352,10 @@ mod tests {
 
     #[test]
     fn check_no_errors_with_nested_block_quotes() {
-        let text = ">>> This is multiple blockquote with correct indentation.".to_owned();
+        let text = ">>> This is multiple blockquotes with good indentation.
+>>> More multiple blockquotes with good indentation.
+>>> More multiple blockquotes with good indentation."
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let ast = parse_document(&arena, &text, &Options::default());
@@ -162,17 +368,14 @@ mod tests {
 
     #[test]
     fn check_no_errors_with_nested_block_quotes2() {
-        let text = ">>> This is multiple blockquote with bad
-    indentation."
+        let text = "> > > This is multiple blockquote with good indentation.
+> > > More multiple blockquote with good indentation.
+> > > More multiple blockquote with good indentation."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document { path, ast, text };
         let rule = MD027::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -181,7 +384,10 @@ mod tests {
 
     #[test]
     fn check_no_errors_with_nested_block_quotes3() {
-        let text = "> > > This is multiple blockquote with correct indentation.".to_owned();
+        let text = ">>> This is multiple blockquote with good indentation.
+    More multiple blockquote with good indentation.
+    More multiple blockquote with good indentation."
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let ast = parse_document(&arena, &text, &Options::default());
