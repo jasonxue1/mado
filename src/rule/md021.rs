@@ -127,6 +127,34 @@ mod tests {
     }
 
     #[test]
+    fn check_no_errors_with_escaped_hash() {
+        let text = "#  Header 1  \\#
+
+\\##  Header 2  ##
+
+## Header 3  \\##
+
+\\## Header 4  ##
+
+##  Header 5 \\##
+
+\\##  Header 6 ##"
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD021::default();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
     fn check_no_errors_with_atx() {
         let text = "#  Header 1
 
