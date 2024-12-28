@@ -46,7 +46,18 @@ impl RuleLike for MD039 {
             if let NodeValue::Link(_) = node.data.borrow().value {
                 if let Some(text_node) = node.first_child() {
                     if let NodeValue::Text(text) = &text_node.data.borrow().value {
-                        if text.trim() != text {
+                        if text.trim_start() != text {
+                            let position = text_node.data.borrow().sourcepos;
+                            let violation = self.to_violation(doc.path.clone(), position);
+                            violations.push(violation);
+                            continue;
+                        }
+                    }
+                }
+
+                if let Some(text_node) = node.last_child() {
+                    if let NodeValue::Text(text) = &text_node.data.borrow().value {
+                        if text.trim_end() != text {
                             let position = text_node.data.borrow().sourcepos;
                             let violation = self.to_violation(doc.path.clone(), position);
                             violations.push(violation);
@@ -71,7 +82,10 @@ mod tests {
 
     #[test]
     fn check_errors() {
-        let text = "[ a link ](http://www.example.com/)".to_owned();
+        let text = "[ a link ](http://www.example.com/)
+[a link ](http://www.example.com/)
+[ a link](http://www.example.com/)"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let ast = parse_document(&arena, &text, &Options::default());
@@ -82,7 +96,38 @@ mod tests {
         };
         let rule = MD039::new();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(path, Sourcepos::from((1, 2, 1, 9)))];
+        let expected = vec![
+            rule.to_violation(path.clone(), Sourcepos::from((1, 2, 1, 9))),
+            rule.to_violation(path.clone(), Sourcepos::from((2, 2, 2, 8))),
+            rule.to_violation(path, Sourcepos::from((3, 2, 3, 8))),
+        ];
+        assert_eq!(actual, expected);
+    }
+
+    // NOTE: These results may differ from mdl
+    #[test]
+    fn check_errors_code() {
+        let text = "[ a `link` ](http://www.example.com/)
+[ `link` ](http://www.example.com)
+[`link` ](http://www.example.com)
+[ `link`](http://www.example.com)"
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD039::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![
+            rule.to_violation(path.clone(), Sourcepos::from((1, 2, 1, 4))),
+            rule.to_violation(path.clone(), Sourcepos::from((2, 2, 2, 2))),
+            rule.to_violation(path.clone(), Sourcepos::from((3, 8, 3, 8))),
+            rule.to_violation(path, Sourcepos::from((4, 2, 4, 2))),
+        ];
         assert_eq!(actual, expected);
     }
 
@@ -115,6 +160,21 @@ mod tests {
     #[test]
     fn check_no_errors_bracket() {
         let text = "< http://www.example.com/ >".to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD039::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_code() {
+        let text = "[a `link`](http://www.example.com)
+[`link`](http://www.example.com)"
+            .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let ast = parse_document(&arena, &text, &Options::default());
