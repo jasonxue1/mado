@@ -1,3 +1,4 @@
+use core::cmp::Ordering;
 use core::fmt::{Display, Error, Formatter, Result};
 
 use colored::Colorize as _;
@@ -29,6 +30,33 @@ impl Display for Mdl {
             self.violation.name().red().bold(),
             self.violation.description()
         )
+    }
+}
+
+impl PartialOrd for Mdl {
+    #[inline]
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Mdl {
+    #[inline]
+    fn cmp(&self, other: &Self) -> Ordering {
+        let path_cmp = self.violation.path().cmp(other.violation.path());
+        if path_cmp != Ordering::Equal {
+            return path_cmp;
+        }
+
+        let name_cmp = self.violation.name().cmp(other.violation.name());
+        if name_cmp != Ordering::Equal {
+            return name_cmp;
+        }
+
+        self.violation
+            .position()
+            .start
+            .cmp(&other.violation.position().start)
     }
 }
 

@@ -1,3 +1,4 @@
+use core::cmp::Ordering;
 use core::fmt::{Display, Error, Formatter, Result};
 
 use colored::Colorize as _;
@@ -31,6 +32,20 @@ impl Display for Concise {
             self.violation.name().red().bold(),
             self.violation.description()
         )
+    }
+}
+
+impl PartialOrd for Concise {
+    #[inline]
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Concise {
+    #[inline]
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.violation.cmp(&other.violation)
     }
 }
 

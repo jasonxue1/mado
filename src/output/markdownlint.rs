@@ -1,3 +1,4 @@
+use core::cmp::Ordering;
 use core::fmt::{Display, Error, Formatter, Result};
 
 use colored::Colorize as _;
@@ -34,6 +35,20 @@ impl Display for Markdownlint {
             )
             .red()
         )
+    }
+}
+
+impl PartialOrd for Markdownlint {
+    #[inline]
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Markdownlint {
+    #[inline]
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.violation.cmp(&other.violation)
     }
 }
 

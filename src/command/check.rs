@@ -53,7 +53,7 @@ impl Checker {
     pub fn check(self) -> Result<ExitCode> {
         let runner = ParallelLintRunner::new(self.walker, self.config.clone(), 100);
         let mut violations = runner.run()?;
-        violations.sort();
+        violations.sort_by(self.config.lint.output_format.sorter());
 
         if violations.is_empty() {
             println!("All checks passed!");
