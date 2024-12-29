@@ -1,4 +1,4 @@
-use comrak::nodes::{NodeHeading, NodeValue};
+use comrak::nodes::NodeValue;
 use miette::Result;
 use serde::Deserialize;
 
@@ -13,7 +13,7 @@ use super::RuleLike;
 pub enum HeadingStyle {
     Consistent,
     Atx,
-    // AtxClosed, // TODO
+    AtxClosed,
     Setext,
     SetextWithAtx,
 }
@@ -70,13 +70,24 @@ impl RuleLike for MD003 {
         let mut maybe_heading_style = None;
 
         for node in doc.ast.children() {
-            if let NodeValue::Heading(NodeHeading { level, setext, .. }) = node.data.borrow().value
-            {
+            if let NodeValue::Heading(heading) = node.data.borrow().value {
+                let is_atx_closed = if let Some(child_node) = node.last_child() {
+                    let heading_position = node.data.borrow().sourcepos;
+                    let inner_position = child_node.data.borrow().sourcepos;
+                    !heading.setext && heading_position.end.column > inner_position.end.column
+                } else {
+                    // TODO: Handle this case
+                    !heading.setext
+                };
+
                 let is_violated = match (&self.style, maybe_heading_style) {
-                    (HeadingStyle::Consistent, Some(heading_style)) => setext != heading_style,
-                    (HeadingStyle::Atx, _) => setext,
-                    (HeadingStyle::Setext, _) => !setext,
-                    (HeadingStyle::SetextWithAtx, _) => level < 3 && !setext,
+                    (HeadingStyle::Consistent, Some((expected_setext, expected_atx_closed))) => {
+                        heading.setext != expected_setext || expected_atx_closed != is_atx_closed
+                    }
+                    (HeadingStyle::Atx, _) => heading.setext || is_atx_closed,
+                    (HeadingStyle::AtxClosed, _) => heading.setext || !is_atx_closed,
+                    (HeadingStyle::Setext, _) => !heading.setext,
+                    (HeadingStyle::SetextWithAtx, _) => heading.level < 3 && !heading.setext,
                     _ => false,
                 };
 
@@ -87,7 +98,7 @@ impl RuleLike for MD003 {
                 }
 
                 if maybe_heading_style.is_none() {
-                    maybe_heading_style = Some(setext);
+                    maybe_heading_style = Some((heading.setext, is_atx_closed));
                 }
             }
         }
@@ -124,7 +135,10 @@ Setext style H1
         };
         let rule = MD003::default();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(path, Sourcepos::from((5, 1, 6, 15)))];
+        let expected = vec![
+            rule.to_violation(path.clone(), Sourcepos::from((3, 1, 3, 25))),
+            rule.to_violation(path, Sourcepos::from((5, 1, 6, 15))),
+        ];
         assert_eq!(actual, expected);
     }
 
@@ -147,7 +161,36 @@ Setext style H1
         };
         let rule = MD003::new(HeadingStyle::Atx);
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(path, Sourcepos::from((5, 1, 6, 15)))];
+        let expected = vec![
+            rule.to_violation(path.clone(), Sourcepos::from((3, 1, 3, 25))),
+            rule.to_violation(path, Sourcepos::from((5, 1, 6, 15))),
+        ];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_errors_for_atx_closed() {
+        let text = "# ATX style H1
+
+## Closed ATX style H2 ##
+
+Setext style H1
+==============="
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD003::new(HeadingStyle::AtxClosed);
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![
+            rule.to_violation(path.clone(), Sourcepos::from((1, 1, 1, 14))),
+            rule.to_violation(path, Sourcepos::from((5, 1, 6, 15))),
+        ];
         assert_eq!(actual, expected);
     }
 
@@ -229,6 +272,22 @@ Setext style H1
         let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document { path, ast, text };
         let rule = MD003::new(HeadingStyle::Atx);
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_for_atx_closed() {
+        let text = "# ATX style H1 #
+
+## ATX style H2 ##"
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD003::new(HeadingStyle::AtxClosed);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
         assert_eq!(actual, expected);

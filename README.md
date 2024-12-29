@@ -55,7 +55,7 @@ are currently supported.
 |-------|--------------------|-----------------------------------------------|
 | MD001 | :white_check_mark: |                                               |
 | MD002 | :white_check_mark: |                                               |
-| MD003 | :warning:          | `:atx_closed` is not supported.               |
+| MD003 | :hammer:           |                                               |
 | MD004 | :warning:          | `:sublist` is not supported.                  |
 | MD005 | :white_check_mark: |                                               |
 | MD006 | :white_check_mark: |                                               |
