@@ -25,17 +25,17 @@ impl RuleLike for MD047 {
 
     #[inline]
     fn description(&self) -> &'static str {
-        "Code block style"
+        "File should end with a single newline character"
     }
 
     #[inline]
     fn tags(&self) -> Vec<&'static str> {
-        vec!["code"]
+        vec!["blank_lines"]
     }
 
     #[inline]
     fn aliases(&self) -> Vec<&'static str> {
-        vec!["code-block-style"]
+        vec!["single-trailing-newline"]
     }
 
     #[inline]
