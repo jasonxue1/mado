@@ -100,4 +100,22 @@ mod tests {
         let expected = vec![];
         assert_eq!(actual, expected);
     }
+
+    #[test]
+    fn check_no_errors_with_indented_code_block_comment() {
+        let text = "Some text
+
+   ```
+   # Header
+   ```"
+        .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD023::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
 }
