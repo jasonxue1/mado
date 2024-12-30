@@ -45,7 +45,7 @@ impl RuleLike for MD014 {
         for node in doc.ast.descendants() {
             if let NodeValue::CodeBlock(code) = &node.data.borrow().value {
                 let mut lines = code.literal.lines();
-                if lines.all(|line| line.starts_with("$ ")) {
+                if lines.all(|line| line.is_empty() || line.starts_with("$ ")) {
                     let position = node.data.borrow().sourcepos;
                     let violation = self.to_violation(doc.path.clone(), position);
                     violations.push(violation);
@@ -71,6 +71,7 @@ mod tests {
         let text = "```
 $ ls
 $ cat foo
+
 $ less bar
 ```"
         .to_owned();
@@ -84,7 +85,7 @@ $ less bar
         };
         let rule = MD014::default();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(path, Sourcepos::from((1, 1, 5, 3)))];
+        let expected = vec![rule.to_violation(path, Sourcepos::from((1, 1, 6, 3)))];
         assert_eq!(actual, expected);
     }
 
@@ -117,7 +118,25 @@ $ less bar
         let text = "```
 ls
 cat foo
+
 less bar
+```"
+        .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD014::default();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_variables() {
+        let text = "```
+$foo=bar
+$baz=quz
 ```"
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
