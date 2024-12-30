@@ -1,4 +1,4 @@
-use comrak::nodes::{AstNode, NodeValue};
+use comrak::nodes::{NodeCodeBlock, NodeValue};
 use miette::Result;
 
 use crate::{violation::Violation, Document};
@@ -41,35 +41,38 @@ impl RuleLike for MD031 {
     #[inline]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let mut violations = vec![];
-        let mut maybe_prev_node: Option<&'_ AstNode<'_>> = None;
 
         for node in doc.ast.children() {
-            if let Some(prev_node) = maybe_prev_node {
+            if let Some(prev_node) = node.previous_sibling() {
                 let prev_position = prev_node.data.borrow().sourcepos;
                 let position = node.data.borrow().sourcepos;
 
-                if let NodeValue::CodeBlock(code) = &prev_node.data.borrow().value {
-                    if code.fenced
-                        && position.start.line == prev_position.end.line + 1
+                if let NodeValue::CodeBlock(NodeCodeBlock { fenced: true, .. }) =
+                    &prev_node.data.borrow().value
+                {
+                    if position.start.line == prev_position.end.line + 1
                         && prev_position.end.column != 0
                     {
-                        let violation = self.to_violation(doc.path.clone(), position);
+                        let mut fence_position = prev_position;
+                        fence_position.start.line = fence_position.end.line;
+                        let violation = self.to_violation(doc.path.clone(), fence_position);
                         violations.push(violation);
                     }
                 }
 
-                if let NodeValue::CodeBlock(code) = &node.data.borrow().value {
-                    if code.fenced
-                        && position.start.line == prev_position.end.line + 1
+                if let NodeValue::CodeBlock(NodeCodeBlock { fenced: true, .. }) =
+                    &node.data.borrow().value
+                {
+                    if position.start.line == prev_position.end.line + 1
                         && prev_position.end.column != 0
                     {
-                        let violation = self.to_violation(doc.path.clone(), position);
+                        let mut fence_position = position;
+                        fence_position.end.line = fence_position.start.line;
+                        let violation = self.to_violation(doc.path.clone(), fence_position);
                         violations.push(violation);
                     }
                 }
             }
-
-            maybe_prev_node = Some(node);
         }
 
         Ok(violations)
@@ -87,15 +90,21 @@ mod tests {
 
     #[test]
     fn check_errors() {
-        let text = "Some text
+        let text = "text
 ```
-Code block
+code
 ```
 
+text
 ```
-Another code block
+code
 ```
-Some more text"
+text
+
+```
+code
+```
+text"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -108,30 +117,136 @@ Some more text"
         let rule = MD031::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
-            rule.to_violation(path.clone(), Sourcepos::from((2, 1, 4, 3))),
-            rule.to_violation(path, Sourcepos::from((9, 1, 9, 14))),
+            rule.to_violation(path.clone(), Sourcepos::from((2, 1, 2, 3))),
+            rule.to_violation(path.clone(), Sourcepos::from((7, 1, 7, 3))),
+            rule.to_violation(path.clone(), Sourcepos::from((9, 1, 9, 3))),
+            rule.to_violation(path, Sourcepos::from((14, 1, 14, 3))),
+        ];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_errors_with_code() {
+        let text = "```
+code
+```
+```
+code
+```
+```
+code
+```"
+        .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD031::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![
+            rule.to_violation(path.clone(), Sourcepos::from((3, 1, 3, 3))),
+            rule.to_violation(path.clone(), Sourcepos::from((4, 1, 4, 3))),
+            rule.to_violation(path.clone(), Sourcepos::from((6, 1, 6, 3))),
+            rule.to_violation(path, Sourcepos::from((7, 1, 7, 3))),
+        ];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_errors_with_list() {
+        let text = "* list
+```
+code
+```
+
+* list
+```
+code
+```
+* list
+
+```
+code
+```
+* list"
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD031::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![
+            rule.to_violation(path.clone(), Sourcepos::from((2, 1, 2, 3))),
+            rule.to_violation(path.clone(), Sourcepos::from((7, 1, 7, 3))),
+            rule.to_violation(path.clone(), Sourcepos::from((9, 1, 9, 3))),
+            rule.to_violation(path, Sourcepos::from((14, 1, 14, 3))),
         ];
         assert_eq!(actual, expected);
     }
 
     #[test]
     fn check_no_errors() {
-        let text = "Some text
+        let text = "text
 
 ```
-Code block
+code
 ```
 
+text
+
 ```
-Another code block
+code
 ```
 
-Some more text"
+text
+
+```
+code
+```
+
+text"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document { path, ast, text };
+        let rule = MD031::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_noerrors_code() {
+        let text = "```
+code
+```
+
+```
+code
+```
+
+```
+code
+```"
+        .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
         let rule = MD031::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
