@@ -1,4 +1,4 @@
-use comrak::nodes::{AstNode, NodeValue};
+use comrak::nodes::NodeValue;
 use miette::Result;
 
 use crate::{violation::Violation, Document};
@@ -41,10 +41,9 @@ impl RuleLike for MD032 {
     #[inline]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let mut violations = vec![];
-        let mut maybe_prev_node: Option<&'_ AstNode<'_>> = None;
 
         for node in doc.ast.children() {
-            if let Some(prev_node) = maybe_prev_node {
+            if let Some(prev_node) = node.previous_sibling() {
                 let position = node.data.borrow().sourcepos;
                 let prev_position = prev_node.data.borrow().sourcepos;
 
@@ -81,8 +80,6 @@ impl RuleLike for MD032 {
                     }
                 }
             }
-
-            maybe_prev_node = Some(node);
         }
 
         Ok(violations)
