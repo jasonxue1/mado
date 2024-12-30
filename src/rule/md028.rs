@@ -24,10 +24,8 @@ impl MD028 {
         path: &PathBuf,
         violations: &mut Vec<Violation>,
     ) {
-        let mut maybe_prev_node: Option<&'_ AstNode<'_>> = None;
-
         for node in root.children() {
-            if let Some(prev_node) = maybe_prev_node {
+            if let Some(prev_node) = node.previous_sibling() {
                 if let (NodeValue::BlockQuote, NodeValue::BlockQuote) =
                     (&prev_node.data.borrow().value, &node.data.borrow().value)
                 {
@@ -49,8 +47,6 @@ impl MD028 {
                     self.check_recursive(item_node, path, violations);
                 }
             }
-
-            maybe_prev_node = Some(node);
         }
     }
 }
