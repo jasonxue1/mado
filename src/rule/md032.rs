@@ -42,7 +42,29 @@ impl RuleLike for MD032 {
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let mut violations = vec![];
 
-        for node in doc.ast.children() {
+        'node_loop: for node in doc.ast.children() {
+            // Check Paragraph in Item
+            if let (NodeValue::List(_), Some(item_node)) =
+                (&node.data.borrow().value, node.last_child())
+            {
+                if let Some(block_node) = item_node.last_child() {
+                    for inline_node in block_node.descendants() {
+                        let inline_position = inline_node.data.borrow().sourcepos;
+                        if inline_position.start.column == 1 {
+                            // TODO: Improve position
+                            let mut bottom_position = inline_position;
+                            bottom_position.end.line = bottom_position.start.line;
+                            bottom_position.end.column = 0;
+                            bottom_position.start.line -= 1;
+
+                            let violation = self.to_violation(doc.path.clone(), bottom_position);
+                            violations.push(violation);
+                            continue 'node_loop;
+                        }
+                    }
+                }
+            }
+
             if let Some(prev_node) = node.previous_sibling() {
                 let position = node.data.borrow().sourcepos;
                 let prev_position = prev_node.data.borrow().sourcepos;
@@ -51,8 +73,11 @@ impl RuleLike for MD032 {
                     if position.start.line == prev_position.end.line + 1
                         && prev_position.end.column != 0
                     {
-                        let violation = self.to_violation(doc.path.clone(), position);
+                        let mut bottom_position = prev_position;
+                        bottom_position.start.line = bottom_position.end.line;
+                        let violation = self.to_violation(doc.path.clone(), bottom_position);
                         violations.push(violation);
+                        continue;
                     }
                 }
 
@@ -60,23 +85,12 @@ impl RuleLike for MD032 {
                     if position.start.line == prev_position.end.line + 1
                         && prev_position.end.column != 0
                     {
-                        let violation = self.to_violation(doc.path.clone(), position);
-                        violations.push(violation);
-                    }
-                }
-            }
-
-            // Check Paragraph in Item
-            if let (NodeValue::List(_), Some(item_node)) =
-                (&node.data.borrow().value, node.last_child())
-            {
-                if let Some(child_node) = item_node.last_child() {
-                    for grandchild_node in child_node.descendants() {
-                        let position = grandchild_node.data.borrow().sourcepos;
-                        if position.start.column == 1 {
-                            let violation = self.to_violation(doc.path.clone(), position);
-                            violations.push(violation);
+                        let mut top_position = position;
+                        if position.end.column == 0 {
+                            top_position.end.line = position.start.line + 1;
                         }
+                        let violation = self.to_violation(doc.path.clone(), top_position);
+                        violations.push(violation);
                     }
                 }
             }
@@ -97,13 +111,13 @@ mod tests {
 
     #[test]
     fn check_errors() {
-        let text = "Some text
-* Some
-* List
-
-1. Some
-2. List
-Some text"
+        let text = "text
+* list
+text
+- list
+text
+1. list
+text"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -116,20 +130,24 @@ Some text"
         let rule = MD032::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
-            rule.to_violation(path.clone(), Sourcepos::from((2, 1, 4, 0))),
-            rule.to_violation(path, Sourcepos::from((7, 1, 7, 9))),
+            rule.to_violation(path.clone(), Sourcepos::from((2, 1, 3, 0))),
+            rule.to_violation(path.clone(), Sourcepos::from((4, 1, 5, 0))),
+            rule.to_violation(path, Sourcepos::from((6, 1, 7, 0))),
         ];
         assert_eq!(actual, expected);
     }
 
     #[test]
-    fn check_errors2() {
-        let text = "1. Some
-2. List
-   Text
+    fn check_errors_with_blank_lines() {
+        let text = "text
+* list
 
-   Text
-Some text"
+text
+- list
+text
+
+1. list
+text"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -141,16 +159,41 @@ Some text"
         };
         let rule = MD032::new();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(path, Sourcepos::from((6, 1, 6, 9)))];
+        let expected = vec![
+            rule.to_violation(path.clone(), Sourcepos::from((2, 1, 3, 0))),
+            rule.to_violation(path.clone(), Sourcepos::from((5, 1, 6, 0))),
+            rule.to_violation(path, Sourcepos::from((8, 1, 9, 0))),
+        ];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_errors_with_indented_text_and_blank_lines() {
+        let text = "1. list
+   text
+
+   text
+text"
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD032::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![rule.to_violation(path, Sourcepos::from((4, 1, 5, 0)))];
         assert_eq!(actual, expected);
     }
 
     #[test]
     fn check_errors_nested() {
-        let text = "1. Some
-2. List
-    * Item
-Some text"
+        let text = "1. list
+    * nested list
+text"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -162,18 +205,17 @@ Some text"
         };
         let rule = MD032::new();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(path, Sourcepos::from((4, 1, 4, 9)))];
+        let expected = vec![rule.to_violation(path, Sourcepos::from((2, 1, 3, 0)))];
         assert_eq!(actual, expected);
     }
 
     #[test]
-    fn check_errors_nested2() {
-        let text = "1. Some
-2. List
-   Text
+    fn check_errors_nested_with_blank_line() {
+        let text = "1. list
+   text
 
-   * Text
-Some text"
+   * nested list
+text"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -185,20 +227,28 @@ Some text"
         };
         let rule = MD032::new();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(path, Sourcepos::from((6, 1, 6, 9)))];
+        let expected = vec![rule.to_violation(path, Sourcepos::from((4, 1, 5, 0)))];
         assert_eq!(actual, expected);
     }
 
     #[test]
     fn check_errors_with_code_block() {
-        let text = "    Indented code block
-* Some
-* List
-
-1. Some
-2. List
+        let text = "```
+code
 ```
-Fenced code block
+* list
+
+```
+code
+```
+- list
+```
+code
+```
+
+* list
+```
+code
 ```"
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
@@ -212,21 +262,23 @@ Fenced code block
         let rule = MD032::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
-            rule.to_violation(path.clone(), Sourcepos::from((2, 1, 4, 0))),
-            rule.to_violation(path, Sourcepos::from((7, 1, 9, 3))),
+            // TODO: deduplicate
+            rule.to_violation(path.clone(), Sourcepos::from((4, 1, 5, 0))),
+            rule.to_violation(path.clone(), Sourcepos::from((9, 1, 9, 6))),
+            rule.to_violation(path.clone(), Sourcepos::from((9, 1, 9, 6))),
+            rule.to_violation(path, Sourcepos::from((14, 1, 14, 6))),
         ];
         assert_eq!(actual, expected);
     }
 
     #[test]
-    fn check_errors_with_code_block2() {
-        let text = "1. Some
-2. List
-   Text
+    fn check_errors_with_code_block_and_blank_line() {
+        let text = "1. list
+   text
 
-   Text
+   text
 ```
-Fenced code block
+code
 ```"
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
@@ -239,21 +291,49 @@ Fenced code block
         };
         let rule = MD032::new();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(path, Sourcepos::from((6, 1, 8, 3)))];
+        let expected = vec![rule.to_violation(path, Sourcepos::from((4, 1, 4, 7)))];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_errors_nested_with_code_block() {
+        let text = "1. list
+   text
+
+   * nested list
+```
+code
+```"
+        .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document {
+            path: path.clone(),
+            ast,
+            text,
+        };
+        let rule = MD032::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![rule.to_violation(path, Sourcepos::from((4, 1, 4, 16)))];
         assert_eq!(actual, expected);
     }
 
     #[test]
     fn check_no_errors() {
-        let text = "Some text
+        let text = "text
 
-* Some
-* List
+* list
 
-1. Some
-2. List
+text
 
-Some text"
+- list
+
+text
+
+1. list
+
+text"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -267,9 +347,8 @@ Some text"
 
     #[test]
     fn check_no_errors_with_indented_text() {
-        let text = "1. Some
-2. List
-   Some text"
+        let text = "1. list
+   text"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -283,11 +362,10 @@ Some text"
 
     #[test]
     fn check_no_errors_nested() {
-        let text = "1. Some
-2. List
-    * Item
+        let text = "1. list
+    * nested list
 
-Some text"
+text"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -304,14 +382,13 @@ Some text"
     }
 
     #[test]
-    fn check_no_errors_nested2() {
-        let text = "1. Some
-2. List
-   Text
+    fn check_no_errors_nested_with_blank_line() {
+        let text = "1. list
+   text
 
-   * Text
+   * nested list
 
-Some text"
+text"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -321,6 +398,60 @@ Some text"
             ast,
             text,
         };
+        let rule = MD032::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_with_code_block() {
+        let text = "```
+code
+```
+
+* list
+
+```
+code
+```
+
+- list
+
+```
+code
+```
+
+* list
+
+```
+code
+```"
+        .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD032::new();
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    // NOTE: mdl triggers a violation
+    #[test]
+    fn check_no_errors_with_ordered_list_like_paragraph() {
+        let text = "* list
+  text
+
+text
+10. list
+20. list"
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
         let rule = MD032::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
