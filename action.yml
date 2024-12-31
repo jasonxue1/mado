@@ -1,0 +1,18 @@
+name: "mado-action"
+description: "Run mado to check Markdown files"
+author: "Akiomi Kamakura"
+inputs:
+  args:
+    description: "Arguments passed to Mado. Defaults to `check .`."
+    required: false
+    default: "check ."
+
+runs:
+  using: 'composite'
+  steps:
+    - id: mado
+      shell: bash
+      run: $GITHUB_ACTION_PATH/action/entrypoint.sh
+      env:
+        INSTALL_DIR: .
+        INPUT_ARGS: ${{ inputs.args }}
