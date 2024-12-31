@@ -1,6 +1,10 @@
 name: "mado-action"
 description: "Run mado to check Markdown files"
 author: "Akiomi Kamakura"
+branding:
+  icon: check
+  color: white
+
 inputs:
   args:
     description: "Arguments passed to Mado. Defaults to `check .`."
