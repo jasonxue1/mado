@@ -1,4 +1,4 @@
-# mado
+# Mado
 
 A fast Markdown linter, written in Rust.
 Compliant with [CommonMark](https://commonmark.org) and [GFM](https://github.github.com/gfm/).
@@ -43,8 +43,7 @@ is used.
 
 ## Rules
 
-Several [markdownlint rules](https://github.com/markdownlint/markdownlint/blob/main/docs/RULES.md)
-are currently supported.
+Mado supports almost all [markdownlint rules](https://github.com/markdownlint/markdownlint/blob/main/docs/RULES.md).
 
 * :white_check_mark: The rule is stable.
 * :hammer: The rule is unstable.
