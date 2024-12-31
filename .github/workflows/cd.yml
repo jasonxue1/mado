@@ -48,3 +48,4 @@ jobs:
       with:
         executable-name: mado
         target: ${{ matrix.platform.target }}
+        changes-file: CHANGELOG.md
