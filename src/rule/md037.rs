@@ -45,30 +45,27 @@ impl RuleLike for MD037 {
     #[inline]
     #[allow(clippy::cast_possible_wrap)]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
-        static RE_START: LazyLock<Regex> = LazyLock::new(|| {
+        static RE: LazyLock<Regex> = LazyLock::new(|| {
             #[allow(clippy::unwrap_used)]
-            Regex::new(r"(\s\*\s.+\*)|(\s\*\*\s.+\*\*)|(\s_\s.+_)|(\s__\s.+__)").unwrap()
-        });
-        static RE_END: LazyLock<Regex> = LazyLock::new(|| {
-            #[allow(clippy::unwrap_used)]
-            Regex::new(r"(\*.+\s\*\s)|(\*\*.+\s\*\*\s)|(_.+\s_\s)|(__.+\s__\s)").unwrap()
+            Regex::new(r"((\s\*\s.+\*)|(\s\*\*\s.+\*\*)|(\s_\s.+_)|(\s__\s.+__))|((\*.+\s\*\s)|(\*\*.+\s\*\*\s)|(_.+\s_\s)|(__.+\s__\s))").unwrap()
         });
 
         let mut violations = vec![];
 
         for node in doc.ast.descendants() {
             if let NodeValue::Text(text) = &node.data.borrow().value {
-                if let Some(m) = RE_START.find(text) {
+                if let Some(m) = RE.find(text) {
                     let mut position = node.data.borrow().sourcepos;
-                    position.end = position.start.column_add(m.end() as isize - 1);
-                    position.start = position.start.column_add(m.start() as isize + 1);
 
-                    let violation = self.to_violation(doc.path.clone(), position);
-                    violations.push(violation);
-                } else if let Some(m) = RE_END.find(text) {
-                    let mut position = node.data.borrow().sourcepos;
-                    position.end = position.start.column_add(m.end() as isize - 2);
-                    position.start = position.start.column_add(m.start() as isize);
+                    if m.as_str().starts_with(' ') {
+                        // When a start marker matches
+                        position.end = position.start.column_add(m.end() as isize - 1);
+                        position.start = position.start.column_add(m.start() as isize + 1);
+                    } else {
+                        // When an end marker matches
+                        position.end = position.start.column_add(m.end() as isize - 2);
+                        position.start = position.start.column_add(m.start() as isize);
+                    }
 
                     let violation = self.to_violation(doc.path.clone(), position);
                     violations.push(violation);
