@@ -65,11 +65,11 @@ impl Checker {
         for violation in violations {
             match self.config.lint.output_format {
                 Format::Concise => {
-                    writeln!(output, "{}", Concise::new(violation)).into_diagnostic()?;
+                    writeln!(output, "{}", Concise::new(&violation)).into_diagnostic()?;
                 }
-                Format::Mdl => writeln!(output, "{}", Mdl::new(violation)).into_diagnostic()?,
+                Format::Mdl => writeln!(output, "{}", Mdl::new(&violation)).into_diagnostic()?,
                 Format::Markdownlint => {
-                    writeln!(output, "{}", Markdownlint::new(violation)).into_diagnostic()?;
+                    writeln!(output, "{}", Markdownlint::new(&violation)).into_diagnostic()?;
                 }
             }
         }

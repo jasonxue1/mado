@@ -6,17 +6,17 @@ use colored::Colorize as _;
 use crate::Violation;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Concise {
-    violation: Violation,
+pub struct Concise<'a> {
+    violation: &'a Violation,
 }
 
-impl Concise {
-    pub fn new(violation: Violation) -> Self {
+impl<'a> Concise<'a> {
+    pub fn new(violation: &'a Violation) -> Self {
         Self { violation }
     }
 }
 
-impl Display for Concise {
+impl Display for Concise<'_> {
     #[inline]
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         let path = self.violation.path().to_str().ok_or(Error)?;
@@ -35,17 +35,17 @@ impl Display for Concise {
     }
 }
 
-impl PartialOrd for Concise {
+impl PartialOrd for Concise<'_> {
     #[inline]
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
-impl Ord for Concise {
+impl Ord for Concise<'_> {
     #[inline]
     fn cmp(&self, other: &Self) -> Ordering {
-        self.violation.cmp(&other.violation)
+        self.violation.cmp(other.violation)
     }
 }
 
@@ -69,7 +69,7 @@ mod tests {
             "description".to_owned(),
             position,
         );
-        let actual = Concise::new(violation).to_string();
+        let actual = Concise::new(&violation).to_string();
         let expected = "\u{1b}[1mfile.md\u{1b}[0m\u{1b}[34m:\u{1b}[0m0\u{1b}[34m:\u{1b}[0m1\u{1b}[34m:\u{1b}[0m \u{1b}[1;31mname\u{1b}[0m description";
         assert_eq!(actual, expected);
     }

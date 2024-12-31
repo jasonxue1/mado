@@ -6,17 +6,17 @@ use colored::Colorize as _;
 use crate::Violation;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Markdownlint {
-    violation: Violation,
+pub struct Markdownlint<'a> {
+    violation: &'a Violation,
 }
 
-impl Markdownlint {
-    pub fn new(violation: Violation) -> Self {
+impl<'a> Markdownlint<'a> {
+    pub fn new(violation: &'a Violation) -> Self {
         Self { violation }
     }
 }
 
-impl Display for Markdownlint {
+impl Display for Markdownlint<'_> {
     // TODO: Add `expected` and `actual`
     #[inline]
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
@@ -38,17 +38,17 @@ impl Display for Markdownlint {
     }
 }
 
-impl PartialOrd for Markdownlint {
+impl PartialOrd for Markdownlint<'_> {
     #[inline]
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
-impl Ord for Markdownlint {
+impl Ord for Markdownlint<'_> {
     #[inline]
     fn cmp(&self, other: &Self) -> Ordering {
-        self.violation.cmp(&other.violation)
+        self.violation.cmp(other.violation)
     }
 }
 
@@ -72,7 +72,7 @@ mod tests {
             "description".to_owned(),
             position,
         );
-        let actual = Markdownlint::new(violation).to_string();
+        let actual = Markdownlint::new(&violation).to_string();
         let expected = "\u{1b}[31mfile.md:0:1 name/alias description\u{1b}[0m";
         assert_eq!(actual, expected);
     }

@@ -6,17 +6,17 @@ use colored::Colorize as _;
 use crate::Violation;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Mdl {
-    violation: Violation,
+pub struct Mdl<'a> {
+    violation: &'a Violation,
 }
 
-impl Mdl {
-    pub fn new(violation: Violation) -> Self {
+impl<'a> Mdl<'a> {
+    pub fn new(violation: &'a Violation) -> Self {
         Self { violation }
     }
 }
 
-impl Display for Mdl {
+impl Display for Mdl<'_> {
     #[inline]
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         let path = self.violation.path().to_str().ok_or(Error)?;
@@ -33,14 +33,14 @@ impl Display for Mdl {
     }
 }
 
-impl PartialOrd for Mdl {
+impl PartialOrd for Mdl<'_> {
     #[inline]
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
-impl Ord for Mdl {
+impl Ord for Mdl<'_> {
     #[inline]
     fn cmp(&self, other: &Self) -> Ordering {
         let path_cmp = self.violation.path().cmp(other.violation.path());
@@ -80,7 +80,7 @@ mod tests {
             "description".to_owned(),
             position,
         );
-        let actual = Mdl::new(violation).to_string();
+        let actual = Mdl::new(&violation).to_string();
         let expected = "\u{1b}[1mfile.md\u{1b}[0m\u{1b}[34m:\u{1b}[0m0\u{1b}[34m:\u{1b}[0m \u{1b}[1;31mname\u{1b}[0m description";
         assert_eq!(actual, expected);
     }
