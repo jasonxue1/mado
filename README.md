@@ -12,7 +12,7 @@ mado check path/to/*.md
 
 ## Performance
 
-50-62x faster than existing linters
+38-47x faster than existing linters
 (like [markdownlint](https://github.com/markdownlint/markdownlint)).
 
 ```mermaid
@@ -33,7 +33,7 @@ xychart-beta
     title "Linting about 1,500 markdown files (Lower is faster)"
     x-axis ["mado (rust)", "markdownlint-cli (node.js)", "markdownlint (ruby)", "markdownlint-cli2 (node.js)"]
     y-axis "Time (seconds)" 0 --> 10
-    bar [0.1266, 6.361, 6.444, 7.872]
+    bar [0.167, 6.456, 6.615, 7.846]
 ```
 
 This benchmark was run on a MacBook Pro (2021, M1 Max)
