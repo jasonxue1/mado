@@ -32,7 +32,11 @@ impl Linter {
                     Rule::MD009 => Box::new(rule::MD009::new()),
                     Rule::MD010 => Box::new(rule::MD010::new()),
                     Rule::MD012 => Box::new(rule::MD012::new()),
-                    Rule::MD013 => Box::new(rule::MD013::new(config.lint.md013.line_length)),
+                    Rule::MD013 => Box::new(rule::MD013::new(
+                        config.lint.md013.line_length,
+                        config.lint.md013.code_blocks,
+                        config.lint.md013.tables,
+                    )),
                     Rule::MD014 => Box::new(rule::MD014::new()),
                     Rule::MD018 => Box::new(rule::MD018::new()),
                     Rule::MD019 => Box::new(rule::MD019::new()),

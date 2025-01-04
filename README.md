@@ -62,7 +62,7 @@ Mado supports almost all [markdownlint rules](https://github.com/markdownlint/ma
 | MD009 | :white_check_mark: |                                               |
 | MD010 | :white_check_mark: |                                               |
 | MD012 | :white_check_mark: |                                               |
-| MD013 | :warning:          | `code_blocks` and `tables` are not supported. |
+| MD013 | :white_check_mark: |                                               |
 | MD014 | :white_check_mark: |                                               |
 | MD018 | :white_check_mark: |                                               |
 | MD019 | :white_check_mark: |                                               |

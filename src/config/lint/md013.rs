@@ -7,6 +7,8 @@ use crate::rule;
 #[allow(clippy::exhaustive_structs)]
 pub struct MD013 {
     pub line_length: usize,
+    pub code_blocks: bool,
+    pub tables: bool,
 }
 
 impl Default for MD013 {
@@ -14,6 +16,8 @@ impl Default for MD013 {
     fn default() -> Self {
         Self {
             line_length: rule::MD013::DEFAULT_LINE_LENGTH,
+            code_blocks: rule::MD013::DEFAULT_CODE_BLOCKS,
+            tables: rule::MD013::DEFAULT_TABLES,
         }
     }
 }

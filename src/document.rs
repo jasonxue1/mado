@@ -20,6 +20,7 @@ impl<'a> Document<'a> {
         let text = fs::read_to_string(path).into_diagnostic()?;
         let mut options = Options::default();
         options.extension.front_matter_delimiter = Some("---".to_owned());
+        options.extension.table = true;
         let ast = parse_document(arena, &text, &options);
 
         Ok(Self {
