@@ -60,7 +60,7 @@ impl RuleLike for MD040 {
 mod tests {
     use std::path::Path;
 
-    use comrak::{nodes::Sourcepos, parse_document, Arena, Options};
+    use comrak::{nodes::Sourcepos, Arena};
     use pretty_assertions::assert_eq;
 
     use super::*;
@@ -74,12 +74,7 @@ echo Hello world
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD040::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![rule.to_violation(path, Sourcepos::from((1, 1, 4, 3)))];
@@ -95,8 +90,7 @@ echo Hello world
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD040::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -113,8 +107,7 @@ Some more text"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD040::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

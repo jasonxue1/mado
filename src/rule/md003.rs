@@ -111,7 +111,7 @@ impl RuleLike for MD003 {
 mod tests {
     use std::path::Path;
 
-    use comrak::{nodes::Sourcepos, parse_document, Arena, Options};
+    use comrak::{nodes::Sourcepos, Arena};
     use pretty_assertions::assert_eq;
 
     use super::*;
@@ -127,12 +127,7 @@ Setext style H1
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD003::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
@@ -153,12 +148,7 @@ Setext style H1
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD003::new(HeadingStyle::Atx);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
@@ -179,12 +169,7 @@ Setext style H1
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD003::new(HeadingStyle::AtxClosed);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
@@ -205,12 +190,7 @@ Setext style H1
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD003::new(HeadingStyle::Setext);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
@@ -230,12 +210,7 @@ Setext style H1
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD003::new(HeadingStyle::SetextWithAtx);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
@@ -253,8 +228,7 @@ Setext style H1
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD003::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -269,8 +243,7 @@ Setext style H1
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD003::new(HeadingStyle::Atx);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -285,8 +258,7 @@ Setext style H1
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD003::new(HeadingStyle::AtxClosed);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -303,8 +275,7 @@ Setext style H2
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD003::new(HeadingStyle::Setext);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -323,8 +294,7 @@ Setext style H2
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD003::new(HeadingStyle::SetextWithAtx);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -341,10 +311,7 @@ author: "John Smith"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let mut options = Options::default();
-        options.extension.front_matter_delimiter = Some("---".to_owned());
-        let ast = parse_document(&arena, &text, &options);
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD003::new(HeadingStyle::Consistent);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

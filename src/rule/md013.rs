@@ -96,7 +96,7 @@ impl RuleLike for MD013 {
             }
         }
 
-        for (i, line) in doc.text.lines().enumerate() {
+        for (i, line) in doc.lines.iter().enumerate() {
             let lineno = i + 1;
 
             if !self.code_blocks && code_block_ranges.contains(&lineno) {
@@ -122,7 +122,7 @@ impl RuleLike for MD013 {
 mod tests {
     use std::path::Path;
 
-    use comrak::{parse_document, Arena, Options};
+    use comrak::Arena;
     use pretty_assertions::assert_eq;
 
     use super::*;
@@ -135,12 +135,7 @@ This line is a violation because there are spaces beyond that length"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD013::new(34, true, true);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![rule.to_violation(path, Sourcepos::from((3, 35, 3, 68)))];
@@ -156,12 +151,7 @@ This line is a violation because `there are spaces beyond that`"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD013::new(34, true, true);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
@@ -181,14 +171,7 @@ IF THIS LINE IS THE MAXIMUM LENGTH
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let mut options = Options::default();
-        options.extension.table = true;
-        let ast = parse_document(&arena, &text, &options);
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD013::new(34, true, true);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
@@ -209,12 +192,7 @@ puts 'This line is a violation because there are spaces beyond that length'
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD013::new(34, true, true);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![rule.to_violation(path, Sourcepos::from((5, 35, 5, 75)))];
@@ -230,8 +208,7 @@ This-line-is-okay-because-there-are-no-spaces-anywhere-within"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD013::new(34, true, true);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -247,8 +224,7 @@ This line is okay because there `are-no-spaces-beyond-that-length`"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD013::new(34, true, true);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -265,10 +241,7 @@ IF THIS LINE IS THE MAXIMUM LENGTH
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let mut options = Options::default();
-        options.extension.table = true;
-        let ast = parse_document(&arena, &text, &options);
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD013::new(34, true, false);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -285,10 +258,7 @@ IF THIS LINE IS THE MAXIMUM LENGTH
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let mut options = Options::default();
-        options.extension.table = true;
-        let ast = parse_document(&arena, &text, &options);
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD013::new(34, true, true);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -306,8 +276,7 @@ puts 'This line is a violation because there are spaces beyond that length'
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD013::new(34, false, true);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -326,8 +295,7 @@ puts 'This-line-is-okay-because-there-are-no-spaces-anywhere-within'
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD013::new(34, true, true);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -344,8 +312,7 @@ puts 'This line is a violation because there are spaces beyond that length'
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD013::new(34, false, false);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

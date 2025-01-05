@@ -104,7 +104,7 @@ impl RuleLike for MD004 {
 mod tests {
     use std::path::Path;
 
-    use comrak::{nodes::Sourcepos, parse_document, Arena, Options};
+    use comrak::{nodes::Sourcepos, Arena};
     use pretty_assertions::assert_eq;
 
     use super::*;
@@ -117,12 +117,7 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD004::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
@@ -140,12 +135,7 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD004::new(ListStyle::Asterisk);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
@@ -163,12 +153,7 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD004::new(ListStyle::Plus);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
@@ -186,12 +171,7 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD004::new(ListStyle::Dash);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
@@ -209,8 +189,7 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD004::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -225,8 +204,7 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD004::new(ListStyle::Asterisk);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -241,8 +219,7 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD004::new(ListStyle::Plus);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -257,8 +234,7 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD004::new(ListStyle::Dash);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -267,19 +243,14 @@ mod tests {
 
     // NOTE: This test case is marked as a violation in markdownlint
     #[test]
-    fn check_errors_with_blockquote() {
+    fn check_no_errors_with_blockquote() {
         let text = ">- Item 1
 >- Item 2
 >- Item 3"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD004::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

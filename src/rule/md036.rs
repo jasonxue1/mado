@@ -96,7 +96,7 @@ impl RuleLike for MD036 {
 mod tests {
     use std::path::Path;
 
-    use comrak::{nodes::Sourcepos, parse_document, Arena, Options};
+    use comrak::{nodes::Sourcepos, Arena};
     use pretty_assertions::assert_eq;
 
     use super::*;
@@ -113,12 +113,7 @@ Consectetur adipiscing elit, sed do eiusmod."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD036::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
@@ -138,12 +133,7 @@ Some more text"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD036::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![rule.to_violation(path, Sourcepos::from((3, 1, 3, 15)))];
@@ -162,8 +152,7 @@ Consectetur adipiscing elit, sed do eiusmod."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD036::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -182,8 +171,7 @@ Consectetur adipiscing elit, sed do eiusmod."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD036::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -198,8 +186,7 @@ _Another section_ bar"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD036::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -214,8 +201,7 @@ Some more text"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD036::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -229,8 +215,7 @@ text**"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD036::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -242,8 +227,7 @@ text**"
         let text = " **My document**".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD036::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -255,8 +239,7 @@ text**"
         let text = "**`My document`**".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD036::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -268,8 +251,7 @@ text**"
         let text = "**[My document](https://example.com)**".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD036::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
