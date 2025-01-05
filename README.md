@@ -91,6 +91,18 @@ Mado supports almost all [markdownlint rules](https://github.com/markdownlint/ma
 | MD046 | :white_check_mark: |                                               |
 | MD047 | :white_check_mark: |                                               |
 
+## Configuration
+
+Mado can be configured through a `mado.toml` or `.mado.toml` in the current directory.
+In addition, the following paths are available as a global configuration file:
+
+* `Linux`: `~/.config/mado/mado.toml`
+* `macOS`: `~/.config/mado/mado.toml`
+* `Windows`: `~\AppData\Roaming\mado\mado.toml`
+
+See [the example mado.toml](https://github.com/akiomik/mado/blob/main/mado.toml)
+for details.
+
 ## Development
 
 ### Testing

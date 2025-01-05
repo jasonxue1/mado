@@ -43,8 +43,7 @@ pub fn resolve() -> Result<Config> {
     }
 
     let strategy = choose_base_strategy().into_diagnostic()?;
-    let mut config_path = strategy.config_dir();
-    config_path.push(FILE_NAME);
+    let config_path = strategy.config_dir().join("mado").join(FILE_NAME);
     let exists_config = fs::exists(&config_path).into_diagnostic()?;
     if exists_config {
         return load(&config_path);
