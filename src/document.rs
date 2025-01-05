@@ -50,3 +50,39 @@ impl<'a> Document<'a> {
         None
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn open() {
+        let arena = Arena::new();
+        let path = Path::new("README.md");
+        assert!(Document::open(&arena, path).is_ok());
+    }
+
+    #[test]
+    fn front_matter_some() {
+        let front_matter = "---
+foo: bar
+---
+
+"
+        .to_owned();
+        let text = format!("{front_matter}text");
+        let arena = Arena::new();
+        let path = Path::new("test.md").to_path_buf();
+        let doc = Document::new(&arena, path, text.clone()).unwrap();
+        assert_eq!(doc.front_matter(), Some(front_matter));
+    }
+
+    #[test]
+    fn front_matter_none() {
+        let text = "text".to_owned();
+        let arena = Arena::new();
+        let path = Path::new("test.md").to_path_buf();
+        let doc = Document::new(&arena, path, text.clone()).unwrap();
+        assert_eq!(doc.front_matter(), None);
+    }
+}
