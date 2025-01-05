@@ -8,7 +8,7 @@ use miette::IntoDiagnostic as _;
 use miette::Result;
 use serde::Deserialize;
 
-mod lint;
+pub mod lint;
 
 pub use lint::Lint;
 
@@ -58,8 +58,8 @@ impl Config {
 mod tests {
     use super::*;
 
-    use crate::{output::Format, Rule};
-    use lint::MD002;
+    use crate::output::Format;
+    use lint::{RuleSet, MD002};
 
     #[test]
     fn load() {
@@ -83,7 +83,7 @@ level = 2
         let actual: Config = toml::from_str(text).unwrap();
         let mut expected = Config::default();
         expected.lint.output_format = Format::Mdl;
-        expected.lint.rules = vec![Rule::MD027];
+        expected.lint.rules = vec![RuleSet::MD027];
         expected.lint.md002 = MD002 { level: 2 };
         assert_eq!(actual, expected);
     }
