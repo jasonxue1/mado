@@ -103,6 +103,20 @@ In addition, the following paths are available as a global configuration file:
 See [the example mado.toml](https://github.com/akiomik/mado/blob/main/mado.toml)
 for details.
 
+## Github Actions
+
+You can use Mado on Github Action.
+
+```yaml
+# Basic (Run `mado check .`)
+- uses: akiomik/mado@v0.1.1
+
+# Custom (Run `mado` with arbitrary arguments)
+- uses: akiomik/mado@v0.1.1
+  with:
+    args: '--config path/to/mado.toml check path/to/*.md'
+```
+
 ## Development
 
 ### Testing
