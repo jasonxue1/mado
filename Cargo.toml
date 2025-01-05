@@ -5,7 +5,6 @@ version = "0.1.1"
 edition = "2021"
 repository = "https://github.com/akiomik/mado"
 license = "Apache-2.0"
-license-file = "LICENSE"
 authors = ["Akiomi Kamakura <akiomik@gmail.com>"]
 keywords = ["markdown", "lint"]
 categories = ["command-line-utilities", "development-tools"]
