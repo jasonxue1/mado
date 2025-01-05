@@ -1,10 +1,10 @@
 use std::sync::LazyLock;
 
-use comrak::nodes::Sourcepos;
+use comrak::nodes::{NodeValue, Sourcepos};
 use miette::Result;
 use regex::Regex;
 
-use crate::{violation::Violation, Document};
+use crate::{collection::RangeSet, violation::Violation, Document};
 
 use super::RuleLike;
 
@@ -12,15 +12,23 @@ use super::RuleLike;
 #[non_exhaustive]
 pub struct MD013 {
     line_length: usize,
+    code_blocks: bool,
+    tables: bool,
 }
 
 impl MD013 {
     pub const DEFAULT_LINE_LENGTH: usize = 80;
+    pub const DEFAULT_CODE_BLOCKS: bool = true;
+    pub const DEFAULT_TABLES: bool = true;
 
     #[inline]
     #[must_use]
-    pub fn new(line_length: usize) -> Self {
-        Self { line_length }
+    pub fn new(line_length: usize, code_blocks: bool, tables: bool) -> Self {
+        Self {
+            line_length,
+            code_blocks,
+            tables,
+        }
     }
 }
 
@@ -29,6 +37,8 @@ impl Default for MD013 {
     fn default() -> Self {
         Self {
             line_length: Self::DEFAULT_LINE_LENGTH,
+            code_blocks: Self::DEFAULT_CODE_BLOCKS,
+            tables: Self::DEFAULT_TABLES,
         }
     }
 }
@@ -63,8 +73,39 @@ impl RuleLike for MD013 {
 
         let mut violations = vec![];
 
+        let mut code_block_ranges = RangeSet::new();
+        let mut table_ranges = RangeSet::new();
+
+        if self.code_blocks || self.tables {
+            for node in doc.ast.descendants() {
+                if !self.code_blocks {
+                    if let NodeValue::CodeBlock(_code) = &node.data.borrow().value {
+                        let position = node.data.borrow().sourcepos;
+                        let range = position.start.line..=position.end.line;
+                        code_block_ranges.insert(range);
+                    }
+                }
+
+                if !self.tables {
+                    if let NodeValue::TableRow(_table) = &node.data.borrow().value {
+                        let position = node.data.borrow().sourcepos;
+                        let range = position.start.line..=position.end.line;
+                        table_ranges.insert(range);
+                    }
+                }
+            }
+        }
+
         for (i, line) in doc.text.lines().enumerate() {
             let lineno = i + 1;
+
+            if !self.code_blocks && code_block_ranges.contains(&lineno) {
+                continue;
+            }
+
+            if !self.tables && table_ranges.contains(&lineno) {
+                continue;
+            }
 
             if line.len() > self.line_length && RE.is_match_at(line, self.line_length) {
                 let position = Sourcepos::from((lineno, self.line_length + 1, lineno, line.len()));
@@ -100,7 +141,7 @@ This line is a violation because there are spaces beyond that length"
             ast,
             text,
         };
-        let rule = MD013::new(34);
+        let rule = MD013::new(34, true, true);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![rule.to_violation(path, Sourcepos::from((3, 35, 3, 68)))];
         assert_eq!(actual, expected);
@@ -121,7 +162,7 @@ This line is a violation because `there are spaces beyond that`"
             ast,
             text,
         };
-        let rule = MD013::new(34);
+        let rule = MD013::new(34, true, true);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((3, 35, 3, 84))),
@@ -140,13 +181,15 @@ IF THIS LINE IS THE MAXIMUM LENGTH
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
+        let mut options = Options::default();
+        options.extension.table = true;
+        let ast = parse_document(&arena, &text, &options);
         let doc = Document {
             path: path.clone(),
             ast,
             text,
         };
-        let rule = MD013::new(34);
+        let rule = MD013::new(34, true, true);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((3, 35, 3, 37))),
@@ -156,7 +199,7 @@ IF THIS LINE IS THE MAXIMUM LENGTH
     }
 
     #[test]
-    fn check_errors_codeblock() {
+    fn check_errors_code_block() {
         let text = "
 IF THIS LINE IS THE MAXIMUM LENGTH
 
@@ -172,7 +215,7 @@ puts 'This line is a violation because there are spaces beyond that length'
             ast,
             text,
         };
-        let rule = MD013::new(34);
+        let rule = MD013::new(34, true, true);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![rule.to_violation(path, Sourcepos::from((5, 35, 5, 75)))];
         assert_eq!(actual, expected);
@@ -189,7 +232,7 @@ This-line-is-okay-because-there-are-no-spaces-anywhere-within"
         let arena = Arena::new();
         let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document { path, ast, text };
-        let rule = MD013::new(34);
+        let rule = MD013::new(34, true, true);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
         assert_eq!(actual, expected);
@@ -206,7 +249,7 @@ This line is okay because there `are-no-spaces-beyond-that-length`"
         let arena = Arena::new();
         let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document { path, ast, text };
-        let rule = MD013::new(34);
+        let rule = MD013::new(34, true, true);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
         assert_eq!(actual, expected);
@@ -216,22 +259,63 @@ This line is okay because there `are-no-spaces-beyond-that-length`"
     fn check_no_errors_table() {
         let text = "
 IF THIS LINE IS THE MAXIMUM LENGTH
-|foo|bar|baz|foo|bar|baz|foo|bar|baz|foo|bar|baz|foo|bar|baz|foo|bar|baz|foo|bar|baz|
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-|foo|bar|baz|foo|bar|baz|foo|bar|baz|foo|bar|baz|foo|bar|baz|foo|bar|baz|foo|bar|baz|"
+| foo | bar | baz | foo | bar | baz |
+|-----|-----|-----|-----|-----|-----|
+| foo | bar | baz | foo | bar | baz |"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
+        let mut options = Options::default();
+        options.extension.table = true;
+        let ast = parse_document(&arena, &text, &options);
         let doc = Document { path, ast, text };
-        let rule = MD013::new(34);
+        let rule = MD013::new(34, true, false);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
         assert_eq!(actual, expected);
     }
 
     #[test]
-    fn check_no_errors_codeblock() {
+    fn check_no_errors_table_without_spaces() {
+        let text = "
+IF THIS LINE IS THE MAXIMUM LENGTH
+|foo|bar|baz|foo|bar|baz|foo|bar|baz|foo|bar|baz|foo|bar|baz|foo|bar|baz|foo|bar|baz|
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+|foo|bar|baz|foo|bar|baz|foo|bar|baz|foo|bar|baz|foo|bar|baz|foo|bar|baz|foo|bar|baz|"
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let mut options = Options::default();
+        options.extension.table = true;
+        let ast = parse_document(&arena, &text, &options);
+        let doc = Document { path, ast, text };
+        let rule = MD013::new(34, true, true);
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_code_block() {
+        let text = "
+IF THIS LINE IS THE MAXIMUM LENGTH
+
+```ruby
+puts 'This line is a violation because there are spaces beyond that length'
+```"
+        .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD013::new(34, false, true);
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_code_block_without_spaces() {
         let text = "
 IF THIS LINE IS THE MAXIMUM LENGTH
 
@@ -244,7 +328,7 @@ puts 'This-line-is-okay-because-there-are-no-spaces-anywhere-within'
         let arena = Arena::new();
         let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document { path, ast, text };
-        let rule = MD013::new(34);
+        let rule = MD013::new(34, true, true);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
         assert_eq!(actual, expected);
