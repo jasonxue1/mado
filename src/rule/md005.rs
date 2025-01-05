@@ -87,7 +87,7 @@ impl RuleLike for MD005 {
 mod tests {
     use std::path::Path;
 
-    use comrak::{parse_document, Arena, Options};
+    use comrak::Arena;
     use pretty_assertions::assert_eq;
 
     use super::*;
@@ -101,12 +101,7 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD005::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![rule.to_violation(path, Sourcepos::from((4, 4, 4, 22)))];
@@ -122,12 +117,7 @@ mod tests {
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD005::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![rule.to_violation(path, Sourcepos::from((4, 4, 4, 4)))];
@@ -148,12 +138,7 @@ Some text
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD005::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
@@ -177,12 +162,7 @@ Some text
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD005::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
@@ -201,8 +181,7 @@ Some text
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD005::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -223,8 +202,7 @@ Some text
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD005::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

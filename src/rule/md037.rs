@@ -81,7 +81,7 @@ impl RuleLike for MD037 {
 mod tests {
     use std::path::Path;
 
-    use comrak::{nodes::Sourcepos, parse_document, Arena, Options};
+    use comrak::{nodes::Sourcepos, Arena};
     use pretty_assertions::assert_eq;
 
     use super::*;
@@ -98,12 +98,7 @@ Here is some more _ italic _ text."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD037::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
@@ -127,12 +122,7 @@ Here is some more _ italic_ text."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD037::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
@@ -156,8 +146,7 @@ Here is some more _italic_ text."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD037::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -176,8 +165,7 @@ Here is some _ more _italic_ text _ ."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD037::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -189,8 +177,7 @@ Here is some _ more _italic_ text _ ."
         let text = "This is an emoji :white_check_mark:".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD037::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -209,8 +196,7 @@ Here is some more _italic _text."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD037::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -229,8 +215,7 @@ Here is some more_ italic_ text."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD037::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

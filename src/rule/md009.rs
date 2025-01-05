@@ -41,7 +41,7 @@ impl RuleLike for MD009 {
     #[inline]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let mut violations = vec![];
-        for (i, line) in doc.text.lines().enumerate() {
+        for (i, line) in doc.lines.iter().enumerate() {
             let trimmed_line = line.trim_end_matches(' ');
             if trimmed_line != line {
                 let lineno = i + 1;
@@ -60,7 +60,7 @@ impl RuleLike for MD009 {
 mod tests {
     use std::path::Path;
 
-    use comrak::{parse_document, Arena, Options};
+    use comrak::Arena;
     use pretty_assertions::assert_eq;
 
     use super::*;
@@ -72,12 +72,7 @@ And text with some trailing spaces   "
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD009::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
@@ -92,8 +87,7 @@ And text with some trailing spaces   "
         let text = "Text with no trailing spaces".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD009::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -105,8 +99,7 @@ And text with some trailing spaces   "
         let text = "Text with no trailing spaces　".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD009::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

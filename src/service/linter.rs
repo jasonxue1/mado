@@ -96,7 +96,7 @@ impl Linter {
 mod tests {
     use std::path::Path;
 
-    use comrak::{nodes::Sourcepos, parse_document, Arena, Options};
+    use comrak::{nodes::Sourcepos, Arena};
     use pretty_assertions::assert_eq;
 
     use super::*;
@@ -113,14 +113,7 @@ description: Some text
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let mut options = Options::default();
-        options.extension.front_matter_delimiter = Some("---".to_owned());
-        let ast = parse_document(&arena, &text, &options);
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let md026 = MD026::default();
         let rules = vec![Rule::MD026];
         let mut config = Config::default();

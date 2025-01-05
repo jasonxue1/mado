@@ -50,7 +50,7 @@ impl RuleLike for MD010 {
         });
 
         let mut violations = vec![];
-        for (i, line) in doc.text.lines().enumerate() {
+        for (i, line) in doc.lines.iter().enumerate() {
             let lineno = i + 1;
             if let Some(m) = RE.find(line) {
                 let position = Sourcepos::from((lineno, m.start() + 1, lineno, m.end()));
@@ -67,7 +67,7 @@ impl RuleLike for MD010 {
 mod tests {
     use std::path::Path;
 
-    use comrak::{parse_document, Arena, Options};
+    use comrak::Arena;
     use pretty_assertions::assert_eq;
 
     use super::*;
@@ -80,12 +80,7 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document {
-            path: path.clone(),
-            ast,
-            text,
-        };
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD010::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![rule.to_violation(path, Sourcepos::from((3, 1, 3, 1)))];
@@ -100,8 +95,7 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let ast = parse_document(&arena, &text, &Options::default());
-        let doc = Document { path, ast, text };
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD010::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
