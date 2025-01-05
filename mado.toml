@@ -86,4 +86,4 @@ punctuation = ".,;:!?"
 level = 1
 
 [lint.md046]
-style = "consistent"
+style = "fenced"

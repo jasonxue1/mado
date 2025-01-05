@@ -7,11 +7,10 @@ use ignore::WalkParallel;
 use miette::IntoDiagnostic as _;
 use miette::Result;
 
-use crate::config;
-use crate::config::Config;
 use crate::output::{Concise, Format, Markdownlint, Mdl};
 use crate::service::runner::ParallelLintRunner;
 use crate::service::walker::WalkParallelBuilder;
+use crate::Config;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)]
@@ -24,8 +23,8 @@ impl Options {
     #[inline]
     pub fn to_config(self) -> Result<Config> {
         let mut config = match self.config_path {
-            Some(config_path) => config::load(&config_path)?,
-            None => config::resolve()?,
+            Some(config_path) => Config::load(&config_path)?,
+            None => Config::resolve()?,
         };
 
         if let Some(format) = self.output_format {
