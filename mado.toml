@@ -54,7 +54,9 @@ style = "consistent"
 indent = 4
 
 [lint.md013]
-line-length = 128
+line-length = 80
+code-blocks = false
+tables = false
 
 [lint.md025]
 level = 1
