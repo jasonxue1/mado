@@ -14,6 +14,11 @@ impl<'a> Markdownlint<'a> {
     pub fn new(violation: &'a Violation) -> Self {
         Self { violation }
     }
+
+    #[cfg(test)]
+    pub fn violation(&self) -> &'a Violation {
+        self.violation
+    }
 }
 
 impl Display for Markdownlint<'_> {
