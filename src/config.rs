@@ -19,37 +19,39 @@ pub struct Config {
     pub lint: Lint,
 }
 
-#[inline]
-pub fn load<P: AsRef<Path>>(path: P) -> Result<Config> {
-    let config_text = fs::read_to_string(path).into_diagnostic()?;
-    toml::from_str(&config_text).map_err(|err| miette!(err))
-}
+impl Config {
+    const FILE_NAME: &str = "mado.toml";
+    const HIDDEN_FILE_NAME: &str = ".mado.toml";
 
-const FILE_NAME: &str = "mado.toml";
-const HIDDEN_FILE_NAME: &str = ".mado.toml";
-
-#[inline]
-pub fn resolve() -> Result<Config> {
-    let local_path = Path::new(FILE_NAME);
-    let exists_local = fs::exists(local_path).into_diagnostic()?;
-    if exists_local {
-        return load(local_path);
+    #[inline]
+    pub fn load<P: AsRef<Path>>(path: P) -> Result<Self> {
+        let config_text = fs::read_to_string(path).into_diagnostic()?;
+        toml::from_str(&config_text).map_err(|err| miette!(err))
     }
 
-    let hidden_local_path = Path::new(HIDDEN_FILE_NAME);
-    let exists_hidden_local = fs::exists(hidden_local_path).into_diagnostic()?;
-    if exists_hidden_local {
-        return load(hidden_local_path);
-    }
+    #[inline]
+    pub fn resolve() -> Result<Self> {
+        let local_path = Path::new(Self::FILE_NAME);
+        let exists_local = fs::exists(local_path).into_diagnostic()?;
+        if exists_local {
+            return Self::load(local_path);
+        }
 
-    let strategy = choose_base_strategy().into_diagnostic()?;
-    let config_path = strategy.config_dir().join("mado").join(FILE_NAME);
-    let exists_config = fs::exists(&config_path).into_diagnostic()?;
-    if exists_config {
-        return load(&config_path);
-    }
+        let hidden_local_path = Path::new(Self::HIDDEN_FILE_NAME);
+        let exists_hidden_local = fs::exists(hidden_local_path).into_diagnostic()?;
+        if exists_hidden_local {
+            return Self::load(hidden_local_path);
+        }
 
-    Ok(Config::default())
+        let strategy = choose_base_strategy().into_diagnostic()?;
+        let config_path = strategy.config_dir().join("mado").join(Self::FILE_NAME);
+        let exists_config = fs::exists(&config_path).into_diagnostic()?;
+        if exists_config {
+            return Self::load(&config_path);
+        }
+
+        Ok(Config::default())
+    }
 }
 
 #[cfg(test)]
@@ -58,6 +60,16 @@ mod tests {
 
     use crate::{output::Format, Rule};
     use lint::MD002;
+
+    #[test]
+    fn load() {
+        let path = Path::new("mado.toml");
+        let actual = Config::load(path).unwrap();
+        let mut expected = Config::default();
+        expected.lint.md013.code_blocks = false;
+        expected.lint.md013.tables = false;
+        assert_eq!(actual, expected);
+    }
 
     #[test]
     fn deserialize() {
