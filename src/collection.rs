@@ -100,9 +100,21 @@ where
     }
 }
 
+impl<R, Idx, const N: usize> From<[R; N]> for RangeSet<R, Idx>
+where
+    R: RangeBounds<Idx> + Eq + Hash,
+{
+    #[inline]
+    fn from(value: [R; N]) -> Self {
+        let data = HashSet::from(value);
+        let phantom = PhantomData;
+        Self { data, phantom }
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use pretty_assertions::assert_eq;
+    use pretty_assertions::{assert_eq, assert_ne};
 
     use super::*;
 
@@ -123,6 +135,15 @@ mod tests {
     }
 
     #[test]
+    fn iter() {
+        let ranges = [0..10, 20..30, 25..35];
+        let set = RangeSet::from(ranges.clone());
+        let actual: HashSet<_> = set.iter().collect();
+        let expected: HashSet<_> = ranges.iter().collect();
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
     fn is_empty() {
         let mut set = RangeSet::new();
         assert!(set.is_empty());
@@ -132,10 +153,7 @@ mod tests {
 
     #[test]
     fn contains_range() {
-        let mut set = RangeSet::new();
-        set.insert(0..10);
-        set.insert(20..30);
-        set.insert(25..35);
+        let set = RangeSet::from([0..10, 20..30, 25..35]);
         assert!(set.contains(&0));
         assert!(!set.contains(&10));
         assert!(set.contains(&20));
@@ -145,14 +163,36 @@ mod tests {
 
     #[test]
     fn contains_range_inclusive() {
-        let mut set = RangeSet::new();
-        set.insert(0..=10);
-        set.insert(20..=30);
-        set.insert(25..=35);
+        let set = RangeSet::from([0..=10, 20..=30, 25..=35]);
         assert!(set.contains(&0));
         assert!(set.contains(&10));
         assert!(set.contains(&20));
         assert!(set.contains(&30));
         assert!(set.contains(&35));
+    }
+
+    #[test]
+    fn partial_eq_true() {
+        let ranges = [0..10, 20..30, 25..35];
+        let set0 = RangeSet::from(ranges.clone());
+        let set1 = RangeSet::from(ranges.clone());
+        assert_eq!(set0, set1);
+    }
+
+    #[test]
+    fn partial_eq_false() {
+        let ranges0 = [0..10, 20..30, 25..35];
+        let ranges1 = [0..10, 20..30, 35..45];
+        let set0 = RangeSet::from(ranges0.clone());
+        let set1 = RangeSet::from(ranges1.clone());
+        assert_ne!(set0, set1);
+    }
+
+    #[test]
+    fn from_array() {
+        let ranges = [0..10, 20..30, 25..35];
+        let set = RangeSet::from(ranges.clone());
+        let expected: HashSet<_> = ranges.iter().map(ToOwned::to_owned).collect();
+        assert_eq!(set.data, expected);
     }
 }
