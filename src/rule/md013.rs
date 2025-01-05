@@ -76,7 +76,7 @@ impl RuleLike for MD013 {
         let mut code_block_ranges = RangeSet::new();
         let mut table_ranges = RangeSet::new();
 
-        if self.code_blocks || self.tables {
+        if !self.code_blocks || !self.tables {
             for node in doc.ast.descendants() {
                 if !self.code_blocks {
                     if let NodeValue::CodeBlock(_code) = &node.data.borrow().value {
@@ -87,7 +87,7 @@ impl RuleLike for MD013 {
                 }
 
                 if !self.tables {
-                    if let NodeValue::TableRow(_table) = &node.data.borrow().value {
+                    if let NodeValue::Table(_table) = &node.data.borrow().value {
                         let position = node.data.borrow().sourcepos;
                         let range = position.start.line..=position.end.line;
                         table_ranges.insert(range);
@@ -329,6 +329,24 @@ puts 'This-line-is-okay-because-there-are-no-spaces-anywhere-within'
         let ast = parse_document(&arena, &text, &Options::default());
         let doc = Document { path, ast, text };
         let rule = MD013::new(34, true, true);
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_with_tables_false_and_code_blocks_false() {
+        let text = r"
+IF THIS LINE IS THE MAXIMUM LENGTH
+```ruby
+puts 'This line is a violation because there are spaces beyond that length'
+```"
+        .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let ast = parse_document(&arena, &text, &Options::default());
+        let doc = Document { path, ast, text };
+        let rule = MD013::new(34, false, false);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
         assert_eq!(actual, expected);
