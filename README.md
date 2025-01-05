@@ -109,10 +109,10 @@ You can use Mado on Github Action.
 
 ```yaml
 # Basic (Run `mado check .`)
-- uses: akiomik/mado@v0.1.1
+- uses: akiomik/mado@v0.1.2
 
 # Custom (Run `mado` with arbitrary arguments)
-- uses: akiomik/mado@v0.1.1
+- uses: akiomik/mado@v0.1.2
   with:
     args: '--config path/to/mado.toml check path/to/*.md'
 ```
