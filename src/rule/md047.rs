@@ -68,7 +68,7 @@ mod tests {
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text).unwrap();
-        let rule = MD047::default();
+        let rule = MD047::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![rule.to_violation(path, Sourcepos::from((1, 1, 1, 10)))];
         assert_eq!(actual, expected);
@@ -82,7 +82,7 @@ mod tests {
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text).unwrap();
-        let rule = MD047::default();
+        let rule = MD047::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
         assert_eq!(actual, expected);
@@ -94,7 +94,7 @@ mod tests {
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text).unwrap();
-        let rule = MD047::default();
+        let rule = MD047::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
         assert_eq!(actual, expected);
