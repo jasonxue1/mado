@@ -1,5 +1,8 @@
 # Mado
 
+[![CI](https://github.com/akiomik/mado/actions/workflows/ci.yml/badge.svg)](https://github.com/akiomik/mado/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/github/akiomik/mado/graph/badge.svg?token=X9UW8G77E6)](https://codecov.io/github/akiomik/mado)
+
 A fast Markdown linter, written in Rust.
 Compliant with [CommonMark](https://commonmark.org) and [GFM](https://github.github.com/gfm/).
 
