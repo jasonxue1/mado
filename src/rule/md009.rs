@@ -5,7 +5,7 @@ use crate::{violation::Violation, Document};
 
 use super::RuleLike;
 
-#[derive(Default)]
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct MD009;
 
