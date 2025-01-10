@@ -1,9 +1,9 @@
 use std::path::PathBuf;
 
-use comrak::nodes::Sourcepos;
-use line::LineRule;
+use comrak::nodes::{AstNode, Sourcepos};
+use line::{LineContext, LineMatcher, LineRule};
 use miette::Result;
-use node::NodeRule;
+use node::{NodeContext, NodeRule, NodeValueMatcher};
 
 use crate::{violation::Violation, Document};
 
@@ -49,7 +49,7 @@ pub mod md046;
 mod md047;
 pub mod node;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone)]
 #[non_exhaustive]
 pub enum Rule {
     MD001(MD001),
@@ -136,6 +136,230 @@ impl Rule {
             Rule::MD047(rule) => rule.check(doc),
         }
     }
+
+    #[inline]
+    pub fn run_node<'a>(
+        &mut self,
+        ctx: &NodeContext,
+        node: &'a AstNode<'a>,
+    ) -> Option<Result<Vec<Violation>>> {
+        match self {
+            Rule::MD001(rule) => Some(rule.run(ctx, node)),
+            Rule::MD002(rule) => Some(rule.run(ctx, node)),
+            Rule::MD003(rule) => Some(rule.run(ctx, node)),
+            Rule::MD004(rule) => Some(rule.run(ctx, node)),
+            Rule::MD005(rule) => Some(rule.run(ctx, node)),
+            Rule::MD006(rule) => Some(rule.run(ctx, node)),
+            Rule::MD007(rule) => Some(rule.run(ctx, node)),
+            Rule::MD009(_rule) => None,
+            Rule::MD010(_rule) => None,
+            Rule::MD012(_rule) => None,
+            Rule::MD013(_rule) => None,
+            Rule::MD014(rule) => Some(rule.run(ctx, node)),
+            Rule::MD018(rule) => Some(rule.run(ctx, node)),
+            Rule::MD019(rule) => Some(rule.run(ctx, node)),
+            Rule::MD020(_rule) => None,
+            Rule::MD021(_rule) => None,
+            Rule::MD022(rule) => Some(rule.run(ctx, node)),
+            Rule::MD023(rule) => Some(rule.run(ctx, node)),
+            Rule::MD024(rule) => Some(rule.run(ctx, node)),
+            Rule::MD025(rule) => Some(rule.run(ctx, node)),
+            Rule::MD026(rule) => Some(rule.run(ctx, node)),
+            Rule::MD027(rule) => Some(rule.run(ctx, node)),
+            Rule::MD028(rule) => Some(rule.run(ctx, node)),
+            Rule::MD029(rule) => Some(rule.run(ctx, node)),
+            Rule::MD030(_rule) => None,
+            Rule::MD031(_rule) => None,
+            Rule::MD032(_rule) => None,
+            Rule::MD033(_rule) => None,
+            Rule::MD034(_rule) => None,
+            Rule::MD035(_rule) => None,
+            Rule::MD036(_rule) => None,
+            Rule::MD037(_rule) => None,
+            Rule::MD038(_rule) => None,
+            Rule::MD039(_rule) => None,
+            Rule::MD040(_rule) => None,
+            Rule::MD041(_rule) => None,
+            Rule::MD046(_rule) => None,
+            Rule::MD047(_rule) => None,
+        }
+    }
+
+    #[inline]
+    pub fn run_line(&mut self, ctx: &LineContext, line: &str) -> Option<Result<Vec<Violation>>> {
+        match self {
+            Rule::MD001(_rule) => None,
+            Rule::MD002(_rule) => None,
+            Rule::MD003(_rule) => None,
+            Rule::MD004(_rule) => None,
+            Rule::MD005(_rule) => None,
+            Rule::MD006(_rule) => None,
+            Rule::MD007(_rule) => None,
+            Rule::MD009(rule) => Some(rule.run(ctx, line)),
+            Rule::MD010(rule) => Some(rule.run(ctx, line)),
+            Rule::MD012(_rule) => None,
+            Rule::MD013(rule) => Some(rule.run(ctx, line)),
+            Rule::MD014(_rule) => None,
+            Rule::MD018(_rule) => None,
+            Rule::MD019(_rule) => None,
+            Rule::MD020(_rule) => None,
+            Rule::MD021(_rule) => None,
+            Rule::MD022(_rule) => None,
+            Rule::MD023(_rule) => None,
+            Rule::MD024(_rule) => None,
+            Rule::MD025(_rule) => None,
+            Rule::MD026(_rule) => None,
+            Rule::MD027(_rule) => None,
+            Rule::MD028(_rule) => None,
+            Rule::MD029(_rule) => None,
+            Rule::MD030(_rule) => None,
+            Rule::MD031(_rule) => None,
+            Rule::MD032(_rule) => None,
+            Rule::MD033(_rule) => None,
+            Rule::MD034(_rule) => None,
+            Rule::MD035(_rule) => None,
+            Rule::MD036(_rule) => None,
+            Rule::MD037(_rule) => None,
+            Rule::MD038(_rule) => None,
+            Rule::MD039(_rule) => None,
+            Rule::MD040(_rule) => None,
+            Rule::MD041(_rule) => None,
+            Rule::MD046(_rule) => None,
+            Rule::MD047(_rule) => None,
+        }
+    }
+
+    #[inline]
+    pub fn node_matcher(&self) -> Option<NodeValueMatcher> {
+        match self {
+            Rule::MD001(rule) => Some(rule.matcher()),
+            Rule::MD002(rule) => Some(rule.matcher()),
+            Rule::MD003(rule) => Some(rule.matcher()),
+            Rule::MD004(rule) => Some(rule.matcher()),
+            Rule::MD005(rule) => Some(rule.matcher()),
+            Rule::MD006(rule) => Some(rule.matcher()),
+            Rule::MD007(rule) => Some(rule.matcher()),
+            Rule::MD009(_rule) => None,
+            Rule::MD010(_rule) => None,
+            Rule::MD012(_rule) => None,
+            Rule::MD013(_rule) => None,
+            Rule::MD014(rule) => Some(rule.matcher()),
+            Rule::MD018(rule) => Some(rule.matcher()),
+            Rule::MD019(rule) => Some(rule.matcher()),
+            Rule::MD020(_rule) => None,
+            Rule::MD021(_rule) => None,
+            Rule::MD022(rule) => Some(rule.matcher()),
+            Rule::MD023(rule) => Some(rule.matcher()),
+            Rule::MD024(rule) => Some(rule.matcher()),
+            Rule::MD025(rule) => Some(rule.matcher()),
+            Rule::MD026(rule) => Some(rule.matcher()),
+            Rule::MD027(rule) => Some(rule.matcher()),
+            Rule::MD028(rule) => Some(rule.matcher()),
+            Rule::MD029(rule) => Some(rule.matcher()),
+            Rule::MD030(_rule) => None,
+            Rule::MD031(_rule) => None,
+            Rule::MD032(_rule) => None,
+            Rule::MD033(_rule) => None,
+            Rule::MD034(_rule) => None,
+            Rule::MD035(_rule) => None,
+            Rule::MD036(_rule) => None,
+            Rule::MD037(_rule) => None,
+            Rule::MD038(_rule) => None,
+            Rule::MD039(_rule) => None,
+            Rule::MD040(_rule) => None,
+            Rule::MD041(_rule) => None,
+            Rule::MD046(_rule) => None,
+            Rule::MD047(_rule) => None,
+        }
+    }
+
+    #[inline]
+    pub fn line_matcher(&self) -> Option<LineMatcher> {
+        match self {
+            Rule::MD001(_rule) => None,
+            Rule::MD002(_rule) => None,
+            Rule::MD003(_rule) => None,
+            Rule::MD004(_rule) => None,
+            Rule::MD005(_rule) => None,
+            Rule::MD006(_rule) => None,
+            Rule::MD007(_rule) => None,
+            Rule::MD009(rule) => Some(rule.matcher()),
+            Rule::MD010(rule) => Some(rule.matcher()),
+            Rule::MD012(_rule) => None,
+            Rule::MD013(rule) => Some(rule.matcher()),
+            Rule::MD014(_rule) => None,
+            Rule::MD018(_rule) => None,
+            Rule::MD019(_rule) => None,
+            Rule::MD020(_rule) => None,
+            Rule::MD021(_rule) => None,
+            Rule::MD022(_rule) => None,
+            Rule::MD023(_rule) => None,
+            Rule::MD024(_rule) => None,
+            Rule::MD025(_rule) => None,
+            Rule::MD026(_rule) => None,
+            Rule::MD027(_rule) => None,
+            Rule::MD028(_rule) => None,
+            Rule::MD029(_rule) => None,
+            Rule::MD030(_rule) => None,
+            Rule::MD031(_rule) => None,
+            Rule::MD032(_rule) => None,
+            Rule::MD033(_rule) => None,
+            Rule::MD034(_rule) => None,
+            Rule::MD035(_rule) => None,
+            Rule::MD036(_rule) => None,
+            Rule::MD037(_rule) => None,
+            Rule::MD038(_rule) => None,
+            Rule::MD039(_rule) => None,
+            Rule::MD040(_rule) => None,
+            Rule::MD041(_rule) => None,
+            Rule::MD046(_rule) => None,
+            Rule::MD047(_rule) => None,
+        }
+    }
+
+    #[inline]
+    pub fn reset(&mut self) {
+        match self {
+            Rule::MD001(rule) => rule.reset(),
+            Rule::MD002(rule) => rule.reset(),
+            Rule::MD003(rule) => rule.reset(),
+            Rule::MD004(rule) => rule.reset(),
+            Rule::MD005(rule) => rule.reset(),
+            Rule::MD006(rule) => rule.reset(),
+            Rule::MD007(rule) => rule.reset(),
+            Rule::MD009(rule) => rule.reset(),
+            Rule::MD010(rule) => rule.reset(),
+            Rule::MD012(_rule) => {}
+            Rule::MD013(rule) => rule.reset(),
+            Rule::MD014(rule) => rule.reset(),
+            Rule::MD018(rule) => rule.reset(),
+            Rule::MD019(rule) => rule.reset(),
+            Rule::MD020(_rule) => {}
+            Rule::MD021(_rule) => {}
+            Rule::MD022(rule) => rule.reset(),
+            Rule::MD023(rule) => rule.reset(),
+            Rule::MD024(rule) => rule.reset(),
+            Rule::MD025(rule) => rule.reset(),
+            Rule::MD026(rule) => rule.reset(),
+            Rule::MD027(rule) => rule.reset(),
+            Rule::MD028(rule) => rule.reset(),
+            Rule::MD029(rule) => rule.reset(),
+            Rule::MD030(_rule) => {}
+            Rule::MD031(_rule) => {}
+            Rule::MD032(_rule) => {}
+            Rule::MD033(_rule) => {}
+            Rule::MD034(_rule) => {}
+            Rule::MD035(_rule) => {}
+            Rule::MD036(_rule) => {}
+            Rule::MD037(_rule) => {}
+            Rule::MD038(_rule) => {}
+            Rule::MD039(_rule) => {}
+            Rule::MD040(_rule) => {}
+            Rule::MD041(_rule) => {}
+            Rule::MD046(_rule) => {}
+            Rule::MD047(_rule) => {}
+        }
+    }
 }
 
 pub trait RuleLike: Send {
@@ -177,9 +401,10 @@ pub trait NewRuleLike: Send {
 }
 
 #[non_exhaustive]
-pub enum RuleType {
-    Node(Box<dyn NodeRule>),
-    Line(Box<dyn LineRule>),
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum RuleKind {
+    Node,
+    Line,
 }
 
 pub use md001::MD001;

@@ -4,10 +4,8 @@ use miette::Result;
 
 use crate::config::lint::RuleSet;
 use crate::config::Config;
-use crate::rule;
 use crate::rule::line::LineContext;
 use crate::rule::node::NodeContext;
-use crate::rule::RuleType;
 use crate::rule::{
     MD001, MD002, MD003, MD004, MD005, MD006, MD007, MD009, MD010, MD012, MD013, MD014, MD018,
     MD019, MD020, MD021, MD022, MD023, MD024, MD025, MD026, MD027, MD028, MD029, MD030, MD031,
@@ -20,7 +18,6 @@ use crate::Rule;
 #[derive(Default)]
 pub struct Linter {
     rules: Vec<Rule>,
-    new_rules: Vec<RuleType>,
 }
 
 impl Linter {
@@ -82,37 +79,7 @@ impl Linter {
             })
             .collect();
 
-        let new_rules = vec![
-            RuleType::Node(Box::new(rule::MD001::new())),
-            RuleType::Node(Box::new(rule::MD002::new(config.lint.md002.level))),
-            RuleType::Node(Box::new(rule::MD003::new(config.lint.md003.style.clone()))),
-            RuleType::Node(Box::new(rule::MD004::new(config.lint.md004.style.clone()))),
-            RuleType::Node(Box::new(rule::MD005::new())),
-            RuleType::Node(Box::new(rule::MD006::new())),
-            RuleType::Node(Box::new(rule::MD007::new(config.lint.md007.indent))),
-            RuleType::Line(Box::new(rule::MD009::new())),
-            RuleType::Line(Box::new(rule::MD010::new())),
-            RuleType::Line(Box::new(rule::MD013::new(
-                config.lint.md013.line_length,
-                config.lint.md013.code_blocks,
-                config.lint.md013.tables,
-            ))),
-            RuleType::Node(Box::new(rule::MD014::new())),
-            RuleType::Node(Box::new(rule::MD018::new())),
-            RuleType::Node(Box::new(rule::MD019::new())),
-            RuleType::Node(Box::new(rule::MD022::new())),
-            RuleType::Node(Box::new(rule::MD023::new())),
-            RuleType::Node(Box::new(rule::MD024::new())),
-            RuleType::Node(Box::new(rule::MD025::new(config.lint.md025.level))),
-            RuleType::Node(Box::new(rule::MD026::new(
-                config.lint.md026.punctuation.clone(),
-            ))),
-            RuleType::Node(Box::new(rule::MD027::new())),
-            RuleType::Node(Box::new(rule::MD028::new())),
-            RuleType::Node(Box::new(rule::MD029::new(config.lint.md029.style.clone()))),
-        ];
-
-        Self { rules, new_rules }
+        Self { rules }
     }
 
     #[inline]
@@ -137,10 +104,10 @@ impl Linter {
                 }
             }
 
-            for rule in &mut self.new_rules {
-                if let RuleType::Node(node_rule) = rule {
-                    if node_rule.matcher().is_match(node) {
-                        let rule_violations = node_rule.run(&node_ctx, node)?;
+            for rule in &mut self.rules {
+                if let Some(matcher) = rule.node_matcher() {
+                    if matcher.is_match(node) {
+                        let rule_violations = rule.run_node(&node_ctx, node).unwrap()?;
                         violations.extend(rule_violations);
                     }
                 }
@@ -183,10 +150,10 @@ impl Linter {
                 maybe_prev_list_node = Some(node);
             }
 
-            for rule in &mut self.new_rules {
-                if let RuleType::Node(node_rule) = rule {
-                    if node_rule.matcher().is_match(node) {
-                        let rule_violations = node_rule.run(&node_ctx, node)?;
+            for rule in &mut self.rules {
+                if let Some(matcher) = rule.node_matcher() {
+                    if matcher.is_match(node) {
+                        let rule_violations = rule.run_node(&node_ctx, node).unwrap()?;
                         violations.extend(rule_violations);
                     }
                 }
@@ -199,25 +166,18 @@ impl Linter {
         };
         for line in doc.text.lines() {
             line_ctx.lineno += 1;
-            for rule in &self.new_rules {
-                if let RuleType::Line(line_rule) = rule {
-                    if line_rule.matcher().is_match(line) {
-                        let line_violations = line_rule.run(&line_ctx, line)?;
+            for rule in &mut self.rules {
+                if let Some(matcher) = rule.line_matcher() {
+                    if matcher.is_match(line) {
+                        let line_violations = rule.run_line(&line_ctx, line).unwrap()?;
                         violations.extend(line_violations);
                     }
                 }
             }
         }
 
-        for rule in &mut self.new_rules {
-            match rule {
-                RuleType::Node(node_rule) => {
-                    node_rule.reset();
-                }
-                RuleType::Line(line_rule) => {
-                    line_rule.reset();
-                }
-            }
+        for rule in &mut self.rules {
+            rule.reset();
         }
 
         violations.sort();
@@ -240,25 +200,18 @@ impl Linter {
         };
         for line in doc.text.lines() {
             line_ctx.lineno += 1;
-            for rule in &self.new_rules {
-                if let RuleType::Line(line_rule) = rule {
-                    if line_rule.matcher().is_match(line) {
-                        let line_violations = line_rule.run(&line_ctx, line)?;
+            for rule in &mut self.rules {
+                if let Some(matcher) = rule.line_matcher() {
+                    if matcher.is_match(line) {
+                        let line_violations = rule.run_line(&line_ctx, line).unwrap()?;
                         violations.extend(line_violations);
                     }
                 }
             }
         }
 
-        for rule in &mut self.new_rules {
-            match rule {
-                RuleType::Node(node_rule) => {
-                    node_rule.reset();
-                }
-                RuleType::Line(line_rule) => {
-                    line_rule.reset();
-                }
-            }
+        for rule in &mut self.rules {
+            rule.reset();
         }
 
         violations.sort();
