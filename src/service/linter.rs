@@ -19,7 +19,25 @@ pub struct Linter {
 impl Linter {
     #[inline]
     #[must_use]
-    pub fn new(config: &Config) -> Self {
+    pub fn new(rules: Vec<Rule>) -> Self {
+        Self { rules }
+    }
+
+    #[inline]
+    pub fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
+        // Iterate rules while unrolling Vec<Result<Vec<..>>> to Result<Vec<..>>
+        self.rules.iter().try_fold(vec![], |mut unrolled, rule| {
+            let result = rule.check(doc);
+            unrolled.extend(result?);
+            Ok(unrolled)
+        })
+    }
+}
+
+impl From<&Config> for Linter {
+    #[inline]
+    #[must_use]
+    fn from(config: &Config) -> Self {
         let rules: Vec<_> = config
             .lint
             .rules
@@ -68,16 +86,6 @@ impl Linter {
 
         Self { rules }
     }
-
-    #[inline]
-    pub fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
-        // Iterate rules while unrolling Vec<Result<Vec<..>>> to Result<Vec<..>>
-        self.rules.iter().try_fold(vec![], |mut unrolled, rule| {
-            let result = rule.check(doc);
-            unrolled.extend(result?);
-            Ok(unrolled)
-        })
-    }
 }
 
 #[cfg(test)]
@@ -96,115 +104,115 @@ mod tests {
     use super::*;
 
     #[test]
-    fn new_md001() {
+    fn from_md001() {
         let md001 = Rule::MD001(MD001::new());
         let rules = vec![RuleSet::MD001];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md001]);
     }
 
     #[test]
-    fn new_md002() {
+    fn from_md002() {
         let level = 3;
         let md002 = Rule::MD002(MD002::new(level));
         let rules = vec![RuleSet::MD002];
         let mut config = Config::default();
         config.lint.md002.level = level;
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md002]);
     }
 
     #[test]
-    fn new_md003() {
+    fn from_md003() {
         let style = HeadingStyle::SetextWithAtx;
         let md003 = Rule::MD003(MD003::new(style.clone()));
         let rules = vec![RuleSet::MD003];
         let mut config = Config::default();
         config.lint.md003.style = style;
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md003]);
     }
 
     #[test]
-    fn new_md004() {
+    fn from_md004() {
         let style = ListStyle::Asterisk;
         let md004 = Rule::MD004(MD004::new(style.clone()));
         let rules = vec![RuleSet::MD004];
         let mut config = Config::default();
         config.lint.md004.style = style;
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md004]);
     }
 
     #[test]
-    fn new_md005() {
+    fn from_md005() {
         let md005 = Rule::MD005(MD005::new());
         let rules = vec![RuleSet::MD005];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md005]);
     }
 
     #[test]
-    fn new_md006() {
+    fn from_md006() {
         let md006 = Rule::MD006(MD006::new());
         let rules = vec![RuleSet::MD006];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md006]);
     }
 
     #[test]
-    fn new_md007() {
+    fn from_md007() {
         let indent = 9;
         let md007 = Rule::MD007(MD007::new(indent));
         let rules = vec![RuleSet::MD007];
         let mut config = Config::default();
         config.lint.rules = rules;
         config.lint.md007.indent = indent;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md007]);
     }
 
     #[test]
-    fn new_md009() {
+    fn from_md009() {
         let md009 = Rule::MD009(MD009::new());
         let rules = vec![RuleSet::MD009];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md009]);
     }
 
     #[test]
-    fn new_md010() {
+    fn from_md010() {
         let md010 = Rule::MD010(MD010::new());
         let rules = vec![RuleSet::MD010];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md010]);
     }
 
     #[test]
-    fn new_md012() {
+    fn from_md012() {
         let md012 = Rule::MD012(MD012::new());
         let rules = vec![RuleSet::MD012];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md012]);
     }
 
     #[test]
-    fn new_md013() {
+    fn from_md013() {
         let line_length = 33;
         let code_blocks = false;
         let tables = false;
@@ -215,136 +223,136 @@ mod tests {
         config.lint.md013.line_length = line_length;
         config.lint.md013.code_blocks = code_blocks;
         config.lint.md013.tables = tables;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md013]);
     }
 
     #[test]
-    fn new_md014() {
+    fn from_md014() {
         let md014 = Rule::MD014(MD014::new());
         let rules = vec![RuleSet::MD014];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md014]);
     }
 
     #[test]
-    fn new_md018() {
+    fn from_md018() {
         let md018 = Rule::MD018(MD018::new());
         let rules = vec![RuleSet::MD018];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md018]);
     }
 
     #[test]
-    fn new_md019() {
+    fn from_md019() {
         let md019 = Rule::MD019(MD019::new());
         let rules = vec![RuleSet::MD019];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md019]);
     }
 
     #[test]
-    fn new_md020() {
+    fn from_md020() {
         let md020 = Rule::MD020(MD020::new());
         let rules = vec![RuleSet::MD020];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md020]);
     }
 
     #[test]
-    fn new_md021() {
+    fn from_md021() {
         let md021 = Rule::MD021(MD021::new());
         let rules = vec![RuleSet::MD021];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md021]);
     }
 
     #[test]
-    fn new_md022() {
+    fn from_md022() {
         let md022 = Rule::MD022(MD022::new());
         let rules = vec![RuleSet::MD022];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md022]);
     }
 
     #[test]
-    fn new_md023() {
+    fn from_md023() {
         let md023 = Rule::MD023(MD023::new());
         let rules = vec![RuleSet::MD023];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md023]);
     }
 
     #[test]
-    fn new_md024() {
+    fn from_md024() {
         let md024 = Rule::MD024(MD024::new());
         let rules = vec![RuleSet::MD024];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md024]);
     }
 
     #[test]
-    fn new_md025() {
+    fn from_md025() {
         let level = 3;
         let md025 = Rule::MD025(MD025::new(level));
         let rules = vec![RuleSet::MD025];
         let mut config = Config::default();
         config.lint.rules = rules;
         config.lint.md025.level = level;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md025]);
     }
 
     #[test]
-    fn new_md027() {
+    fn from_md027() {
         let md027 = Rule::MD027(MD027::new());
         let rules = vec![RuleSet::MD027];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md027]);
     }
 
     #[test]
-    fn new_md028() {
+    fn from_md028() {
         let md028 = Rule::MD028(MD028::new());
         let rules = vec![RuleSet::MD028];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md028]);
     }
 
     #[test]
-    fn new_md029() {
+    fn from_md029() {
         let style = OrderedListStyle::Ordered;
         let md029 = Rule::MD029(MD029::new(style.clone()));
         let rules = vec![RuleSet::MD029];
         let mut config = Config::default();
         config.lint.rules = rules;
         config.lint.md029.style = style;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md029]);
     }
 
     #[test]
-    fn new_md030() {
+    fn from_md030() {
         let ul_single = 1;
         let ol_single = 2;
         let ul_multi = 3;
@@ -357,147 +365,147 @@ mod tests {
         config.lint.md030.ol_single = ol_single;
         config.lint.md030.ul_multi = ul_multi;
         config.lint.md030.ol_multi = ol_multi;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md030]);
     }
 
     #[test]
-    fn new_md031() {
+    fn from_md031() {
         let md031 = Rule::MD031(MD031::new());
         let rules = vec![RuleSet::MD031];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md031]);
     }
 
     #[test]
-    fn new_md032() {
+    fn from_md032() {
         let md032 = Rule::MD032(MD032::new());
         let rules = vec![RuleSet::MD032];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md032]);
     }
 
     #[test]
-    fn new_md033() {
+    fn from_md033() {
         let allowed_elements = vec!["br".to_owned()];
         let md033 = Rule::MD033(MD033::new(&allowed_elements));
         let rules = vec![RuleSet::MD033];
         let mut config = Config::default();
         config.lint.rules = rules;
         config.lint.md033.allowed_elements = allowed_elements;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md033]);
     }
 
     #[test]
-    fn new_md034() {
+    fn from_md034() {
         let md034 = Rule::MD034(MD034::new());
         let rules = vec![RuleSet::MD034];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md034]);
     }
 
     #[test]
-    fn new_md035() {
+    fn from_md035() {
         let style = HorizontalRuleStyle::Custom("~~~".to_owned());
         let md035 = Rule::MD035(MD035::new(style.clone()));
         let rules = vec![RuleSet::MD035];
         let mut config = Config::default();
         config.lint.rules = rules;
         config.lint.md035.style = style;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md035]);
     }
 
     #[test]
-    fn new_md036() {
+    fn from_md036() {
         let punctuation = "!?".to_owned();
         let md036 = Rule::MD036(MD036::new(punctuation.clone()));
         let rules = vec![RuleSet::MD036];
         let mut config = Config::default();
         config.lint.rules = rules;
         config.lint.md036.punctuation = punctuation;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md036]);
     }
 
     #[test]
-    fn new_md037() {
+    fn from_md037() {
         let md037 = Rule::MD037(MD037::new());
         let rules = vec![RuleSet::MD037];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md037]);
     }
 
     #[test]
-    fn new_md038() {
+    fn from_md038() {
         let md038 = Rule::MD038(MD038::new());
         let rules = vec![RuleSet::MD038];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md038]);
     }
 
     #[test]
-    fn new_md039() {
+    fn from_md039() {
         let md039 = Rule::MD039(MD039::new());
         let rules = vec![RuleSet::MD039];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md039]);
     }
 
     #[test]
-    fn new_md040() {
+    fn from_md040() {
         let md040 = Rule::MD040(MD040::new());
         let rules = vec![RuleSet::MD040];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md040]);
     }
 
     #[test]
-    fn new_md041() {
+    fn from_md041() {
         let level = 3;
         let md041 = Rule::MD041(MD041::new(level));
         let rules = vec![RuleSet::MD041];
         let mut config = Config::default();
         config.lint.rules = rules;
         config.lint.md041.level = level;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md041]);
     }
 
     #[test]
-    fn new_md046() {
+    fn from_md046() {
         let style = CodeBlockStyle::Indented;
         let md046 = Rule::MD046(MD046::new(style.clone()));
         let rules = vec![RuleSet::MD046];
         let mut config = Config::default();
         config.lint.rules = rules;
         config.lint.md046.style = style;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md046]);
     }
 
     #[test]
-    fn new_md047() {
+    fn from_md047() {
         let md047 = Rule::MD047(MD047::new());
         let rules = vec![RuleSet::MD047];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         assert_eq!(linter.rules, vec![md047]);
     }
 
@@ -517,7 +525,7 @@ description: Some text
         let rules = vec![RuleSet::MD026];
         let mut config = Config::default();
         config.lint.rules = rules;
-        let linter = Linter::new(&config);
+        let linter = Linter::from(&config);
         let actual = linter.check(&doc).unwrap();
         let expected = vec![md026.to_violation(path, Sourcepos::from((6, 1, 6, 19)))];
         assert_eq!(actual, expected);
