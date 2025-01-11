@@ -1,6 +1,11 @@
 use std::path::PathBuf;
 
-use super::Matcher;
+use miette::Result;
+
+use crate::Violation;
+
+use super::Rule as _;
+use super::{Matcher, MD009, MD010, MD013};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -29,4 +34,42 @@ impl Matcher<&str> for LineMatcher {
 pub struct LineContext {
     pub path: PathBuf,
     pub lineno: usize,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum LineRule {
+    MD009(MD009),
+    MD010(MD010),
+    MD013(MD013),
+}
+
+impl LineRule {
+    #[inline]
+    pub fn run(&mut self, ctx: &LineContext, line: &str) -> Result<Vec<Violation>> {
+        match self {
+            LineRule::MD009(rule) => rule.run(ctx, line),
+            LineRule::MD010(rule) => rule.run(ctx, line),
+            LineRule::MD013(rule) => rule.run(ctx, line),
+        }
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn matcher(&self) -> LineMatcher {
+        match self {
+            LineRule::MD009(rule) => rule.matcher(),
+            LineRule::MD010(rule) => rule.matcher(),
+            LineRule::MD013(rule) => rule.matcher(),
+        }
+    }
+
+    #[inline]
+    pub fn reset(&mut self) {
+        match self {
+            LineRule::MD009(rule) => rule.reset(),
+            LineRule::MD010(rule) => rule.reset(),
+            LineRule::MD013(rule) => rule.reset(),
+        }
+    }
 }

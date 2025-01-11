@@ -5,10 +5,10 @@ use miette::Result;
 use crate::config::lint::RuleSet;
 use crate::config::Config;
 use crate::rule::line::LineContext;
+use crate::rule::line::LineRule;
 use crate::rule::node::NodeContext;
-use crate::rule::LineRule;
+use crate::rule::node::NodeRule;
 use crate::rule::Matcher as _;
-use crate::rule::NodeRule;
 use crate::rule::{
     MD001, MD002, MD003, MD004, MD005, MD006, MD007, MD009, MD010, MD013, MD014, MD018, MD019,
     MD022, MD023, MD024, MD025, MD026, MD027, MD028, MD029,
