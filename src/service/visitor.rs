@@ -64,7 +64,7 @@ impl MarkdownLintVisitorFactory {
 impl<'s> ParallelVisitorBuilder<'s> for MarkdownLintVisitorFactory {
     #[inline]
     fn build(&mut self) -> Box<dyn ParallelVisitor + 's> {
-        let linter = Linter::new(&self.config);
+        let linter = Linter::from(&self.config);
         Box::new(MarkdownLintVisitor::new(linter, self.tx.clone()))
     }
 }
