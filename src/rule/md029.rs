@@ -7,7 +7,7 @@ use serde::Deserialize;
 use crate::{violation::Violation, Document};
 
 use super::{
-    node::{NodeContext, NodeValueMatcher},
+    node::{NodeContext, NodeMatcher},
     Rule, RuleLike, RuleMetadata,
 };
 
@@ -112,7 +112,7 @@ impl RuleLike for MD029 {
     }
 }
 
-impl<'a> Rule<&NodeContext, &'a AstNode<'a>, NodeValueMatcher> for MD029 {
+impl<'a> Rule<&NodeContext, &'a AstNode<'a>, NodeMatcher> for MD029 {
     #[inline]
     fn metadata(&self) -> RuleMetadata {
         RuleMetadata {
@@ -124,8 +124,8 @@ impl<'a> Rule<&NodeContext, &'a AstNode<'a>, NodeValueMatcher> for MD029 {
     }
 
     #[inline]
-    fn matcher(&self) -> NodeValueMatcher {
-        NodeValueMatcher::new(|node| {
+    fn matcher(&self) -> NodeMatcher {
+        NodeMatcher::new(|node| {
             matches!(
                 node,
                 NodeValue::List(NodeList {

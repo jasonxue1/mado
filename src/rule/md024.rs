@@ -7,7 +7,7 @@ use crate::{violation::Violation, Document};
 
 use super::{
     helper::inline_text_of,
-    node::{NodeContext, NodeValueMatcher},
+    node::{NodeContext, NodeMatcher},
     Rule, RuleLike, RuleMetadata,
 };
 
@@ -76,7 +76,7 @@ impl RuleLike for MD024 {
     }
 }
 
-impl<'a> Rule<&NodeContext, &'a AstNode<'a>, NodeValueMatcher> for MD024 {
+impl<'a> Rule<&NodeContext, &'a AstNode<'a>, NodeMatcher> for MD024 {
     #[inline]
     fn metadata(&self) -> RuleMetadata {
         RuleMetadata {
@@ -88,8 +88,8 @@ impl<'a> Rule<&NodeContext, &'a AstNode<'a>, NodeValueMatcher> for MD024 {
     }
 
     #[inline]
-    fn matcher(&self) -> NodeValueMatcher {
-        NodeValueMatcher::new(|node| matches!(node, NodeValue::Heading(_)))
+    fn matcher(&self) -> NodeMatcher {
+        NodeMatcher::new(|node| matches!(node, NodeValue::Heading(_)))
     }
 
     #[inline]

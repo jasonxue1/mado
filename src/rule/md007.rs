@@ -4,7 +4,7 @@ use miette::Result;
 use crate::{violation::Violation, Document};
 
 use super::{
-    node::{NodeContext, NodeValueMatcher},
+    node::{NodeContext, NodeMatcher},
     Rule, RuleLike, RuleMetadata,
 };
 
@@ -84,7 +84,7 @@ impl RuleLike for MD007 {
     }
 }
 
-impl<'a> Rule<&NodeContext, &'a AstNode<'a>, NodeValueMatcher> for MD007 {
+impl<'a> Rule<&NodeContext, &'a AstNode<'a>, NodeMatcher> for MD007 {
     #[inline]
     fn metadata(&self) -> RuleMetadata {
         RuleMetadata {
@@ -96,8 +96,8 @@ impl<'a> Rule<&NodeContext, &'a AstNode<'a>, NodeValueMatcher> for MD007 {
     }
 
     #[inline]
-    fn matcher(&self) -> NodeValueMatcher {
-        NodeValueMatcher::new(|node| {
+    fn matcher(&self) -> NodeMatcher {
+        NodeMatcher::new(|node| {
             matches!(
                 node,
                 NodeValue::Item(NodeList { list_type, .. }) if *list_type == ListType::Bullet

@@ -5,7 +5,7 @@ use crate::violation::Violation;
 use crate::Document;
 
 use super::{
-    node::{NodeContext, NodeValueMatcher},
+    node::{NodeContext, NodeMatcher},
     Rule, RuleLike, RuleMetadata,
 };
 
@@ -85,7 +85,7 @@ impl RuleLike for MD002 {
     }
 }
 
-impl<'a> Rule<&NodeContext, &'a AstNode<'a>, NodeValueMatcher> for MD002 {
+impl<'a> Rule<&NodeContext, &'a AstNode<'a>, NodeMatcher> for MD002 {
     #[inline]
     fn metadata(&self) -> RuleMetadata {
         RuleMetadata {
@@ -97,8 +97,8 @@ impl<'a> Rule<&NodeContext, &'a AstNode<'a>, NodeValueMatcher> for MD002 {
     }
 
     #[inline]
-    fn matcher(&self) -> NodeValueMatcher {
-        NodeValueMatcher::new(|node| matches!(node, NodeValue::Heading(_)))
+    fn matcher(&self) -> NodeMatcher {
+        NodeMatcher::new(|node| matches!(node, NodeValue::Heading(_)))
     }
 
     #[inline]

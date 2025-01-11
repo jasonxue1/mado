@@ -27,11 +27,11 @@ use crate::Violation;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
-pub struct NodeValueMatcher {
+pub struct NodeMatcher {
     pred: fn(&NodeValue) -> bool,
 }
 
-impl NodeValueMatcher {
+impl NodeMatcher {
     #[inline]
     #[must_use]
     pub fn new(pred: fn(&NodeValue) -> bool) -> Self {
@@ -39,7 +39,7 @@ impl NodeValueMatcher {
     }
 }
 
-impl<'a> Matcher<&'a AstNode<'a>> for NodeValueMatcher {
+impl<'a> Matcher<&'a AstNode<'a>> for NodeMatcher {
     #[inline]
     #[must_use]
     fn is_match(&self, node: &'a AstNode<'a>) -> bool {
@@ -105,7 +105,7 @@ impl NodeRule {
 
     #[inline]
     #[must_use]
-    pub fn matcher(&self) -> NodeValueMatcher {
+    pub fn matcher(&self) -> NodeMatcher {
         match self {
             NodeRule::MD001(rule) => rule.matcher(),
             NodeRule::MD002(rule) => rule.matcher(),
