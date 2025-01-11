@@ -7,7 +7,7 @@ use crate::Document;
 
 use super::{
     node::{NodeContext, NodeValueMatcher},
-    NewRuleLike, Rule, RuleLike, RuleMetadata,
+    Rule, RuleLike, RuleMetadata,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
@@ -113,7 +113,7 @@ impl RuleLike for MD004 {
     }
 }
 
-impl NewRuleLike for MD004 {
+impl<'a> Rule<&NodeContext, &'a AstNode<'a>, NodeValueMatcher> for MD004 {
     #[inline]
     fn metadata(&self) -> RuleMetadata {
         RuleMetadata {
@@ -124,13 +124,6 @@ impl NewRuleLike for MD004 {
         }
     }
 
-    #[inline]
-    fn reset(&mut self) {
-        self.state = State::default();
-    }
-}
-
-impl<'a> Rule<&NodeContext, &'a AstNode<'a>, NodeValueMatcher> for MD004 {
     #[inline]
     fn matcher(&self) -> NodeValueMatcher {
         NodeValueMatcher::new(|node| {
@@ -166,6 +159,11 @@ impl<'a> Rule<&NodeContext, &'a AstNode<'a>, NodeValueMatcher> for MD004 {
         }
 
         Ok(violations)
+    }
+
+    #[inline]
+    fn reset(&mut self) {
+        self.state = State::default();
     }
 }
 

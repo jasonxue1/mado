@@ -9,7 +9,7 @@ use crate::Document;
 
 use super::{
     line::{LineContext, LineMatcher},
-    NewRuleLike, Rule, RuleLike, RuleMetadata,
+    Rule, RuleLike, RuleMetadata,
 };
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
@@ -66,7 +66,7 @@ impl RuleLike for MD010 {
     }
 }
 
-impl NewRuleLike for MD010 {
+impl Rule<&LineContext, &str, LineMatcher> for MD010 {
     #[inline]
     fn metadata(&self) -> RuleMetadata {
         RuleMetadata {
@@ -77,11 +77,6 @@ impl NewRuleLike for MD010 {
         }
     }
 
-    #[inline]
-    fn reset(&mut self) {}
-}
-
-impl Rule<&LineContext, &str, LineMatcher> for MD010 {
     #[inline]
     fn matcher(&self) -> LineMatcher {
         LineMatcher::new(|_line| true)

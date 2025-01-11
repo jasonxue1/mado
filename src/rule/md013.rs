@@ -8,7 +8,7 @@ use crate::{collection::RangeSet, violation::Violation, Document};
 
 use super::{
     line::{LineContext, LineMatcher},
-    NewRuleLike, Rule, RuleLike, RuleMetadata,
+    Rule, RuleLike, RuleMetadata,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -121,7 +121,7 @@ impl RuleLike for MD013 {
     }
 }
 
-impl NewRuleLike for MD013 {
+impl Rule<&LineContext, &str, LineMatcher> for MD013 {
     #[inline]
     fn metadata(&self) -> RuleMetadata {
         RuleMetadata {
@@ -132,11 +132,6 @@ impl NewRuleLike for MD013 {
         }
     }
 
-    #[inline]
-    fn reset(&mut self) {}
-}
-
-impl Rule<&LineContext, &str, LineMatcher> for MD013 {
     #[inline]
     fn matcher(&self) -> LineMatcher {
         LineMatcher::new(|_line| true)

@@ -5,7 +5,7 @@ use crate::{violation::Violation, Document};
 
 use super::{
     line::{LineContext, LineMatcher},
-    NewRuleLike, Rule, RuleLike, RuleMetadata,
+    Rule, RuleLike, RuleMetadata,
 };
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
@@ -59,7 +59,7 @@ impl RuleLike for MD009 {
     }
 }
 
-impl NewRuleLike for MD009 {
+impl Rule<&LineContext, &str, LineMatcher> for MD009 {
     #[inline]
     fn metadata(&self) -> RuleMetadata {
         RuleMetadata {
@@ -70,11 +70,6 @@ impl NewRuleLike for MD009 {
         }
     }
 
-    #[inline]
-    fn reset(&mut self) {}
-}
-
-impl Rule<&LineContext, &str, LineMatcher> for MD009 {
     #[inline]
     fn matcher(&self) -> LineMatcher {
         LineMatcher::new(|line| {

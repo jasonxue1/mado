@@ -215,22 +215,21 @@ pub struct RuleMetadata {
     pub aliases: Vec<&'static str>,
 }
 
-pub trait NewRuleLike: Send {
-    fn metadata(&self) -> RuleMetadata;
-
-    fn reset(&mut self);
-}
-
 pub trait Matcher<A> {
     #[must_use]
     fn is_match(&self, value: A) -> bool;
 }
 
-pub trait Rule<Ctx, A, M: Matcher<A>>: NewRuleLike {
+pub trait Rule<Ctx, A, M: Matcher<A>>: Send {
+    #[must_use]
+    fn metadata(&self) -> RuleMetadata;
+
     #[must_use]
     fn matcher(&self) -> M;
 
     fn run(&mut self, ctx: Ctx, value: A) -> Result<Vec<Violation>>;
+
+    fn reset(&mut self) {}
 }
 
 pub use md001::MD001;

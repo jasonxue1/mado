@@ -5,7 +5,7 @@ use crate::{violation::Violation, Document};
 
 use super::{
     node::{NodeContext, NodeValueMatcher},
-    NewRuleLike, Rule, RuleLike, RuleMetadata,
+    Rule, RuleLike, RuleMetadata,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -78,7 +78,7 @@ impl RuleLike for MD026 {
     }
 }
 
-impl NewRuleLike for MD026 {
+impl<'a> Rule<&NodeContext, &'a AstNode<'a>, NodeValueMatcher> for MD026 {
     #[inline]
     fn metadata(&self) -> RuleMetadata {
         RuleMetadata {
@@ -88,12 +88,6 @@ impl NewRuleLike for MD026 {
             aliases: vec!["no-trailing-punctuation"],
         }
     }
-
-    #[inline]
-    fn reset(&mut self) {}
-}
-
-impl<'a> Rule<&NodeContext, &'a AstNode<'a>, NodeValueMatcher> for MD026 {
     #[inline]
     fn matcher(&self) -> super::node::NodeValueMatcher {
         NodeValueMatcher::new(|node| matches!(node, NodeValue::Heading(_)))
