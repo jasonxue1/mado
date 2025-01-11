@@ -49,7 +49,7 @@ pub mod md046;
 mod md047;
 pub mod node;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum NodeRule {
     MD001(MD001),

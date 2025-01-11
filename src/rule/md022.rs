@@ -1,6 +1,4 @@
-use core::cell::RefCell;
-
-use comrak::nodes::{Ast, AstNode, NodeValue};
+use comrak::nodes::{AstNode, NodeValue};
 use miette::Result;
 
 use crate::{violation::Violation, Document};
@@ -10,24 +8,15 @@ use super::{
     Rule, RuleLike, RuleMetadata,
 };
 
-#[derive(Default, Debug, Clone)]
-pub struct State {
-    pub maybe_prev_node_ref: Option<RefCell<Ast>>,
-}
-
-#[derive(Default, Debug, Clone)]
+#[derive(Default, Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
-pub struct MD022 {
-    pub state: State,
-}
+pub struct MD022 {}
 
 impl MD022 {
     #[inline]
     #[must_use]
     pub fn new() -> Self {
-        Self {
-            state: State::default(),
-        }
+        Self {}
     }
 }
 
@@ -106,11 +95,11 @@ impl<'a> Rule<&NodeContext, &'a AstNode<'a>, NodeValueMatcher> for MD022 {
     fn run(&mut self, ctx: &NodeContext, node: &'a AstNode<'a>) -> Result<Vec<Violation>> {
         let mut violations = vec![];
 
-        if let Some(prev_node_ref) = &self.state.maybe_prev_node_ref {
-            let prev_position = prev_node_ref.borrow().sourcepos;
+        if let Some(prev_node) = node.previous_sibling() {
+            let prev_position = prev_node.data.borrow().sourcepos;
             let position = node.data.borrow().sourcepos;
 
-            match (&prev_node_ref.borrow().value, &node.data.borrow().value) {
+            match (&prev_node.data.borrow().value, &node.data.borrow().value) {
                 (NodeValue::Heading(_), _) => {
                     if position.start.line == prev_position.end.line + 1 {
                         let violation = self.to_violation(ctx.path.clone(), prev_position);
@@ -130,14 +119,7 @@ impl<'a> Rule<&NodeContext, &'a AstNode<'a>, NodeValueMatcher> for MD022 {
             }
         }
 
-        self.state.maybe_prev_node_ref = Some(node.data.clone());
-
         Ok(violations)
-    }
-
-    #[inline]
-    fn reset(&mut self) {
-        self.state = State::default();
     }
 }
 
