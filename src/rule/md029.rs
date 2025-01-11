@@ -7,8 +7,8 @@ use serde::Deserialize;
 use crate::{violation::Violation, Document};
 
 use super::{
-    node::{NodeContext, NodeRule, NodeValueMatcher},
-    NewRuleLike, RuleLike, RuleMetadata,
+    node::{NodeContext, NodeValueMatcher},
+    NewRuleLike, Rule, RuleLike, RuleMetadata,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
@@ -127,7 +127,7 @@ impl NewRuleLike for MD029 {
     fn reset(&mut self) {}
 }
 
-impl NodeRule for MD029 {
+impl<'a> Rule<&NodeContext, &'a AstNode<'a>, NodeValueMatcher> for MD029 {
     #[inline]
     fn matcher(&self) -> NodeValueMatcher {
         NodeValueMatcher::new(|node| {
@@ -142,7 +142,7 @@ impl NodeRule for MD029 {
     }
 
     #[inline]
-    fn run<'a>(&mut self, ctx: &NodeContext, node: &'a AstNode<'a>) -> Result<Vec<Violation>> {
+    fn run(&mut self, ctx: &NodeContext, node: &'a AstNode<'a>) -> Result<Vec<Violation>> {
         let mut violations = vec![];
         let mut maybe_prev_start = None;
 

@@ -4,8 +4,8 @@ use miette::Result;
 use crate::{violation::Violation, Document};
 
 use super::{
-    node::{NodeContext, NodeRule, NodeValueMatcher},
-    NewRuleLike, RuleLike, RuleMetadata,
+    node::{NodeContext, NodeValueMatcher},
+    NewRuleLike, Rule, RuleLike, RuleMetadata,
 };
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
@@ -104,14 +104,14 @@ impl NewRuleLike for MD025 {
     }
 }
 
-impl NodeRule for MD025 {
+impl<'a> Rule<&NodeContext, &'a AstNode<'a>, NodeValueMatcher> for MD025 {
     #[inline]
     fn matcher(&self) -> NodeValueMatcher {
         NodeValueMatcher::new(|node| matches!(node, NodeValue::Heading(_)))
     }
 
     #[inline]
-    fn run<'a>(&mut self, ctx: &NodeContext, node: &'a AstNode<'a>) -> Result<Vec<Violation>> {
+    fn run(&mut self, ctx: &NodeContext, node: &'a AstNode<'a>) -> Result<Vec<Violation>> {
         let mut violations = vec![];
 
         if let NodeValue::Heading(NodeHeading { level, .. }) = node.data.borrow().value {

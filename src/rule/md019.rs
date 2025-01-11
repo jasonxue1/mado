@@ -5,8 +5,8 @@ use crate::violation::Violation;
 use crate::Document;
 
 use super::{
-    node::{NodeContext, NodeRule, NodeValueMatcher},
-    NewRuleLike, RuleLike, RuleMetadata,
+    node::{NodeContext, NodeValueMatcher},
+    NewRuleLike, Rule, RuleLike, RuleMetadata,
 };
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
@@ -93,7 +93,7 @@ impl NewRuleLike for MD019 {
     fn reset(&mut self) {}
 }
 
-impl NodeRule for MD019 {
+impl<'a> Rule<&NodeContext, &'a AstNode<'a>, NodeValueMatcher> for MD019 {
     #[inline]
     fn matcher(&self) -> NodeValueMatcher {
         NodeValueMatcher::new(|node| {
@@ -102,7 +102,7 @@ impl NodeRule for MD019 {
     }
 
     #[inline]
-    fn run<'a>(&mut self, ctx: &NodeContext, node: &'a AstNode<'a>) -> Result<Vec<Violation>> {
+    fn run(&mut self, ctx: &NodeContext, node: &'a AstNode<'a>) -> Result<Vec<Violation>> {
         let mut violations = vec![];
 
         if let Some(text_node) = node.first_child() {

@@ -1,11 +1,8 @@
 use std::path::PathBuf;
 
 use comrak::nodes::{AstNode, NodeValue};
-use miette::Result;
 
-use crate::Violation;
-
-use super::NewRuleLike;
+use super::Matcher;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -19,10 +16,12 @@ impl NodeValueMatcher {
     pub fn new(pred: fn(&NodeValue) -> bool) -> Self {
         Self { pred }
     }
+}
 
+impl<'a> Matcher<&'a AstNode<'a>> for NodeValueMatcher {
     #[inline]
     #[must_use]
-    pub fn is_match<'a>(&self, node: &'a AstNode<'a>) -> bool {
+    fn is_match(&self, node: &'a AstNode<'a>) -> bool {
         (self.pred)(&node.data.borrow().value)
     }
 }
@@ -33,11 +32,4 @@ pub struct NodeContext {
     pub path: PathBuf,
     pub level: usize,
     pub list_level: Option<usize>,
-}
-
-pub trait NodeRule: NewRuleLike {
-    #[must_use]
-    fn matcher(&self) -> NodeValueMatcher;
-
-    fn run<'a>(&mut self, ctx: &NodeContext, node: &'a AstNode<'a>) -> Result<Vec<Violation>>;
 }

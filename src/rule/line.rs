@@ -1,10 +1,6 @@
 use std::path::PathBuf;
 
-use miette::Result;
-
-use crate::Violation;
-
-use super::NewRuleLike;
+use super::Matcher;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -18,10 +14,12 @@ impl LineMatcher {
     pub fn new(pred: fn(&str) -> bool) -> Self {
         Self { pred }
     }
+}
 
+impl Matcher<&str> for LineMatcher {
     #[inline]
     #[must_use]
-    pub fn is_match(&self, line: &str) -> bool {
+    fn is_match(&self, line: &str) -> bool {
         (self.pred)(line)
     }
 }
@@ -31,11 +29,4 @@ impl LineMatcher {
 pub struct LineContext {
     pub path: PathBuf,
     pub lineno: usize,
-}
-
-pub trait LineRule: NewRuleLike {
-    #[must_use]
-    fn matcher(&self) -> LineMatcher;
-
-    fn run(&self, ctx: &LineContext, line: &str) -> Result<Vec<Violation>>;
 }

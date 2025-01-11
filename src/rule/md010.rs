@@ -8,8 +8,8 @@ use crate::violation::Violation;
 use crate::Document;
 
 use super::{
-    line::{LineContext, LineMatcher, LineRule},
-    NewRuleLike, RuleLike, RuleMetadata,
+    line::{LineContext, LineMatcher},
+    NewRuleLike, Rule, RuleLike, RuleMetadata,
 };
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
@@ -81,14 +81,14 @@ impl NewRuleLike for MD010 {
     fn reset(&mut self) {}
 }
 
-impl LineRule for MD010 {
+impl Rule<&LineContext, &str, LineMatcher> for MD010 {
     #[inline]
     fn matcher(&self) -> LineMatcher {
         LineMatcher::new(|_line| true)
     }
 
     #[inline]
-    fn run<'a>(&self, ctx: &LineContext, line: &str) -> Result<Vec<Violation>> {
+    fn run(&mut self, ctx: &LineContext, line: &str) -> Result<Vec<Violation>> {
         static RE: LazyLock<Regex> = LazyLock::new(|| {
             #[allow(clippy::unwrap_used)]
             Regex::new("\t").unwrap()

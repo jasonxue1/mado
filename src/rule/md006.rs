@@ -5,9 +5,8 @@ use crate::{violation::Violation, Document};
 
 use super::{
     node::{NodeContext, NodeValueMatcher},
-    NewRuleLike, RuleLike, RuleMetadata,
+    NewRuleLike, Rule, RuleLike, RuleMetadata,
 };
-use crate::rule::node::NodeRule;
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -83,7 +82,7 @@ impl NewRuleLike for MD006 {
     fn reset(&mut self) {}
 }
 
-impl NodeRule for MD006 {
+impl<'a> Rule<&NodeContext, &'a AstNode<'a>, NodeValueMatcher> for MD006 {
     #[inline]
     fn matcher(&self) -> NodeValueMatcher {
         NodeValueMatcher::new(|value| {
@@ -95,7 +94,7 @@ impl NodeRule for MD006 {
     }
 
     #[inline]
-    fn run<'a>(&mut self, ctx: &NodeContext, node: &'a AstNode<'a>) -> Result<Vec<Violation>> {
+    fn run(&mut self, ctx: &NodeContext, node: &'a AstNode<'a>) -> Result<Vec<Violation>> {
         if let Some(list_level) = ctx.list_level {
             if list_level == 1 {
                 let position = node.data.borrow().sourcepos;

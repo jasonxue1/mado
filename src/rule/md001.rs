@@ -7,7 +7,7 @@ use super::{
     node::{NodeContext, NodeValueMatcher},
     NewRuleLike, RuleLike, RuleMetadata,
 };
-use crate::rule::node::NodeRule;
+use crate::rule::Rule;
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -90,14 +90,14 @@ impl NewRuleLike for MD001 {
     fn reset(&mut self) {}
 }
 
-impl NodeRule for MD001 {
+impl<'a> Rule<&NodeContext, &'a AstNode<'a>, NodeValueMatcher> for MD001 {
     #[inline]
     fn matcher(&self) -> NodeValueMatcher {
         NodeValueMatcher::new(|node| matches!(node, NodeValue::Heading(_)))
     }
 
     #[inline]
-    fn run<'a>(&mut self, ctx: &NodeContext, node: &'a AstNode<'a>) -> Result<Vec<Violation>> {
+    fn run(&mut self, ctx: &NodeContext, node: &'a AstNode<'a>) -> Result<Vec<Violation>> {
         let mut violations = vec![];
 
         if let NodeValue::Heading(NodeHeading { level, .. }) = node.data.borrow().value {

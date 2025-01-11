@@ -4,8 +4,8 @@ use miette::Result;
 use crate::{violation::Violation, Document};
 
 use super::{
-    line::{LineContext, LineMatcher, LineRule},
-    NewRuleLike, RuleLike, RuleMetadata,
+    line::{LineContext, LineMatcher},
+    NewRuleLike, Rule, RuleLike, RuleMetadata,
 };
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
@@ -74,7 +74,7 @@ impl NewRuleLike for MD009 {
     fn reset(&mut self) {}
 }
 
-impl LineRule for MD009 {
+impl Rule<&LineContext, &str, LineMatcher> for MD009 {
     #[inline]
     fn matcher(&self) -> LineMatcher {
         LineMatcher::new(|line| {
@@ -84,7 +84,7 @@ impl LineRule for MD009 {
     }
 
     #[inline]
-    fn run<'a>(&self, ctx: &LineContext, line: &str) -> Result<Vec<Violation>> {
+    fn run(&mut self, ctx: &LineContext, line: &str) -> Result<Vec<Violation>> {
         let trimmed_line = line.trim_end_matches(' ');
         let position =
             Sourcepos::from((ctx.lineno, trimmed_line.len() + 1, ctx.lineno, line.len()));

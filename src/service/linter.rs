@@ -6,8 +6,9 @@ use crate::config::lint::RuleSet;
 use crate::config::Config;
 use crate::rule::line::LineContext;
 use crate::rule::node::NodeContext;
-use crate::rule::LineRuleEnum;
-use crate::rule::NodeRuleEnum;
+use crate::rule::LineRule;
+use crate::rule::Matcher as _;
+use crate::rule::NodeRule;
 use crate::rule::{
     MD001, MD002, MD003, MD004, MD005, MD006, MD007, MD009, MD010, MD013, MD014, MD018, MD019,
     MD022, MD023, MD024, MD025, MD026, MD027, MD028, MD029,
@@ -17,8 +18,8 @@ use crate::Document;
 
 #[derive(Default)]
 pub struct Linter {
-    node_rules: Vec<NodeRuleEnum>,
-    line_rules: Vec<LineRuleEnum>,
+    node_rules: Vec<NodeRule>,
+    line_rules: Vec<LineRule>,
 }
 
 impl Linter {
@@ -30,32 +31,32 @@ impl Linter {
             .rules
             .iter()
             .filter_map(|rule| match rule {
-                RuleSet::MD001 => Some(NodeRuleEnum::MD001(MD001::new())),
-                RuleSet::MD002 => Some(NodeRuleEnum::MD002(MD002::new(config.lint.md002.level))),
-                RuleSet::MD003 => Some(NodeRuleEnum::MD003(MD003::new(
-                    config.lint.md003.style.clone(),
-                ))),
-                RuleSet::MD004 => Some(NodeRuleEnum::MD004(MD004::new(
-                    config.lint.md004.style.clone(),
-                ))),
-                RuleSet::MD005 => Some(NodeRuleEnum::MD005(MD005::new())),
-                RuleSet::MD006 => Some(NodeRuleEnum::MD006(MD006::new())),
-                RuleSet::MD007 => Some(NodeRuleEnum::MD007(MD007::new(config.lint.md007.indent))),
-                RuleSet::MD014 => Some(NodeRuleEnum::MD014(MD014::new())),
-                RuleSet::MD018 => Some(NodeRuleEnum::MD018(MD018::new())),
-                RuleSet::MD019 => Some(NodeRuleEnum::MD019(MD019::new())),
-                RuleSet::MD022 => Some(NodeRuleEnum::MD022(MD022::new())),
-                RuleSet::MD023 => Some(NodeRuleEnum::MD023(MD023::new())),
-                RuleSet::MD024 => Some(NodeRuleEnum::MD024(MD024::new())),
-                RuleSet::MD025 => Some(NodeRuleEnum::MD025(MD025::new(config.lint.md025.level))),
-                RuleSet::MD026 => Some(NodeRuleEnum::MD026(MD026::new(
+                RuleSet::MD001 => Some(NodeRule::MD001(MD001::new())),
+                RuleSet::MD002 => Some(NodeRule::MD002(MD002::new(config.lint.md002.level))),
+                RuleSet::MD003 => {
+                    Some(NodeRule::MD003(MD003::new(config.lint.md003.style.clone())))
+                }
+                RuleSet::MD004 => {
+                    Some(NodeRule::MD004(MD004::new(config.lint.md004.style.clone())))
+                }
+                RuleSet::MD005 => Some(NodeRule::MD005(MD005::new())),
+                RuleSet::MD006 => Some(NodeRule::MD006(MD006::new())),
+                RuleSet::MD007 => Some(NodeRule::MD007(MD007::new(config.lint.md007.indent))),
+                RuleSet::MD014 => Some(NodeRule::MD014(MD014::new())),
+                RuleSet::MD018 => Some(NodeRule::MD018(MD018::new())),
+                RuleSet::MD019 => Some(NodeRule::MD019(MD019::new())),
+                RuleSet::MD022 => Some(NodeRule::MD022(MD022::new())),
+                RuleSet::MD023 => Some(NodeRule::MD023(MD023::new())),
+                RuleSet::MD024 => Some(NodeRule::MD024(MD024::new())),
+                RuleSet::MD025 => Some(NodeRule::MD025(MD025::new(config.lint.md025.level))),
+                RuleSet::MD026 => Some(NodeRule::MD026(MD026::new(
                     config.lint.md026.punctuation.clone(),
                 ))),
-                RuleSet::MD027 => Some(NodeRuleEnum::MD027(MD027::new())),
-                RuleSet::MD028 => Some(NodeRuleEnum::MD028(MD028::new())),
-                RuleSet::MD029 => Some(NodeRuleEnum::MD029(MD029::new(
-                    config.lint.md029.style.clone(),
-                ))),
+                RuleSet::MD027 => Some(NodeRule::MD027(MD027::new())),
+                RuleSet::MD028 => Some(NodeRule::MD028(MD028::new())),
+                RuleSet::MD029 => {
+                    Some(NodeRule::MD029(MD029::new(config.lint.md029.style.clone())))
+                }
                 _ => None,
             })
             .collect();
@@ -65,9 +66,9 @@ impl Linter {
             .rules
             .iter()
             .filter_map(|rule| match rule {
-                RuleSet::MD009 => Some(LineRuleEnum::MD009(MD009::new())),
-                RuleSet::MD010 => Some(LineRuleEnum::MD010(MD010::new())),
-                RuleSet::MD013 => Some(LineRuleEnum::MD013(MD013::new(
+                RuleSet::MD009 => Some(LineRule::MD009(MD009::new())),
+                RuleSet::MD010 => Some(LineRule::MD010(MD010::new())),
+                RuleSet::MD013 => Some(LineRule::MD013(MD013::new(
                     config.lint.md013.line_length,
                     config.lint.md013.code_blocks,
                     config.lint.md013.tables,
