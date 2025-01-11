@@ -6,117 +6,80 @@ use crate::config::lint::RuleSet;
 use crate::config::Config;
 use crate::rule::line::LineContext;
 use crate::rule::node::NodeContext;
+use crate::rule::LineRuleEnum;
+use crate::rule::NodeRuleEnum;
 use crate::rule::{
-    MD001, MD002, MD003, MD004, MD005, MD006, MD007, MD009, MD010, MD012, MD013, MD014, MD018,
-    MD019, MD020, MD021, MD022, MD023, MD024, MD025, MD026, MD027, MD028, MD029, MD030, MD031,
-    MD032, MD033, MD034, MD035, MD036, MD037, MD038, MD039, MD040, MD041, MD046, MD047,
+    MD001, MD002, MD003, MD004, MD005, MD006, MD007, MD009, MD010, MD013, MD014, MD018, MD019,
+    MD022, MD023, MD024, MD025, MD026, MD027, MD028, MD029,
 };
 use crate::violation::Violation;
 use crate::Document;
-use crate::Rule;
 
 #[derive(Default)]
 pub struct Linter {
-    rules: Vec<Rule>,
+    node_rules: Vec<NodeRuleEnum>,
+    line_rules: Vec<LineRuleEnum>,
 }
 
 impl Linter {
     #[inline]
     #[must_use]
     pub fn new(config: &Config) -> Self {
-        let rules: Vec<_> = config
+        let node_rules: Vec<_> = config
             .lint
             .rules
             .iter()
-            .map(|rule| match rule {
-                RuleSet::MD001 => Rule::MD001(MD001::new()),
-                RuleSet::MD002 => Rule::MD002(MD002::new(config.lint.md002.level)),
-                RuleSet::MD003 => Rule::MD003(MD003::new(config.lint.md003.style.clone())),
-                RuleSet::MD004 => Rule::MD004(MD004::new(config.lint.md004.style.clone())),
-                RuleSet::MD005 => Rule::MD005(MD005::new()),
-                RuleSet::MD006 => Rule::MD006(MD006::new()),
-                RuleSet::MD007 => Rule::MD007(MD007::new(config.lint.md007.indent)),
-                RuleSet::MD009 => Rule::MD009(MD009::new()),
-                RuleSet::MD010 => Rule::MD010(MD010::new()),
-                RuleSet::MD012 => Rule::MD012(MD012::new()),
-                RuleSet::MD013 => Rule::MD013(MD013::new(
-                    config.lint.md013.line_length,
-                    config.lint.md013.code_blocks,
-                    config.lint.md013.tables,
-                )),
-                RuleSet::MD014 => Rule::MD014(MD014::new()),
-                RuleSet::MD018 => Rule::MD018(MD018::new()),
-                RuleSet::MD019 => Rule::MD019(MD019::new()),
-                RuleSet::MD020 => Rule::MD020(MD020::new()),
-                RuleSet::MD021 => Rule::MD021(MD021::new()),
-                RuleSet::MD022 => Rule::MD022(MD022::new()),
-                RuleSet::MD023 => Rule::MD023(MD023::new()),
-                RuleSet::MD024 => Rule::MD024(MD024::new()),
-                RuleSet::MD025 => Rule::MD025(MD025::new(config.lint.md025.level)),
-                RuleSet::MD026 => Rule::MD026(MD026::new(config.lint.md026.punctuation.clone())),
-                RuleSet::MD027 => Rule::MD027(MD027::new()),
-                RuleSet::MD028 => Rule::MD028(MD028::new()),
-                RuleSet::MD029 => Rule::MD029(MD029::new(config.lint.md029.style.clone())),
-                RuleSet::MD030 => Rule::MD030(MD030::new(
-                    config.lint.md030.ul_single,
-                    config.lint.md030.ol_single,
-                    config.lint.md030.ul_multi,
-                    config.lint.md030.ol_multi,
-                )),
-                RuleSet::MD031 => Rule::MD031(MD031::new()),
-                RuleSet::MD032 => Rule::MD032(MD032::new()),
-                RuleSet::MD033 => Rule::MD033(MD033::new(&config.lint.md033.allowed_elements)),
-                RuleSet::MD034 => Rule::MD034(MD034::new()),
-                RuleSet::MD035 => Rule::MD035(MD035::new(config.lint.md035.style.clone())),
-                RuleSet::MD036 => Rule::MD036(MD036::new(config.lint.md036.punctuation.clone())),
-                RuleSet::MD037 => Rule::MD037(MD037::new()),
-                RuleSet::MD038 => Rule::MD038(MD038::new()),
-                RuleSet::MD039 => Rule::MD039(MD039::new()),
-                RuleSet::MD040 => Rule::MD040(MD040::new()),
-                RuleSet::MD041 => Rule::MD041(MD041::new(config.lint.md041.level)),
-                RuleSet::MD046 => Rule::MD046(MD046::new(config.lint.md046.style.clone())),
-                RuleSet::MD047 => Rule::MD047(MD047::new()),
+            .filter_map(|rule| match rule {
+                RuleSet::MD001 => Some(NodeRuleEnum::MD001(MD001::new())),
+                RuleSet::MD002 => Some(NodeRuleEnum::MD002(MD002::new(config.lint.md002.level))),
+                RuleSet::MD003 => Some(NodeRuleEnum::MD003(MD003::new(
+                    config.lint.md003.style.clone(),
+                ))),
+                RuleSet::MD004 => Some(NodeRuleEnum::MD004(MD004::new(
+                    config.lint.md004.style.clone(),
+                ))),
+                RuleSet::MD005 => Some(NodeRuleEnum::MD005(MD005::new())),
+                RuleSet::MD006 => Some(NodeRuleEnum::MD006(MD006::new())),
+                RuleSet::MD007 => Some(NodeRuleEnum::MD007(MD007::new(config.lint.md007.indent))),
+                RuleSet::MD014 => Some(NodeRuleEnum::MD014(MD014::new())),
+                RuleSet::MD018 => Some(NodeRuleEnum::MD018(MD018::new())),
+                RuleSet::MD019 => Some(NodeRuleEnum::MD019(MD019::new())),
+                RuleSet::MD022 => Some(NodeRuleEnum::MD022(MD022::new())),
+                RuleSet::MD023 => Some(NodeRuleEnum::MD023(MD023::new())),
+                RuleSet::MD024 => Some(NodeRuleEnum::MD024(MD024::new())),
+                RuleSet::MD025 => Some(NodeRuleEnum::MD025(MD025::new(config.lint.md025.level))),
+                RuleSet::MD026 => Some(NodeRuleEnum::MD026(MD026::new(
+                    config.lint.md026.punctuation.clone(),
+                ))),
+                RuleSet::MD027 => Some(NodeRuleEnum::MD027(MD027::new())),
+                RuleSet::MD028 => Some(NodeRuleEnum::MD028(MD028::new())),
+                RuleSet::MD029 => Some(NodeRuleEnum::MD029(MD029::new(
+                    config.lint.md029.style.clone(),
+                ))),
+                _ => None,
             })
             .collect();
 
-        Self { rules }
-    }
+        let line_rules: Vec<_> = config
+            .lint
+            .rules
+            .iter()
+            .filter_map(|rule| match rule {
+                RuleSet::MD009 => Some(LineRuleEnum::MD009(MD009::new())),
+                RuleSet::MD010 => Some(LineRuleEnum::MD010(MD010::new())),
+                RuleSet::MD013 => Some(LineRuleEnum::MD013(MD013::new(
+                    config.lint.md013.line_length,
+                    config.lint.md013.code_blocks,
+                    config.lint.md013.tables,
+                ))),
+                _ => None,
+            })
+            .collect();
 
-    #[inline]
-    fn check_node_recursive<'a>(
-        &mut self,
-        ctx: &NodeContext,
-        root: &'a AstNode<'a>,
-    ) -> Result<Vec<Violation>> {
-        let mut violations = vec![];
-        for node in root.children() {
-            let mut node_ctx = ctx.clone();
-            node_ctx.level += 1;
-
-            if let NodeValue::List(_) = &node.data.borrow().value {
-                match node_ctx.list_level {
-                    Some(list_level) => {
-                        node_ctx.list_level = Some(list_level + 1);
-                    }
-                    None => {
-                        node_ctx.list_level = Some(1);
-                    }
-                }
-            }
-
-            for rule in &mut self.rules {
-                if let Some(matcher) = rule.node_matcher() {
-                    if matcher.is_match(node) {
-                        let rule_violations = rule.run_node(&node_ctx, node).unwrap()?;
-                        violations.extend(rule_violations);
-                    }
-                }
-            }
-
-            let child_violations = self.check_node_recursive(&node_ctx, node)?;
-            violations.extend(child_violations);
+        Self {
+            node_rules,
+            line_rules,
         }
-        Ok(violations)
     }
 
     #[inline]
@@ -150,12 +113,10 @@ impl Linter {
                 maybe_prev_list_node = Some(node);
             }
 
-            for rule in &mut self.rules {
-                if let Some(matcher) = rule.node_matcher() {
-                    if matcher.is_match(node) {
-                        let rule_violations = rule.run_node(&node_ctx, node).unwrap()?;
-                        violations.extend(rule_violations);
-                    }
+            for rule in &mut self.node_rules {
+                if rule.matcher().is_match(node) {
+                    let rule_violations = rule.run(&node_ctx, node)?;
+                    violations.extend(rule_violations);
                 }
             }
         }
@@ -166,67 +127,25 @@ impl Linter {
         };
         for line in doc.text.lines() {
             line_ctx.lineno += 1;
-            for rule in &mut self.rules {
-                if let Some(matcher) = rule.line_matcher() {
-                    if matcher.is_match(line) {
-                        let line_violations = rule.run_line(&line_ctx, line).unwrap()?;
-                        violations.extend(line_violations);
-                    }
+            for rule in &mut self.line_rules {
+                if rule.matcher().is_match(line) {
+                    let line_violations = rule.run(&line_ctx, line)?;
+                    violations.extend(line_violations);
                 }
             }
         }
 
-        for rule in &mut self.rules {
+        for rule in &mut self.node_rules {
+            rule.reset();
+        }
+
+        for rule in &mut self.line_rules {
             rule.reset();
         }
 
         violations.sort();
 
         Ok(violations)
-    }
-
-    #[inline]
-    pub fn new_check(&mut self, doc: &Document) -> Result<Vec<Violation>> {
-        let node_ctx = NodeContext {
-            path: doc.path.clone(),
-            level: 0,
-            list_level: None,
-        };
-        let mut violations = self.check_node_recursive(&node_ctx, doc.ast)?;
-
-        let mut line_ctx = LineContext {
-            path: doc.path.clone(),
-            lineno: 0,
-        };
-        for line in doc.text.lines() {
-            line_ctx.lineno += 1;
-            for rule in &mut self.rules {
-                if let Some(matcher) = rule.line_matcher() {
-                    if matcher.is_match(line) {
-                        let line_violations = rule.run_line(&line_ctx, line).unwrap()?;
-                        violations.extend(line_violations);
-                    }
-                }
-            }
-        }
-
-        for rule in &mut self.rules {
-            rule.reset();
-        }
-
-        violations.sort();
-
-        Ok(violations)
-    }
-
-    #[inline]
-    pub fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
-        // Iterate rules while unrolling Vec<Result<Vec<..>>> to Result<Vec<..>>
-        self.rules.iter().try_fold(vec![], |mut unrolled, rule| {
-            let result = rule.check(doc);
-            unrolled.extend(result?);
-            Ok(unrolled)
-        })
     }
 }
 

@@ -5,8 +5,9 @@ use crate::{violation::Violation, Document};
 
 use super::{
     node::{NodeContext, NodeValueMatcher},
-    NewRuleLike, NodeRule, RuleLike, RuleMetadata,
+    NewRuleLike, RuleLike, RuleMetadata,
 };
+use crate::rule::node::NodeRule;
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]

@@ -15,5 +15,4 @@ pub use cli::Cli;
 pub use command::Command;
 pub use config::Config;
 pub use document::Document;
-pub use rule::Rule;
 pub use violation::Violation;
