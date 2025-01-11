@@ -18,3 +18,27 @@ impl Default for MD029 {
         }
     }
 }
+
+impl From<&MD029> for rule::MD029 {
+    #[inline]
+    fn from(config: &MD029) -> rule::MD029 {
+        rule::MD029::new(config.style.clone())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use pretty_assertions::assert_eq;
+
+    use super::*;
+
+    #[test]
+    fn from_for_rule_md029() {
+        let style = OrderedListStyle::Ordered;
+        let config = MD029 {
+            style: style.clone(),
+        };
+        let expected = rule::MD029::new(style);
+        assert_eq!(rule::MD029::from(&config), expected);
+    }
+}

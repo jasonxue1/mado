@@ -17,3 +17,25 @@ impl Default for MD041 {
         }
     }
 }
+
+impl From<&MD041> for rule::MD041 {
+    #[inline]
+    fn from(config: &MD041) -> rule::MD041 {
+        rule::MD041::new(config.level)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use pretty_assertions::assert_eq;
+
+    use super::*;
+
+    #[test]
+    fn from_for_rule_md041() {
+        let level = 3;
+        let config = MD041 { level };
+        let expected = rule::MD041::new(level);
+        assert_eq!(rule::MD041::from(&config), expected);
+    }
+}

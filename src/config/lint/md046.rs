@@ -18,3 +18,28 @@ impl Default for MD046 {
         }
     }
 }
+
+impl From<&MD046> for rule::MD046 {
+    #[inline]
+    fn from(config: &MD046) -> rule::MD046 {
+        rule::MD046::new(config.style.clone())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use pretty_assertions::assert_eq;
+
+    use super::*;
+    use crate::rule::md046::CodeBlockStyle;
+
+    #[test]
+    fn from_for_rule_md046() {
+        let style = CodeBlockStyle::Indented;
+        let config = MD046 {
+            style: style.clone(),
+        };
+        let expected = rule::MD046::new(style);
+        assert_eq!(rule::MD046::from(&config), expected);
+    }
+}

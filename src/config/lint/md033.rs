@@ -17,3 +17,27 @@ impl Default for MD033 {
         }
     }
 }
+
+impl From<&MD033> for rule::MD033 {
+    #[inline]
+    fn from(config: &MD033) -> rule::MD033 {
+        rule::MD033::new(&config.allowed_elements)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use pretty_assertions::assert_eq;
+
+    use super::*;
+
+    #[test]
+    fn from_for_rule_md033() {
+        let allowed_elements = vec!["br".to_owned()];
+        let config = MD033 {
+            allowed_elements: allowed_elements.clone(),
+        };
+        let expected = rule::MD033::new(&allowed_elements);
+        assert_eq!(rule::MD033::from(&config), expected);
+    }
+}

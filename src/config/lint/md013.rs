@@ -21,3 +21,31 @@ impl Default for MD013 {
         }
     }
 }
+
+impl From<&MD013> for rule::MD013 {
+    #[inline]
+    fn from(config: &MD013) -> rule::MD013 {
+        rule::MD013::new(config.line_length, config.code_blocks, config.tables)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use pretty_assertions::assert_eq;
+
+    use super::*;
+
+    #[test]
+    fn from_for_rule_md013() {
+        let line_length = 33;
+        let code_blocks = true;
+        let tables = false;
+        let config = MD013 {
+            line_length,
+            code_blocks,
+            tables,
+        };
+        let expected = rule::MD013::new(line_length, code_blocks, tables);
+        assert_eq!(rule::MD013::from(&config), expected);
+    }
+}
