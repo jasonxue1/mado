@@ -10,7 +10,7 @@ use super::{
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
-pub struct MD022 {}
+pub struct MD022;
 
 impl MD022 {
     #[inline]

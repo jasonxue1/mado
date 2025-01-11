@@ -98,6 +98,7 @@ impl NodeRule {
     }
 
     #[inline]
+    #[must_use]
     pub fn matcher(&self) -> NodeValueMatcher {
         match self {
             NodeRule::MD001(rule) => rule.matcher(),
@@ -146,7 +147,7 @@ impl NodeRule {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum LineRule {
     MD009(MD009),
@@ -165,6 +166,7 @@ impl LineRule {
     }
 
     #[inline]
+    #[must_use]
     pub fn matcher(&self) -> LineMatcher {
         match self {
             LineRule::MD009(rule) => rule.matcher(),
@@ -229,6 +231,7 @@ pub trait Rule<Ctx, A, M: Matcher<A>>: Send {
 
     fn run(&mut self, ctx: Ctx, value: A) -> Result<Vec<Violation>>;
 
+    #[inline]
     fn reset(&mut self) {}
 }
 
