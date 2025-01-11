@@ -18,3 +18,27 @@ impl Default for MD004 {
         }
     }
 }
+
+impl From<&MD004> for rule::MD004 {
+    #[inline]
+    fn from(config: &MD004) -> rule::MD004 {
+        rule::MD004::new(config.style.clone())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use pretty_assertions::assert_eq;
+
+    use super::*;
+
+    #[test]
+    fn from_for_rule_md004() {
+        let style = ListStyle::Asterisk;
+        let config = MD004 {
+            style: style.clone(),
+        };
+        let expected = rule::MD004::new(style);
+        assert_eq!(rule::MD004::from(&config), expected);
+    }
+}

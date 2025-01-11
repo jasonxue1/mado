@@ -18,3 +18,27 @@ impl Default for MD035 {
         }
     }
 }
+
+impl From<&MD035> for rule::MD035 {
+    #[inline]
+    fn from(config: &MD035) -> rule::MD035 {
+        rule::MD035::new(config.style.clone())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use pretty_assertions::assert_eq;
+
+    use super::*;
+
+    #[test]
+    fn from_for_rule_md035() {
+        let style = HorizontalRuleStyle::Custom("~~~".to_owned());
+        let config = MD035 {
+            style: style.clone(),
+        };
+        let expected = rule::MD035::new(style);
+        assert_eq!(rule::MD035::from(&config), expected);
+    }
+}

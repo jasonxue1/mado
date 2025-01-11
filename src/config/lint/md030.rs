@@ -23,3 +23,38 @@ impl Default for MD030 {
         }
     }
 }
+
+impl From<&MD030> for rule::MD030 {
+    #[inline]
+    fn from(config: &MD030) -> rule::MD030 {
+        rule::MD030::new(
+            config.ul_single,
+            config.ol_single,
+            config.ul_multi,
+            config.ol_multi,
+        )
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use pretty_assertions::assert_eq;
+
+    use super::*;
+
+    #[test]
+    fn from_for_rule_md030() {
+        let ul_single = 1;
+        let ol_single = 2;
+        let ul_multi = 3;
+        let ol_multi = 4;
+        let config = MD030 {
+            ul_single,
+            ol_single,
+            ul_multi,
+            ol_multi,
+        };
+        let expected = rule::MD030::new(ul_single, ol_single, ul_multi, ol_multi);
+        assert_eq!(rule::MD030::from(&config), expected);
+    }
+}

@@ -17,3 +17,25 @@ impl Default for MD025 {
         }
     }
 }
+
+impl From<&MD025> for rule::MD025 {
+    #[inline]
+    fn from(config: &MD025) -> rule::MD025 {
+        rule::MD025::new(config.level)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use pretty_assertions::assert_eq;
+
+    use super::*;
+
+    #[test]
+    fn from_for_rule_md025() {
+        let level = 3;
+        let config = MD025 { level };
+        let expected = rule::MD025::new(level);
+        assert_eq!(rule::MD025::from(&config), expected);
+    }
+}
