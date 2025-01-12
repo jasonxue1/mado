@@ -29,13 +29,13 @@ impl RuleLike for MD001 {
     }
 
     #[inline]
-    fn tags(&self) -> Vec<&'static str> {
-        vec!["headers"]
+    fn tags(&self) -> &'static [&'static str] {
+        &["headers"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<&'static str> {
-        vec!["header-increment"]
+    fn aliases(&self) -> &'static [&'static str] {
+        &["header-increment"]
     }
 
     #[inline]

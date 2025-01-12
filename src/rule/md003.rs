@@ -55,13 +55,13 @@ impl RuleLike for MD003 {
     }
 
     #[inline]
-    fn tags(&self) -> Vec<&'static str> {
-        vec!["headers"]
+    fn tags(&self) -> &'static [&'static str] {
+        &["headers"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<&'static str> {
-        vec!["header-style"]
+    fn aliases(&self) -> &'static [&'static str] {
+        &["header-style"]
     }
 
     #[inline]

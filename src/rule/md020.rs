@@ -30,13 +30,13 @@ impl RuleLike for MD020 {
     }
 
     #[inline]
-    fn tags(&self) -> Vec<&'static str> {
-        vec!["headers", "atx_closed", "spaces"]
+    fn tags(&self) -> &'static [&'static str] {
+        &["headers", "atx_closed", "spaces"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<&'static str> {
-        vec!["no-missing-space-closed-atx"]
+    fn aliases(&self) -> &'static [&'static str] {
+        &["no-missing-space-closed-atx"]
     }
 
     #[inline]

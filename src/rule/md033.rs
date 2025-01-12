@@ -76,13 +76,13 @@ impl RuleLike for MD033 {
     }
 
     #[inline]
-    fn tags(&self) -> Vec<&'static str> {
-        vec!["html"]
+    fn tags(&self) -> &'static [&'static str] {
+        &["html"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<&'static str> {
-        vec!["no-inline-html"]
+    fn aliases(&self) -> &'static [&'static str] {
+        &["no-inline-html"]
     }
 
     #[inline]

@@ -29,13 +29,13 @@ impl RuleLike for MD047 {
     }
 
     #[inline]
-    fn tags(&self) -> Vec<&'static str> {
-        vec!["blank_lines"]
+    fn tags(&self) -> &'static [&'static str] {
+        &["blank_lines"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<&'static str> {
-        vec!["single-trailing-newline"]
+    fn aliases(&self) -> &'static [&'static str] {
+        &["single-trailing-newline"]
     }
 
     #[inline]

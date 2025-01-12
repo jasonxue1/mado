@@ -42,13 +42,13 @@ impl RuleLike for MD041 {
     }
 
     #[inline]
-    fn tags(&self) -> Vec<&'static str> {
-        vec!["headers"]
+    fn tags(&self) -> &'static [&'static str] {
+        &["headers"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<&'static str> {
-        vec!["first-line-h1"]
+    fn aliases(&self) -> &'static [&'static str] {
+        &["first-line-h1"]
     }
 
     #[inline]

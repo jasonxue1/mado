@@ -29,13 +29,13 @@ impl RuleLike for MD012 {
     }
 
     #[inline]
-    fn tags(&self) -> Vec<&'static str> {
-        vec!["whitespace", "blank_lines"]
+    fn tags(&self) -> &'static [&'static str] {
+        &["whitespace", "blank_lines"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<&'static str> {
-        vec!["no-multiple-blanks"]
+    fn aliases(&self) -> &'static [&'static str] {
+        &["no-multiple-blanks"]
     }
 
     // TODO: Improve codes

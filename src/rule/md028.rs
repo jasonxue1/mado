@@ -63,13 +63,13 @@ impl RuleLike for MD028 {
     }
 
     #[inline]
-    fn tags(&self) -> Vec<&'static str> {
-        vec!["blockquote", "whitespace"]
+    fn tags(&self) -> &'static [&'static str] {
+        &["blockquote", "whitespace"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<&'static str> {
-        vec!["no-blanks-blockquote"]
+    fn aliases(&self) -> &'static [&'static str] {
+        &["no-blanks-blockquote"]
     }
 
     #[inline]
