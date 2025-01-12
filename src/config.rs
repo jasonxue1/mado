@@ -72,6 +72,14 @@ mod tests {
     }
 
     #[test]
+    fn resolve() {
+        let actual = Config::resolve().unwrap();
+        let path = Path::new("mado.toml");
+        let expected = Config::load(path).unwrap();
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
     fn deserialize() {
         let text = r#"[lint]
 output-format = "mdl"
