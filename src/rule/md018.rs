@@ -4,13 +4,20 @@ use miette::Result;
 use crate::violation::Violation;
 use crate::Document;
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct MD018;
 
 impl MD018 {
+    const METADATA: Metadata = Metadata {
+        name: "MD018",
+        description: "No space after hash on atx style header",
+        tags: &["headers", "atx", "spaces"],
+        aliases: &["no-missing-space-atx"],
+    };
+
     #[inline]
     #[must_use]
     pub fn new() -> Self {
@@ -20,23 +27,8 @@ impl MD018 {
 
 impl RuleLike for MD018 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD018"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "No space after hash on atx style header"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["headers", "atx", "spaces"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["no-missing-space-atx"]
+    fn metadata(&self) -> Metadata {
+        Self::METADATA
     }
 
     #[inline]

@@ -3,7 +3,7 @@ use miette::Result;
 
 use crate::{violation::Violation, Document};
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -12,6 +12,13 @@ pub struct MD025 {
 }
 
 impl MD025 {
+    const METADATA: Metadata = Metadata {
+        name: "MD025",
+        description: "Multiple top level headers in the same document",
+        tags: &["headers"],
+        aliases: &["single-h1"],
+    };
+
     pub const DEFAULT_LEVEL: u8 = 1;
 
     #[inline]
@@ -32,23 +39,8 @@ impl Default for MD025 {
 
 impl RuleLike for MD025 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD025"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Multiple top level headers in the same document"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["headers"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["single-h1"]
+    fn metadata(&self) -> Metadata {
+        MD025::METADATA
     }
 
     #[inline]

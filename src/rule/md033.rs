@@ -6,7 +6,7 @@ use scraper::Html;
 
 use crate::{violation::Violation, Document};
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -15,6 +15,13 @@ pub struct MD033 {
 }
 
 impl MD033 {
+    const METADATA: Metadata = Metadata {
+        name: "MD033",
+        description: "Inline HTML",
+        tags: &["html"],
+        aliases: &["no-inline-html"],
+    };
+
     pub const DEFAULT_ALLOWED_ELEMENTS: Vec<String> = vec![];
 
     #[inline]
@@ -66,23 +73,8 @@ impl Default for MD033 {
 
 impl RuleLike for MD033 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD033"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Inline HTML"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["html"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["no-inline-html"]
+    fn metadata(&self) -> Metadata {
+        Self::METADATA
     }
 
     #[inline]

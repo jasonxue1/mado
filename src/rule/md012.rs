@@ -3,13 +3,20 @@ use miette::Result;
 
 use crate::{collection::RangeSet, violation::Violation, Document};
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct MD012;
 
 impl MD012 {
+    const METADATA: Metadata = Metadata {
+        name: "MD012",
+        description: "Multiple consecutive blank lines",
+        tags: &["whitespace", "blank_lines"],
+        aliases: &["no-multiple-blanks"],
+    };
+
     #[inline]
     #[must_use]
     pub fn new() -> Self {
@@ -19,23 +26,8 @@ impl MD012 {
 
 impl RuleLike for MD012 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD012"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Multiple consecutive blank lines"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["whitespace", "blank_lines"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["no-multiple-blanks"]
+    fn metadata(&self) -> Metadata {
+        Self::METADATA
     }
 
     // TODO: Improve codes

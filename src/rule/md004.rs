@@ -5,7 +5,7 @@ use serde::Deserialize;
 use crate::violation::Violation;
 use crate::Document;
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -25,6 +25,13 @@ pub struct MD004 {
 }
 
 impl MD004 {
+    const METADATA: Metadata = Metadata {
+        name: "MD004",
+        description: "Unordered list style",
+        tags: &["bullet", "ul"],
+        aliases: &["ul-style"],
+    };
+
     pub const DEFAULT_LIST_STYLE: ListStyle = ListStyle::Consistent;
 
     #[inline]
@@ -45,23 +52,8 @@ impl Default for MD004 {
 
 impl RuleLike for MD004 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD004"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Unordered list style"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["bullet", "ul"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["ul-style"]
+    fn metadata(&self) -> Metadata {
+        Self::METADATA
     }
 
     #[inline]

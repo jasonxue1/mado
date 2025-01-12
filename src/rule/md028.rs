@@ -5,13 +5,20 @@ use miette::Result;
 
 use crate::{violation::Violation, Document};
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct MD028;
 
 impl MD028 {
+    const METADATA: Metadata = Metadata {
+        name: "MD028",
+        description: "Blank line inside blockquote",
+        tags: &["blockquote", "whitespace"],
+        aliases: &["no-blanks-blockquote"],
+    };
+
     #[inline]
     #[must_use]
     pub fn new() -> Self {
@@ -53,23 +60,8 @@ impl MD028 {
 
 impl RuleLike for MD028 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD028"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Blank line inside blockquote"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["blockquote", "whitespace"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["no-blanks-blockquote"]
+    fn metadata(&self) -> Metadata {
+        MD028::METADATA
     }
 
     #[inline]

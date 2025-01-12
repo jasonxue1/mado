@@ -44,6 +44,7 @@ mod md040;
 mod md041;
 pub mod md046;
 mod md047;
+mod metadata;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -135,23 +136,19 @@ impl Rule {
 }
 
 pub trait RuleLike: Send {
-    fn name(&self) -> &'static str;
-
-    fn description(&self) -> &'static str;
-
-    fn tags(&self) -> &'static [&'static str];
-
-    fn aliases(&self) -> &'static [&'static str];
+    #[must_use]
+    fn metadata(&self) -> Metadata;
 
     fn check(&self, doc: &Document) -> Result<Vec<Violation>>;
 
     #[inline]
     fn to_violation(&self, path: PathBuf, position: Sourcepos) -> Violation {
+        let metadata = self.metadata();
         Violation::new(
             path,
-            self.name().to_owned(),
-            self.aliases()[0].to_owned(),
-            self.description().to_owned(),
+            metadata.name.to_owned(),
+            metadata.aliases[0].to_owned(),
+            metadata.description.to_owned(),
             position,
         )
     }
@@ -195,3 +192,4 @@ pub use md040::MD040;
 pub use md041::MD041;
 pub use md046::MD046;
 pub use md047::MD047;
+pub use metadata::Metadata;

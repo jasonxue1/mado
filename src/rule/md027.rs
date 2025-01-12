@@ -5,13 +5,20 @@ use miette::Result;
 
 use crate::{violation::Violation, Document};
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct MD027;
 
 impl MD027 {
+    const METADATA: Metadata = Metadata {
+        name: "MD027",
+        description: "Multiple spaces after blockquote symbol",
+        tags: &["blockquote", "whitespace", "indentation"],
+        aliases: &["no-multiple-space-blockquote"],
+    };
+
     #[inline]
     #[must_use]
     pub fn new() -> Self {
@@ -21,23 +28,8 @@ impl MD027 {
 
 impl RuleLike for MD027 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD027"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Multiple spaces after blockquote symbol"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["blockquote", "whitespace", "indentation"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["no-multiple-space-blockquote"]
+    fn metadata(&self) -> Metadata {
+        MD027::METADATA
     }
 
     #[inline]

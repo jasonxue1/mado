@@ -5,13 +5,20 @@ use miette::Result;
 
 use crate::{violation::Violation, Document};
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct MD005;
 
 impl MD005 {
+    const METADATA: Metadata = Metadata {
+        name: "MD005",
+        description: "Inconsistent indentation for list items at the same level",
+        tags: &["bullet", "ul", "indentation"],
+        aliases: &["list-indent"],
+    };
+
     #[inline]
     #[must_use]
     pub fn new() -> Self {
@@ -53,23 +60,8 @@ impl MD005 {
 
 impl RuleLike for MD005 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD005"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Inconsistent indentation for list items at the same level"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["bullet", "ul", "indentation"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["list-indent"]
+    fn metadata(&self) -> Metadata {
+        Self::METADATA
     }
 
     #[inline]

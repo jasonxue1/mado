@@ -6,13 +6,20 @@ use regex::Regex;
 
 use crate::{violation::Violation, Document};
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct MD037;
 
 impl MD037 {
+    const METADATA: Metadata = Metadata {
+        name: "MD037",
+        description: "Spaces inside emphasis markers",
+        tags: &["whitespace", "emphasis"],
+        aliases: &["no-space-in-emphasis"],
+    };
+
     #[inline]
     #[must_use]
     pub fn new() -> Self {
@@ -22,23 +29,8 @@ impl MD037 {
 
 impl RuleLike for MD037 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD037"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Spaces inside emphasis markers"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["whitespace", "emphasis"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["no-space-in-emphasis"]
+    fn metadata(&self) -> Metadata {
+        Self::METADATA
     }
 
     // TODO: Use safe casting

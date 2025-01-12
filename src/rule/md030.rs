@@ -5,7 +5,7 @@ use miette::Result;
 
 use crate::{violation::Violation, Document};
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -17,6 +17,13 @@ pub struct MD030 {
 }
 
 impl MD030 {
+    const METADATA: Metadata = Metadata {
+        name: "MD030",
+        description: "Spaces after list markers",
+        tags: &["ol", "ul", "whitespace"],
+        aliases: &["list-marker-space"],
+    };
+
     pub const DEFAULT_UL_SINGLE: usize = 1;
     pub const DEFAULT_OL_SINGLE: usize = 1;
     pub const DEFAULT_UL_MULTI: usize = 1;
@@ -96,23 +103,8 @@ impl Default for MD030 {
 
 impl RuleLike for MD030 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD030"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Spaces after list markers"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["ol", "ul", "whitespace"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["list-marker-space"]
+    fn metadata(&self) -> Metadata {
+        Self::METADATA
     }
 
     #[inline]

@@ -5,7 +5,7 @@ use miette::Result;
 
 use crate::{violation::Violation, Document};
 
-use super::{helper::inline_text_of, RuleLike};
+use super::{helper::inline_text_of, Metadata, RuleLike};
 
 // TODO: Support allow_different_nesting
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
@@ -13,6 +13,13 @@ use super::{helper::inline_text_of, RuleLike};
 pub struct MD024;
 
 impl MD024 {
+    const METADATA: Metadata = Metadata {
+        name: "MD024",
+        description: "Multiple headers with the same content",
+        tags: &["headers"],
+        aliases: &["no-duplicate-header"],
+    };
+
     #[inline]
     #[must_use]
     pub fn new() -> Self {
@@ -22,23 +29,8 @@ impl MD024 {
 
 impl RuleLike for MD024 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD024"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Multiple headers with the same content"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["headers"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["no-duplicate-header"]
+    fn metadata(&self) -> Metadata {
+        MD024::METADATA
     }
 
     #[inline]

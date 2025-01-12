@@ -4,7 +4,7 @@ use serde::Deserialize;
 
 use crate::{violation::Violation, Document};
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -22,6 +22,13 @@ pub struct MD046 {
 }
 
 impl MD046 {
+    const METADATA: Metadata = Metadata {
+        name: "MD046",
+        description: "Code block style",
+        tags: &["code"],
+        aliases: &["code-block-style"],
+    };
+
     pub const DEFAULT_STYLE: CodeBlockStyle = CodeBlockStyle::Fenced;
 
     #[inline]
@@ -42,23 +49,8 @@ impl Default for MD046 {
 
 impl RuleLike for MD046 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD046"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Code block style"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["code"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["code-block-style"]
+    fn metadata(&self) -> Metadata {
+        Self::METADATA
     }
 
     #[inline]

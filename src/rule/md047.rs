@@ -3,13 +3,20 @@ use miette::Result;
 
 use crate::{violation::Violation, Document};
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct MD047;
 
 impl MD047 {
+    const METADATA: Metadata = Metadata {
+        name: "MD047",
+        description: "File should end with a single newline character",
+        tags: &["blank_lines"],
+        aliases: &["single-trailing-newline"],
+    };
+
     #[inline]
     #[must_use]
     pub fn new() -> Self {
@@ -19,23 +26,8 @@ impl MD047 {
 
 impl RuleLike for MD047 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD047"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "File should end with a single newline character"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["blank_lines"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["single-trailing-newline"]
+    fn metadata(&self) -> Metadata {
+        Self::METADATA
     }
 
     #[inline]
