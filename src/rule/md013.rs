@@ -55,13 +55,13 @@ impl RuleLike for MD013 {
     }
 
     #[inline]
-    fn tags(&self) -> Vec<&'static str> {
-        vec!["line_length"]
+    fn tags(&self) -> &'static [&'static str] {
+        &["line_length"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<&'static str> {
-        vec!["line-length"]
+    fn aliases(&self) -> &'static [&'static str] {
+        &["line-length"]
     }
 
     #[inline]

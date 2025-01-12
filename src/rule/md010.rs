@@ -33,13 +33,13 @@ impl RuleLike for MD010 {
     }
 
     #[inline]
-    fn tags(&self) -> Vec<&'static str> {
-        vec!["whitespace", "hard_tab"]
+    fn tags(&self) -> &'static [&'static str] {
+        &["whitespace", "hard_tab"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<&'static str> {
-        vec!["no-hard-tabs"]
+    fn aliases(&self) -> &'static [&'static str] {
+        &["no-hard-tabs"]
     }
 
     #[inline]

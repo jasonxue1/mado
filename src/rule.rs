@@ -139,9 +139,9 @@ pub trait RuleLike: Send {
 
     fn description(&self) -> &'static str;
 
-    fn tags(&self) -> Vec<&'static str>;
+    fn tags(&self) -> &'static [&'static str];
 
-    fn aliases(&self) -> Vec<&'static str>;
+    fn aliases(&self) -> &'static [&'static str];
 
     fn check(&self, doc: &Document) -> Result<Vec<Violation>>;
 

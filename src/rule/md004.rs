@@ -55,13 +55,13 @@ impl RuleLike for MD004 {
     }
 
     #[inline]
-    fn tags(&self) -> Vec<&'static str> {
-        vec!["bullet", "ul"]
+    fn tags(&self) -> &'static [&'static str] {
+        &["bullet", "ul"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<&'static str> {
-        vec!["ul-style"]
+    fn aliases(&self) -> &'static [&'static str] {
+        &["ul-style"]
     }
 
     #[inline]

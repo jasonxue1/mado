@@ -106,13 +106,13 @@ impl RuleLike for MD030 {
     }
 
     #[inline]
-    fn tags(&self) -> Vec<&'static str> {
-        vec!["ol", "ul", "whitespace"]
+    fn tags(&self) -> &'static [&'static str] {
+        &["ol", "ul", "whitespace"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<&'static str> {
-        vec!["list-marker-space"]
+    fn aliases(&self) -> &'static [&'static str] {
+        &["list-marker-space"]
     }
 
     #[inline]

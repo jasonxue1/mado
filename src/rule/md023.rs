@@ -29,13 +29,13 @@ impl RuleLike for MD023 {
     }
 
     #[inline]
-    fn tags(&self) -> Vec<&'static str> {
-        vec!["headers", "spaces"]
+    fn tags(&self) -> &'static [&'static str] {
+        &["headers", "spaces"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<&'static str> {
-        vec!["header-start-left"]
+    fn aliases(&self) -> &'static [&'static str] {
+        &["header-start-left"]
     }
 
     #[inline]

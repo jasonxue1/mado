@@ -42,13 +42,13 @@ impl RuleLike for MD026 {
     }
 
     #[inline]
-    fn tags(&self) -> Vec<&'static str> {
-        vec!["headers"]
+    fn tags(&self) -> &'static [&'static str] {
+        &["headers"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<&'static str> {
-        vec!["no-trailing-punctuation"]
+    fn aliases(&self) -> &'static [&'static str] {
+        &["no-trailing-punctuation"]
     }
 
     #[inline]

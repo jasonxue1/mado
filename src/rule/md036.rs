@@ -42,13 +42,13 @@ impl RuleLike for MD036 {
     }
 
     #[inline]
-    fn tags(&self) -> Vec<&'static str> {
-        vec!["headers", "emphasis"]
+    fn tags(&self) -> &'static [&'static str] {
+        &["headers", "emphasis"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<&'static str> {
-        vec!["no-emphasis-as-header"]
+    fn aliases(&self) -> &'static [&'static str] {
+        &["no-emphasis-as-header"]
     }
 
     #[inline]

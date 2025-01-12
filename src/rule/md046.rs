@@ -52,13 +52,13 @@ impl RuleLike for MD046 {
     }
 
     #[inline]
-    fn tags(&self) -> Vec<&'static str> {
-        vec!["code"]
+    fn tags(&self) -> &'static [&'static str] {
+        &["code"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<&'static str> {
-        vec!["code-block-style"]
+    fn aliases(&self) -> &'static [&'static str] {
+        &["code-block-style"]
     }
 
     #[inline]

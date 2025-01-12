@@ -63,13 +63,13 @@ impl RuleLike for MD005 {
     }
 
     #[inline]
-    fn tags(&self) -> Vec<&'static str> {
-        vec!["bullet", "ul", "indentation"]
+    fn tags(&self) -> &'static [&'static str] {
+        &["bullet", "ul", "indentation"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<&'static str> {
-        vec!["list-indent"]
+    fn aliases(&self) -> &'static [&'static str] {
+        &["list-indent"]
     }
 
     #[inline]

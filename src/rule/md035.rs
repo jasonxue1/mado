@@ -51,13 +51,13 @@ impl RuleLike for MD035 {
     }
 
     #[inline]
-    fn tags(&self) -> Vec<&'static str> {
-        vec!["hr"]
+    fn tags(&self) -> &'static [&'static str] {
+        &["hr"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<&'static str> {
-        vec!["hr-style"]
+    fn aliases(&self) -> &'static [&'static str] {
+        &["hr-style"]
     }
 
     // TODO: Use safe casting

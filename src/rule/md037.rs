@@ -32,13 +32,13 @@ impl RuleLike for MD037 {
     }
 
     #[inline]
-    fn tags(&self) -> Vec<&'static str> {
-        vec!["whitespace", "emphasis"]
+    fn tags(&self) -> &'static [&'static str] {
+        &["whitespace", "emphasis"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<&'static str> {
-        vec!["no-space-in-emphasis"]
+    fn aliases(&self) -> &'static [&'static str] {
+        &["no-space-in-emphasis"]
     }
 
     // TODO: Use safe casting

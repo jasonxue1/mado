@@ -90,13 +90,13 @@ impl RuleLike for MD029 {
     }
 
     #[inline]
-    fn tags(&self) -> Vec<&'static str> {
-        vec!["ol"]
+    fn tags(&self) -> &'static [&'static str] {
+        &["ol"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<&'static str> {
-        vec!["ol-prefix"]
+    fn aliases(&self) -> &'static [&'static str] {
+        &["ol-prefix"]
     }
 
     #[inline]

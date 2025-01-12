@@ -30,13 +30,13 @@ impl RuleLike for MD034 {
     }
 
     #[inline]
-    fn tags(&self) -> Vec<&'static str> {
-        vec!["links", "url"]
+    fn tags(&self) -> &'static [&'static str] {
+        &["links", "url"]
     }
 
     #[inline]
-    fn aliases(&self) -> Vec<&'static str> {
-        vec!["no-bare-urls"]
+    fn aliases(&self) -> &'static [&'static str] {
+        &["no-bare-urls"]
     }
 
     // TODO: Use safe casting
