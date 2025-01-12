@@ -82,3 +82,66 @@ impl Checker {
         Ok(ExitCode::FAILURE)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::path::Path;
+
+    use pretty_assertions::assert_eq;
+
+    use super::*;
+
+    #[test]
+    fn options_to_config_none_none() {
+        let options = Options {
+            config_path: None,
+            output_format: None,
+        };
+        let actual = options.to_config().unwrap();
+        let mut expected = Config::default();
+        expected.lint.md013.code_blocks = false;
+        expected.lint.md013.tables = false;
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn options_to_config_none_some() {
+        let options = Options {
+            config_path: None,
+            output_format: Some(Format::Mdl),
+        };
+        let actual = options.to_config().unwrap();
+        let mut expected = Config::default();
+        expected.lint.output_format = Format::Mdl;
+        expected.lint.md013.code_blocks = false;
+        expected.lint.md013.tables = false;
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn options_to_config_some_none() {
+        let options = Options {
+            config_path: Some(Path::new("mado.toml").to_path_buf()),
+            output_format: None,
+        };
+        let actual = options.to_config().unwrap();
+        let mut expected = Config::default();
+        expected.lint.md013.code_blocks = false;
+        expected.lint.md013.tables = false;
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn options_to_config_some_some() {
+        let options = Options {
+            config_path: Some(Path::new("mado.toml").to_path_buf()),
+            output_format: Some(Format::Mdl),
+        };
+        let actual = options.to_config().unwrap();
+        let mut expected = Config::default();
+        expected.lint.output_format = Format::Mdl;
+        expected.lint.md013.code_blocks = false;
+        expected.lint.md013.tables = false;
+        assert_eq!(actual, expected);
+    }
+}
