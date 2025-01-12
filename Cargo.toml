@@ -1,7 +1,7 @@
 [package]
 name = "mado"
 description = "A fast Markdown linter."
-version = "0.1.2"
+version = "0.1.3"
 edition = "2021"
 repository = "https://github.com/akiomik/mado"
 license = "Apache-2.0"
