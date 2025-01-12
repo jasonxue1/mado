@@ -4,13 +4,20 @@ use miette::Result;
 
 use crate::{violation::Violation, Document};
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct MD034;
 
 impl MD034 {
+    const METADATA: Metadata = Metadata {
+        name: "MD034",
+        description: "Bare URL used",
+        tags: &["links", "url"],
+        aliases: &["no-bare-urls"],
+    };
+
     #[inline]
     #[must_use]
     pub fn new() -> Self {
@@ -20,23 +27,8 @@ impl MD034 {
 
 impl RuleLike for MD034 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD034"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Bare URL used"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["links", "url"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["no-bare-urls"]
+    fn metadata(&self) -> Metadata {
+        Self::METADATA
     }
 
     // TODO: Use safe casting

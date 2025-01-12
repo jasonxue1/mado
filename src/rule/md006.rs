@@ -3,13 +3,20 @@ use miette::Result;
 
 use crate::{violation::Violation, Document};
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct MD006;
 
 impl MD006 {
+    const METADATA: Metadata = Metadata {
+        name: "MD006",
+        description: "Consider starting bulleted lists at the beginning of the line",
+        tags: &["bullet", "ul", "indentation"],
+        aliases: &["ul-start-left"],
+    };
+
     #[inline]
     #[must_use]
     pub fn new() -> Self {
@@ -19,23 +26,8 @@ impl MD006 {
 
 impl RuleLike for MD006 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD006"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Consider starting bulleted lists at the beginning of the line"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["bullet", "ul", "indentation"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["ul-start-left"]
+    fn metadata(&self) -> Metadata {
+        Self::METADATA
     }
 
     #[inline]

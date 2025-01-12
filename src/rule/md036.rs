@@ -3,7 +3,7 @@ use miette::Result;
 
 use crate::{violation::Violation, Document};
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -12,6 +12,13 @@ pub struct MD036 {
 }
 
 impl MD036 {
+    const METADATA: Metadata = Metadata {
+        name: "MD036",
+        description: "Emphasis used instead of a header",
+        tags: &["headers", "emphasis"],
+        aliases: &["no-emphasis-as-header"],
+    };
+
     pub const DEFAULT_PUNCTUATION: &str = ".,;:!?";
 
     #[inline]
@@ -32,23 +39,8 @@ impl Default for MD036 {
 
 impl RuleLike for MD036 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD036"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Emphasis used instead of a header"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["headers", "emphasis"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["no-emphasis-as-header"]
+    fn metadata(&self) -> Metadata {
+        Self::METADATA
     }
 
     #[inline]

@@ -3,13 +3,20 @@ use miette::Result;
 
 use crate::{violation::Violation, Document};
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct MD040;
 
 impl MD040 {
+    const METADATA: Metadata = Metadata {
+        name: "MD040",
+        description: "Fenced code blocks should have a language specified",
+        tags: &["code", "language"],
+        aliases: &["fenced-code-language"],
+    };
+
     #[inline]
     #[must_use]
     pub fn new() -> Self {
@@ -19,23 +26,8 @@ impl MD040 {
 
 impl RuleLike for MD040 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD040"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Fenced code blocks should have a language specified"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["code", "language"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["fenced-code-language"]
+    fn metadata(&self) -> Metadata {
+        Self::METADATA
     }
 
     #[inline]

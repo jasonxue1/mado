@@ -6,7 +6,7 @@ use regex::Regex;
 
 use crate::{collection::RangeSet, violation::Violation, Document};
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -17,6 +17,13 @@ pub struct MD013 {
 }
 
 impl MD013 {
+    const METADATA: Metadata = Metadata {
+        name: "MD013",
+        description: "Line length",
+        tags: &["line_length"],
+        aliases: &["line-length"],
+    };
+
     pub const DEFAULT_LINE_LENGTH: usize = 80;
     pub const DEFAULT_CODE_BLOCKS: bool = true;
     pub const DEFAULT_TABLES: bool = true;
@@ -45,23 +52,8 @@ impl Default for MD013 {
 
 impl RuleLike for MD013 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD013"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Line length"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["line_length"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["line-length"]
+    fn metadata(&self) -> Metadata {
+        Self::METADATA
     }
 
     #[inline]

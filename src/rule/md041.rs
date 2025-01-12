@@ -3,7 +3,7 @@ use miette::Result;
 
 use crate::{violation::Violation, Document};
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -12,6 +12,13 @@ pub struct MD041 {
 }
 
 impl MD041 {
+    const METADATA: Metadata = Metadata {
+        name: "MD041",
+        description: "First line in file should be a top level header",
+        tags: &["headers"],
+        aliases: &["first-line-h1"],
+    };
+
     pub const DEFAULT_LEVEL: u8 = 1;
 
     #[inline]
@@ -32,23 +39,8 @@ impl Default for MD041 {
 
 impl RuleLike for MD041 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD041"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "First line in file should be a top level header"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["headers"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["first-line-h1"]
+    fn metadata(&self) -> Metadata {
+        Self::METADATA
     }
 
     #[inline]

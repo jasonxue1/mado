@@ -3,13 +3,20 @@ use miette::Result;
 
 use crate::{violation::Violation, Document};
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct MD023;
 
 impl MD023 {
+    const METADATA: Metadata = Metadata {
+        name: "MD023",
+        description: "Headers must start at the beginning of the line",
+        tags: &["headers", "spaces"],
+        aliases: &["header-start-left"],
+    };
+
     #[inline]
     #[must_use]
     pub fn new() -> Self {
@@ -19,23 +26,8 @@ impl MD023 {
 
 impl RuleLike for MD023 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD023"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Headers must start at the beginning of the line"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["headers", "spaces"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["header-start-left"]
+    fn metadata(&self) -> Metadata {
+        MD023::METADATA
     }
 
     #[inline]

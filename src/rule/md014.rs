@@ -3,13 +3,20 @@ use miette::Result;
 
 use crate::{violation::Violation, Document};
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct MD014;
 
 impl MD014 {
+    const METADATA: Metadata = Metadata {
+        name: "MD014",
+        description: "Dollar signs used before commands without showing output",
+        tags: &["code"],
+        aliases: &["commands-show-output"],
+    };
+
     #[inline]
     #[must_use]
     pub fn new() -> Self {
@@ -19,23 +26,8 @@ impl MD014 {
 
 impl RuleLike for MD014 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD014"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Dollar signs used before commands without showing output"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["code"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["commands-show-output"]
+    fn metadata(&self) -> Metadata {
+        Self::METADATA
     }
 
     #[inline]

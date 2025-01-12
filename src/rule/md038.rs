@@ -3,13 +3,20 @@ use miette::Result;
 
 use crate::{violation::Violation, Document};
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct MD038;
 
 impl MD038 {
+    const METADATA: Metadata = Metadata {
+        name: "MD038",
+        description: "Spaces inside code span elements",
+        tags: &["whitespace", "code"],
+        aliases: &["no-space-in-code"],
+    };
+
     #[inline]
     #[must_use]
     pub fn new() -> Self {
@@ -19,23 +26,8 @@ impl MD038 {
 
 impl RuleLike for MD038 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD038"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Spaces inside code span elements"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["whitespace", "code"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["no-space-in-code"]
+    fn metadata(&self) -> Metadata {
+        Self::METADATA
     }
 
     #[inline]

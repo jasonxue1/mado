@@ -6,7 +6,7 @@ use serde::Deserialize;
 
 use crate::{violation::Violation, Document};
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -23,6 +23,13 @@ pub struct MD029 {
 }
 
 impl MD029 {
+    const METADATA: Metadata = Metadata {
+        name: "MD029",
+        description: "Ordered list item prefix",
+        tags: &["ol"],
+        aliases: &["ol-prefix"],
+    };
+
     pub const DEFAULT_STYLE: OrderedListStyle = OrderedListStyle::One;
 
     #[inline]
@@ -80,23 +87,8 @@ impl Default for MD029 {
 
 impl RuleLike for MD029 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD029"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Ordered list item prefix"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["ol"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["ol-prefix"]
+    fn metadata(&self) -> Metadata {
+        MD029::METADATA
     }
 
     #[inline]

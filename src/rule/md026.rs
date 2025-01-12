@@ -3,7 +3,7 @@ use miette::Result;
 
 use crate::{violation::Violation, Document};
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -12,6 +12,13 @@ pub struct MD026 {
 }
 
 impl MD026 {
+    const METADATA: Metadata = Metadata {
+        name: "MD026",
+        description: "Trailing punctuation in header",
+        tags: &["headers"],
+        aliases: &["no-trailing-punctuation"],
+    };
+
     pub const DEFAULT_PUNCTUATION: &str = ".,;:!?";
 
     #[inline]
@@ -32,23 +39,8 @@ impl Default for MD026 {
 
 impl RuleLike for MD026 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD026"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Trailing punctuation in header"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["headers"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["no-trailing-punctuation"]
+    fn metadata(&self) -> Metadata {
+        MD026::METADATA
     }
 
     #[inline]

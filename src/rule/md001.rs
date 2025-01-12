@@ -3,13 +3,20 @@ use miette::Result;
 
 use crate::{violation::Violation, Document};
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct MD001;
 
 impl MD001 {
+    const METADATA: Metadata = Metadata {
+        name: "MD001",
+        description: "Header levels should only increment by one level at a time",
+        tags: &["headers"],
+        aliases: &["header-increment"],
+    };
+
     #[inline]
     #[must_use]
     pub fn new() -> Self {
@@ -19,23 +26,8 @@ impl MD001 {
 
 impl RuleLike for MD001 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD001"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Header levels should only increment by one level at a time"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["headers"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["header-increment"]
+    fn metadata(&self) -> Metadata {
+        Self::METADATA
     }
 
     #[inline]

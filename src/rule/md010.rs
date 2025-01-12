@@ -7,13 +7,20 @@ use regex::Regex;
 use crate::violation::Violation;
 use crate::Document;
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct MD010;
 
 impl MD010 {
+    const METADATA: Metadata = Metadata {
+        name: "MD010",
+        description: "Hard tabs",
+        tags: &["whitespace", "hard_tab"],
+        aliases: &["no-hard-tabs"],
+    };
+
     #[inline]
     #[must_use]
     pub fn new() -> Self {
@@ -23,23 +30,8 @@ impl MD010 {
 
 impl RuleLike for MD010 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD010"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Hard tabs"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["whitespace", "hard_tab"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["no-hard-tabs"]
+    fn metadata(&self) -> Metadata {
+        Self::METADATA
     }
 
     #[inline]

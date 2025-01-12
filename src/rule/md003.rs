@@ -5,7 +5,7 @@ use serde::Deserialize;
 use crate::violation::Violation;
 use crate::Document;
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "kebab-case")]
@@ -25,6 +25,13 @@ pub struct MD003 {
 }
 
 impl MD003 {
+    const METADATA: Metadata = Metadata {
+        name: "MD003",
+        description: "Header style",
+        tags: &["headers"],
+        aliases: &["header-style"],
+    };
+
     pub const DEFAULT_HEADING_STYLE: HeadingStyle = HeadingStyle::Consistent;
 
     #[inline]
@@ -45,23 +52,8 @@ impl Default for MD003 {
 
 impl RuleLike for MD003 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD003"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Header style"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["headers"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["header-style"]
+    fn metadata(&self) -> Metadata {
+        Self::METADATA
     }
 
     #[inline]

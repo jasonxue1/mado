@@ -3,7 +3,7 @@ use miette::Result;
 
 use crate::{violation::Violation, Document};
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -12,6 +12,13 @@ pub struct MD007 {
 }
 
 impl MD007 {
+    const METADATA: Metadata = Metadata {
+        name: "MD007",
+        description: "Unordered list indentation",
+        tags: &["bullet", "ul", "indentation"],
+        aliases: &["ul-indent"],
+    };
+
     pub const DEFAULT_INDENT: usize = 4;
 
     #[inline]
@@ -32,23 +39,8 @@ impl Default for MD007 {
 
 impl RuleLike for MD007 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD007"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Unordered list indentation"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["bullet", "ul", "indentation"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["ul-indent"]
+    fn metadata(&self) -> Metadata {
+        Self::METADATA
     }
 
     #[inline]

@@ -4,7 +4,7 @@ use serde::Deserialize;
 
 use crate::{violation::Violation, Document};
 
-use super::RuleLike;
+use super::{Metadata, RuleLike};
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -21,6 +21,13 @@ pub struct MD035 {
 }
 
 impl MD035 {
+    const METADATA: Metadata = Metadata {
+        name: "MD035",
+        description: "Horizontal rule style",
+        tags: &["hr"],
+        aliases: &["hr-style"],
+    };
+
     pub const DEFAULT_STYLE: HorizontalRuleStyle = HorizontalRuleStyle::Consistent;
 
     #[inline]
@@ -41,23 +48,8 @@ impl Default for MD035 {
 
 impl RuleLike for MD035 {
     #[inline]
-    fn name(&self) -> &'static str {
-        "MD035"
-    }
-
-    #[inline]
-    fn description(&self) -> &'static str {
-        "Horizontal rule style"
-    }
-
-    #[inline]
-    fn tags(&self) -> &'static [&'static str] {
-        &["hr"]
-    }
-
-    #[inline]
-    fn aliases(&self) -> &'static [&'static str] {
-        &["hr-style"]
+    fn metadata(&self) -> Metadata {
+        Self::METADATA
     }
 
     // TODO: Use safe casting
