@@ -22,3 +22,50 @@ impl WalkParallelBuilder {
         Ok(builder.build_parallel())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    extern crate alloc;
+
+    use alloc::sync::Arc;
+    use std::{path::Path, sync::Mutex};
+
+    use ignore::{DirEntry, WalkState};
+    use pretty_assertions::assert_eq;
+
+    use super::WalkParallelBuilder;
+
+    #[test]
+    fn build() {
+        let paths = vec![
+            Path::new("action").to_path_buf(),
+            Path::new("mado.toml").to_path_buf(),
+            Path::new("README.md").to_path_buf(),
+        ];
+        let builder = WalkParallelBuilder::build(&paths).unwrap();
+        let shared_paths = Arc::new(Mutex::new(vec![]));
+        let walker = |either_entry: Result<DirEntry, _>| {
+            if let Ok(entry) = either_entry {
+                shared_paths.lock().unwrap().push(entry.into_path());
+            }
+
+            WalkState::Continue
+        };
+        builder.run(|| Box::new(walker));
+        let mut actual = shared_paths.lock().unwrap().clone();
+        actual.sort();
+        let expected = vec![
+            Path::new("README.md").to_path_buf(),
+            Path::new("action").to_path_buf(),
+            Path::new("action/entrypoint.sh").to_path_buf(),
+            Path::new("mado.toml").to_path_buf(),
+        ];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn build_empty_patterns() {
+        let result = WalkParallelBuilder::build(&[]);
+        assert!(result.is_err());
+    }
+}
