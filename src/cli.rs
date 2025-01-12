@@ -22,3 +22,15 @@ pub struct Cli {
     #[command(subcommand)]
     pub command: Option<Command>,
 }
+
+#[cfg(test)]
+mod tests {
+    use clap::CommandFactory as _;
+
+    use super::*;
+
+    #[test]
+    fn command() {
+        Cli::command().debug_assert();
+    }
+}
