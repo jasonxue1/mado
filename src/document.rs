@@ -42,8 +42,8 @@ impl<'a> Document<'a> {
     #[must_use]
     pub fn front_matter(&self) -> Option<String> {
         if let Some(node) = self.ast.first_child() {
-            if let NodeValue::FrontMatter(front_matter) = node.data.borrow().value.clone() {
-                return Some(front_matter);
+            if let NodeValue::FrontMatter(front_matter) = &node.data.borrow().value {
+                return Some(front_matter.clone());
             }
         }
 
@@ -73,7 +73,7 @@ foo: bar
         let text = format!("{front_matter}text");
         let arena = Arena::new();
         let path = Path::new("test.md").to_path_buf();
-        let doc = Document::new(&arena, path, text.clone()).unwrap();
+        let doc = Document::new(&arena, path, text).unwrap();
         assert_eq!(doc.front_matter(), Some(front_matter));
     }
 
@@ -82,7 +82,16 @@ foo: bar
         let text = "text".to_owned();
         let arena = Arena::new();
         let path = Path::new("test.md").to_path_buf();
-        let doc = Document::new(&arena, path, text.clone()).unwrap();
+        let doc = Document::new(&arena, path, text).unwrap();
+        assert_eq!(doc.front_matter(), None);
+    }
+
+    #[test]
+    fn front_matter_empty() {
+        let text = String::new();
+        let arena = Arena::new();
+        let path = Path::new("test.md").to_path_buf();
+        let doc = Document::new(&arena, path, text).unwrap();
         assert_eq!(doc.front_matter(), None);
     }
 }
