@@ -144,6 +144,25 @@ mod tests {
     }
 
     #[test]
+    fn into_iter() {
+        let ranges = [0..10, 20..30, 25..35];
+        let set = RangeSet::from(ranges.clone());
+        let actual: HashSet<_> = set.into_iter().collect();
+        let expected: HashSet<_> = ranges.into_iter().collect();
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    #[allow(clippy::into_iter_on_ref)]
+    fn into_iter_ref() {
+        let ranges = &[0..10, 20..30, 25..35];
+        let set = &RangeSet::from(ranges.clone());
+        let actual: HashSet<_> = set.into_iter().collect();
+        let expected: HashSet<_> = ranges.into_iter().collect();
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
     fn is_empty() {
         let mut set = RangeSet::new();
         assert!(set.is_empty());
