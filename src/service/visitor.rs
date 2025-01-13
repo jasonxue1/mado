@@ -2,7 +2,8 @@ use core::result::Result;
 
 use comrak::Arena;
 use crossbeam_channel::Sender;
-use ignore::{ParallelVisitor, ParallelVisitorBuilder, WalkState};
+use ignore::{DirEntry, Error, ParallelVisitor, ParallelVisitorBuilder, WalkState};
+use miette::IntoDiagnostic as _;
 
 use super::Linter;
 use crate::{config::Config, Document, Violation};
@@ -18,32 +19,30 @@ impl MarkdownLintVisitor {
     pub fn new(linter: Linter, tx: Sender<Vec<Violation>>) -> Self {
         Self { linter, tx }
     }
+
+    fn visit_inner(&self, either_entry: Result<DirEntry, Error>) -> miette::Result<()> {
+        let entry = either_entry.into_diagnostic()?;
+        let path = entry.path();
+        if path.is_file() && path.extension() == Some("md".as_ref()) {
+            let arena = Arena::new();
+            let doc = Document::open(&arena, path)?;
+            let violations = self.linter.check(&doc)?;
+            if !violations.is_empty() {
+                self.tx.send(violations).into_diagnostic()?;
+            }
+        }
+
+        Ok(())
+    }
 }
 
 impl ParallelVisitor for MarkdownLintVisitor {
-    // TODO: Don't use unwrap
-    #![allow(clippy::unwrap_used)]
     #[inline]
-    fn visit(&mut self, either_entry: Result<ignore::DirEntry, ignore::Error>) -> WalkState {
-        match either_entry {
-            Ok(entry) => {
-                // TODO: Handle errors
-                let path = entry.path();
-                if path.is_file() && path.extension() == Some("md".as_ref()) {
-                    let arena = Arena::new();
-                    let either_doc = Document::open(&arena, path);
-                    match either_doc {
-                        Ok(doc) => {
-                            let violations = self.linter.check(&doc).unwrap();
-                            self.tx.send(violations).unwrap();
-                        }
-                        Err(err) => println!("{err}"),
-                    }
-                }
-            }
-            Err(err) => println!("{err}"),
+    fn visit(&mut self, either_entry: Result<DirEntry, Error>) -> WalkState {
+        if let Err(err) = self.visit_inner(either_entry) {
+            // TODO: Handle errors
+            println!("{err}");
         }
-
         WalkState::Continue
     }
 }
@@ -66,5 +65,26 @@ impl<'s> ParallelVisitorBuilder<'s> for MarkdownLintVisitorFactory {
     fn build(&mut self) -> Box<dyn ParallelVisitor + 's> {
         let linter = Linter::from(&self.config);
         Box::new(MarkdownLintVisitor::new(linter, self.tx.clone()))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use ignore::Walk;
+
+    use super::*;
+
+    #[test]
+    fn markdown_lint_visitor_visit_inner() {
+        let (tx, rx) = crossbeam_channel::bounded::<Vec<Violation>>(100);
+        let linter = Linter::new(vec![]);
+        let visitor = MarkdownLintVisitor::new(linter, tx);
+
+        for entry in Walk::new(".") {
+            visitor.visit_inner(entry).unwrap();
+        }
+
+        drop(visitor);
+        assert!(rx.recv().is_err()); // Because rx has not received any messages
     }
 }
