@@ -1,7 +1,7 @@
 extern crate alloc;
 
 use alloc::sync::Arc;
-use std::sync::Mutex;
+use std::sync::{mpsc, Mutex};
 use std::thread;
 
 use ignore::WalkParallel;
@@ -35,7 +35,7 @@ impl ParallelLintRunner {
     #[expect(clippy::unwrap_in_result)]
     pub fn run(self) -> Result<Vec<Violation>> {
         let mutex_violations: Arc<Mutex<Vec<Violation>>> = Arc::new(Mutex::new(vec![]));
-        let (tx, rx) = crossbeam_channel::bounded::<Vec<Violation>>(self.capacity);
+        let (tx, rx) = mpsc::sync_channel::<Vec<Violation>>(self.capacity);
 
         let local_mutex_violations = Arc::clone(&mutex_violations);
         let thread = thread::spawn(move || {
