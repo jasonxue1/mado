@@ -72,19 +72,22 @@ mod tests {
     use comrak::nodes::Sourcepos;
     use pretty_assertions::assert_eq;
 
+    use crate::rule::Metadata;
+
     use super::*;
+
+    const METADATA: Metadata = Metadata {
+        name: "name",
+        description: "description",
+        aliases: &["alias"],
+        tags: &["tags"],
+    };
 
     #[test]
     fn display_fmt() {
         let path = Path::new("file.md").to_path_buf();
         let position = Sourcepos::from((0, 1, 3, 5));
-        let violation = Violation::new(
-            path,
-            "name".to_owned(),
-            "alias".to_owned(),
-            "description".to_owned(),
-            position,
-        );
+        let violation = Violation::new(path, &METADATA, position);
         let actual = Mdl::new(&violation).to_string();
         let expected = "\u{1b}[1mfile.md\u{1b}[0m\u{1b}[34m:\u{1b}[0m0\u{1b}[34m:\u{1b}[0m \u{1b}[1;31mname\u{1b}[0m description";
         assert_eq!(actual, expected);

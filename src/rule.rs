@@ -137,20 +137,13 @@ impl Rule {
 
 pub trait RuleLike: Send {
     #[must_use]
-    fn metadata(&self) -> Metadata;
+    fn metadata(&self) -> &'static Metadata;
 
     fn check(&self, doc: &Document) -> Result<Vec<Violation>>;
 
     #[inline]
     fn to_violation(&self, path: PathBuf, position: Sourcepos) -> Violation {
-        let metadata = self.metadata();
-        Violation::new(
-            path,
-            metadata.name.to_owned(),
-            metadata.aliases[0].to_owned(),
-            metadata.description.to_owned(),
-            position,
-        )
+        Violation::new(path, self.metadata(), position)
     }
 }
 

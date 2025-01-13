@@ -48,8 +48,8 @@ impl Default for MD035 {
 
 impl RuleLike for MD035 {
     #[inline]
-    fn metadata(&self) -> Metadata {
-        Self::METADATA
+    fn metadata(&self) -> &'static Metadata {
+        &Self::METADATA
     }
 
     // TODO: Use safe casting

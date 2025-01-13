@@ -3,30 +3,22 @@ use std::path::PathBuf;
 
 use comrak::nodes::Sourcepos;
 
+use crate::rule::Metadata;
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Violation {
     path: PathBuf,
-    name: String,
-    alias: String,
-    description: String,
+    metadata: &'static Metadata,
     position: Sourcepos,
 }
 
 impl Violation {
     #[inline]
     #[must_use]
-    pub fn new(
-        path: PathBuf,
-        name: String,
-        alias: String,
-        description: String,
-        position: Sourcepos,
-    ) -> Self {
+    pub fn new(path: PathBuf, metadata: &'static Metadata, position: Sourcepos) -> Self {
         Self {
             path,
-            name,
-            alias,
-            description,
+            metadata,
             position,
         }
     }
@@ -40,19 +32,19 @@ impl Violation {
     #[inline]
     #[must_use]
     pub fn name(&self) -> &str {
-        &self.name
+        self.metadata.name
     }
 
     #[inline]
     #[must_use]
     pub fn alias(&self) -> &str {
-        &self.alias
+        self.metadata.aliases[0]
     }
 
     #[inline]
     #[must_use]
     pub fn description(&self) -> &str {
-        &self.description
+        self.metadata.description
     }
 
     #[inline]
@@ -82,7 +74,7 @@ impl Ord for Violation {
             return position_cmp;
         }
 
-        self.name.cmp(&other.name)
+        self.metadata.name.cmp(other.metadata.name)
     }
 }
 
