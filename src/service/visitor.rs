@@ -1,7 +1,7 @@
 use core::result::Result;
+use std::sync::mpsc::SyncSender;
 
 use comrak::Arena;
-use crossbeam_channel::Sender;
 use ignore::{DirEntry, Error, ParallelVisitor, ParallelVisitorBuilder, WalkState};
 use miette::IntoDiagnostic as _;
 
@@ -10,13 +10,13 @@ use crate::{config::Config, Document, Violation};
 
 pub struct MarkdownLintVisitor {
     linter: Linter,
-    tx: Sender<Vec<Violation>>,
+    tx: SyncSender<Vec<Violation>>,
 }
 
 impl MarkdownLintVisitor {
     #[inline]
     #[must_use]
-    pub fn new(linter: Linter, tx: Sender<Vec<Violation>>) -> Self {
+    pub fn new(linter: Linter, tx: SyncSender<Vec<Violation>>) -> Self {
         Self { linter, tx }
     }
 
@@ -49,13 +49,13 @@ impl ParallelVisitor for MarkdownLintVisitor {
 
 pub struct MarkdownLintVisitorFactory {
     config: Config,
-    tx: Sender<Vec<Violation>>,
+    tx: SyncSender<Vec<Violation>>,
 }
 
 impl MarkdownLintVisitorFactory {
     #[inline]
     #[must_use]
-    pub fn new(config: Config, tx: Sender<Vec<Violation>>) -> Self {
+    pub fn new(config: Config, tx: SyncSender<Vec<Violation>>) -> Self {
         Self { config, tx }
     }
 }
@@ -70,13 +70,15 @@ impl<'s> ParallelVisitorBuilder<'s> for MarkdownLintVisitorFactory {
 
 #[cfg(test)]
 mod tests {
+    use std::sync::mpsc;
+
     use ignore::Walk;
 
     use super::*;
 
     #[test]
     fn markdown_lint_visitor_visit_inner() {
-        let (tx, rx) = crossbeam_channel::bounded::<Vec<Violation>>(100);
+        let (tx, rx) = mpsc::sync_channel::<Vec<Violation>>(0);
         let linter = Linter::new(vec![]);
         let visitor = MarkdownLintVisitor::new(linter, tx);
 
