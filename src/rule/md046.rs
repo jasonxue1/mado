@@ -49,8 +49,8 @@ impl Default for MD046 {
 
 impl RuleLike for MD046 {
     #[inline]
-    fn metadata(&self) -> Metadata {
-        Self::METADATA
+    fn metadata(&self) -> &'static Metadata {
+        &Self::METADATA
     }
 
     #[inline]

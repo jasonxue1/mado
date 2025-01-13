@@ -29,8 +29,8 @@ impl MD037 {
 
 impl RuleLike for MD037 {
     #[inline]
-    fn metadata(&self) -> Metadata {
-        Self::METADATA
+    fn metadata(&self) -> &'static Metadata {
+        &Self::METADATA
     }
 
     // TODO: Use safe casting
