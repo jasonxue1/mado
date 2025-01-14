@@ -1,0 +1,33 @@
+name: CI Package # Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+
+  homebrew:
+    name: Test Homebrew
+    runs-on: macos-latest
+    steps:
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+        with:
+            test-bot: true
+            stable: true
+        env:
+            HOMEBREW_TAP_REPOSITORY: /opt/homebrew/Library/Taps/akiomik/mado
+      - name: Rename akiomik/mado to akiomik/homebrew-mado
+        run: mv /opt/homebrew/Library/Taps/akiomik/mado /opt/homebrew/Library/Taps/akiomik/homebrew-mado
+      - name: Checkout repository for updating HEAD
+        uses: actions/checkout@v4
+      - name: Show the latest commit
+        run: git log -1
+      - name: Run Homebrew info
+        run: brew info mado
+      - name: Run Homebrew Test Bot
+        run: brew test-bot --only-formulae --skip-dependents mado
+      - name: Revert renaming
+        run: mv /opt/homebrew/Library/Taps/akiomik/homebrew-mado /opt/homebrew/Library/Taps/akiomik/mado
