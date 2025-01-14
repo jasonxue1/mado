@@ -2,8 +2,8 @@
 
 class Mado < Formula
   desc "Fast Markdown linter written in Rust"
-  version "0.1.3"
   homepage "https://github.com/akiomik/mado"
+  version "0.1.3"
   license "Apache-2.0"
 
   on_macos do
