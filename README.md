@@ -87,7 +87,7 @@ Mado supports most [markdownlint rules](https://github.com/markdownlint/markdown
 | MD034 | :white_check_mark: |                                                |
 | MD035 | :white_check_mark: |                                                |
 | MD036 | :hammer:           |                                                |
-| MD037 | :hammer:           |                                                |
+| MD037 | :white_check_mark: |                                                |
 | MD038 | :white_check_mark: |                                                |
 | MD039 | :white_check_mark: |                                                |
 | MD040 | :white_check_mark: |                                                |
