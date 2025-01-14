@@ -45,6 +45,15 @@ using [hyperfine](https://github.com/sharkdp/hyperfine)
 with [GitLab documentation](https://gitlab.com/gitlab-org/gitlab/-/tree/7d6a4025a0346f1f50d2825c85742e5a27b39a8b/doc)
 as the dataset.
 
+## Installation
+
+### macOS
+
+```bash
+brew tap akiomik/mado https://github.com/akiomik/mado.git
+brew install mado
+```
+
 ## Supported Rules
 
 Mado supports most [markdownlint rules](https://github.com/markdownlint/markdownlint/blob/main/docs/RULES.md).
