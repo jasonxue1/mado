@@ -54,6 +54,12 @@ brew tap akiomik/mado https://github.com/akiomik/mado.git
 brew install mado
 ```
 
+### Windows
+
+```bash
+scoop install https://raw.githubusercontent.com/akiomik/mado/refs/heads/main/pkg/scoop/mado.json
+```
+
 ## Supported Rules
 
 Mado supports most [markdownlint rules](https://github.com/markdownlint/markdownlint/blob/main/docs/RULES.md).
