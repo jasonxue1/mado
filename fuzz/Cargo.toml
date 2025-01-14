@@ -1,0 +1,22 @@
+[package]
+name = "mado-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+comrak = "0.33.0"
+
+[dependencies.mado]
+path = ".."
+
+[[bin]]
+name = "linter"
+path = "fuzz_targets/linter.rs"
+test = false
+doc = false
+bench = false

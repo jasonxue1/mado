@@ -144,9 +144,9 @@ cargo lint
 ./scripts/benchmarks/comparison.sh
 ```
 
-### Profiling with cargo flamegraph
+### Profiling
 
-Install `flamegraph` first.
+Install [`flamegraph`](https://github.com/flamegraph-rs/flamegraph) first.
 
 ```bash
 cargo install flamegraph
@@ -157,4 +157,18 @@ Then:
 ```bash
 # `--root` option is needed for macOS users
 cargo flamegraph --root --profile bench -- check scripts/benchmarks/data/gitlab
+```
+
+### Fuzzing
+
+Install [`cargo-fuzz`](https://github.com/rust-fuzz/cargo-fuzz) first.
+
+```bash
+cargo install cargo-fuzz
+```
+
+Then:
+
+```bash
+cargo +nightly fuzz run linter
 ```
