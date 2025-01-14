@@ -39,7 +39,7 @@ impl RuleLike for MD037 {
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         static RE: LazyLock<Regex> = LazyLock::new(|| {
             #[allow(clippy::unwrap_used)]
-            Regex::new(r"((\s\*\s.+\*)|(\s\*\*\s.+\*\*)|(\s_\s.+_)|(\s__\s.+__))|((\*.+\s\*\s)|(\*\*.+\s\*\*\s)|(_.+\s_\s)|(__.+\s__\s))").unwrap()
+            Regex::new(r"(?:\s\*\s.+\*)|(?:\s\*\*\s.+\*\*)|(?:\s_\s.+_)|(?:\s__\s.+__)|(?:\*.+\s\*\s)|(?:\*\*.+\s\*\*\s)|(?:_.+\s_\s)|(?:__.+\s__\s)").unwrap()
         });
 
         let mut violations = vec![];
