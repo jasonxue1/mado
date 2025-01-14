@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Mado < Formula
   desc "Fast Markdown linter written in Rust"
   version "0.1.3"
