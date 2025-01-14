@@ -31,3 +31,14 @@ jobs:
         run: brew test-bot --only-formulae --skip-dependents mado
       - name: Revert renaming
         run: mv /opt/homebrew/Library/Taps/akiomik/homebrew-mado /opt/homebrew/Library/Taps/akiomik/mado
+
+  scoop:
+    name: Test Scoop
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository for updating HEAD
+        uses: actions/checkout@v4
+      - name: Setup Scoop
+        uses: MinoruSekine/setup-scoop@v4.0.1
+      - name: Install Mado via Scoop
+        run: scoop install pkg\scoop\mado.json
