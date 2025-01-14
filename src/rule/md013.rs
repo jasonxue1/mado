@@ -60,7 +60,7 @@ impl RuleLike for MD013 {
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         static RE: LazyLock<Regex> = LazyLock::new(|| {
             #[allow(clippy::unwrap_used)]
-            Regex::new(r".*\s").unwrap()
+            Regex::new(r"\s").unwrap()
         });
 
         let mut violations = vec![];
