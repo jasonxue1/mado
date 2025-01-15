@@ -137,16 +137,18 @@ Mado is compatible with GitHub Actions.
 
 ## Development
 
+[just](https://github.com/casey/just/tree/master) is required.
+
 ### Running Tests
 
 ```bash
-cargo test
+just test
 ```
 
 ### Linting Code
 
 ```bash
-cargo lint
+just lint
 ```
 
 ### Benchmarking
@@ -170,9 +172,7 @@ cargo install flamegraph
 Then run:
 
 ```bash
-# Use `--root` on macOS
-# See https://github.com/flamegraph-rs/flamegraph?tab=readme-ov-file#dtrace-on-macos
-cargo flamegraph --root --profile bench -- check scripts/benchmarks/data/gitlab
+just flamegraph
 ```
 
 ### Fuzz Testing
@@ -186,5 +186,5 @@ cargo install cargo-fuzz
 Then run:
 
 ```bash
-cargo +nightly fuzz run linter
+just fuzz
 ```
