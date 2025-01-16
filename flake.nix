@@ -3,22 +3,16 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, ... }:
-    let
-      supportedSystems = [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
-      forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
-      nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; });
-
-    in {
-      packages = forAllSystems (system:
-        let
-          pkgs = nixpkgsFor.${system};
-          os = if pkgs.stdenv.hostPlatform.isDarwin then "macOS" else "Linux-gnu";
-          arch = if pkgs.stdenv.hostPlatform.isAarch64 then "arm64" else "x86_64";
-
-        in {
+  outputs = { self, nixpkgs, flake-utils, ... }:
+    flake-utils.lib.eachDefaultSystem (system:
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+        os = if pkgs.stdenv.hostPlatform.isDarwin then "macOS" else "Linux-gnu";
+        arch = if pkgs.stdenv.hostPlatform.isAarch64 then "arm64" else "x86_64";
+        packages = {
           mado = pkgs.stdenv.mkDerivation rec {
             pname = "mado";
             version = "0.1.3";
@@ -44,14 +38,15 @@
             meta = with pkgs.lib; {
               homepage = "https://github.com/akiomik/mado";
               description = "A fast Markdown linter written in Rust";
-              platforms = supportedSystems;
               license = licenses.asl20;
               sourceProvenance = [ sourceTypes.binaryNativeCode ];
             };
           };
-        }
-      );
+        };
 
-      defaultPackage = forAllSystems (system: self.packages.${system}.mado);
-    };
+      in {
+        packages = packages;
+        defaultPackage = self.packages.${system}.mado;
+      }
+    );
 }
