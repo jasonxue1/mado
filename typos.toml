@@ -1,0 +1,7 @@
+[files]
+extend-exclude = [
+  # NOTE: Due to false positives caused by hash strings
+  "flake.nix",
+  "pkg/homebrew/mado.rb",
+  "pkg/scoop/mado.json",
+]

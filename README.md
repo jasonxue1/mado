@@ -47,14 +47,20 @@ as the dataset.
 
 ## Installation
 
-### macOS
+### Homebrew (macOS and Linux)
 
 ```bash
 brew tap akiomik/mado https://github.com/akiomik/mado.git
 brew install mado
 ```
 
-### Windows
+### Nix (macOS and Linux)
+
+```bash
+nix profile install github:akiomik/mado
+```
+
+### Scoop (Windows)
 
 ```bash
 scoop install https://raw.githubusercontent.com/akiomik/mado/refs/heads/main/pkg/scoop/mado.json
