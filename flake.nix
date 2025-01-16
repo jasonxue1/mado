@@ -19,6 +19,9 @@
         pkgs = nixpkgs.legacyPackages.${system};
         os = if pkgs.stdenv.hostPlatform.isDarwin then "macOS" else "Linux-gnu";
         arch = if pkgs.stdenv.hostPlatform.isAarch64 then "arm64" else "x86_64";
+
+      in
+      {
         packages = {
           mado = pkgs.stdenv.mkDerivation rec {
             pname = "mado";
@@ -49,12 +52,8 @@
               sourceProvenance = [ sourceTypes.binaryNativeCode ];
             };
           };
+          default = self.packages.${system}.mado;
         };
-
-      in
-      {
-        packages = packages;
-        defaultPackage = self.packages.${system}.mado;
         formatter = pkgs.nixfmt-rfc-style;
       }
     );
