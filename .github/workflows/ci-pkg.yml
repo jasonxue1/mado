@@ -28,7 +28,7 @@ jobs:
       - name: Run Homebrew info
         run: brew info mado
       - name: Run Homebrew Test Bot
-        run: brew test-bot --only-formulae --skip-dependents mado
+        run: brew test-bot --only-formulae --skip-dependents --skip-online-checks mado
       - name: Revert renaming
         run: mv /opt/homebrew/Library/Taps/akiomik/homebrew-mado /opt/homebrew/Library/Taps/akiomik/mado
 
