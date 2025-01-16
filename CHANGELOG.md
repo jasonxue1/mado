@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.4 (2025-01-17)
+
+* Minor improvements (#41, #42, #45, #46, #49)
+* Bump colored from 2.2.0 to 3.0.0 (#43)
+* Bump clap from 4.5.23 to 4.5.26 (#44)
+* Add fuzz testing (#47)
+* Update README.md (#48, #50)
+* Add Homebrew support (#51, #52, #54, #55, #56, #57, #62)
+* Add Scoop support (#53, #58)
+* Add justfile (#59)
+* Add Nix support (#60, #61)
+* Add `.github/release.yml` (#63, #65)
+
 ## 0.1.3 (2025-01-13)
 
 * Update project `mado.toml` (#13)
