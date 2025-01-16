@@ -5,6 +5,7 @@ tempdir := `mktemp -d`
 
 fmt:
   cargo fmt --all --check
+  nix fmt flake.nix
 
 test:
   cargo test --all-features --workspace

@@ -6,8 +6,15 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils, ... }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+      ...
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
         os = if pkgs.stdenv.hostPlatform.isDarwin then "macOS" else "Linux-gnu";
@@ -44,9 +51,11 @@
           };
         };
 
-      in {
+      in
+      {
         packages = packages;
         defaultPackage = self.packages.${system}.mado;
+        formatter = pkgs.nixfmt-rfc-style;
       }
     );
 }
