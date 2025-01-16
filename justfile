@@ -1,6 +1,7 @@
 default: fmt test lint
 
-version := "0.1.3"
+prev_version := "0.1.3"
+version := "0.1.4"
 tempdir := `mktemp -d`
 
 fmt:
@@ -29,26 +30,58 @@ fuzz target="linter":
   cargo +nightly fuzz run {{target}}
 
 [private]
-hash target:
-  @echo {{target}}
+download-hash version target:
+  @echo 'Downloading v{{version}}/{{target}}...'
   @wget -q -P {{tempdir}} https://github.com/akiomik/mado/releases/download/v{{version}}/{{target}}
-  @cut -d ' ' -f 1 {{tempdir}}/{{target}}
+  @mv {{tempdir}}/{{target}} {{tempdir}}/v{{version}}-{{target}}
 
 [private]
-nix-hash target:
-  @echo {{target}}
-  @nix-prefetch-url --unpack https://github.com/akiomik/mado/releases/download/v{{version}}/{{target}}
+update-homebrew-hash target: (download-hash prev_version target) (download-hash version target)
+  @echo 'Updating pkg/homebrew/mado.rb for {{target}}...'
+  @prev_hash=`cut -d ' ' -f 1 {{tempdir}}/v{{prev_version}}-{{target}}` \
+    && new_hash=`cut -d ' ' -f 1 {{tempdir}}/v{{version}}-{{target}}` \
+    && sed -I '' "s/$prev_hash/$new_hash/" pkg/homebrew/mado.rb
 
-hash-linux-arm64: (hash "mado-Linux-gnu-arm64.tar.gz.sha256")
-hash-linux-amd64: (hash "mado-Linux-gnu-x86_64.tar.gz.sha256")
-hash-macos-arm64: (hash "mado-macOS-arm64.tar.gz.sha256")
-hash-macos-amd64: (hash "mado-macOS-x86_64.tar.gz.sha256")
-hash-windows-amd64: (hash "mado-Windows-msvc-x86_64.zip.sha256")
-list-hash: hash-linux-arm64 hash-linux-amd64 hash-macos-arm64 hash-macos-amd64 hash-windows-amd64
+update-homebrew-hash-linux-arm64: (update-homebrew-hash "mado-Linux-gnu-arm64.tar.gz.sha256")
+update-homebrew-hash-linux-amd64: (update-homebrew-hash "mado-Linux-gnu-x86_64.tar.gz.sha256")
+update-homebrew-hash-macos-arm64: (update-homebrew-hash "mado-macOS-arm64.tar.gz.sha256")
+update-homebrew-hash-macos-amd64: (update-homebrew-hash "mado-macOS-x86_64.tar.gz.sha256")
+update-homebrew-hash-all: update-homebrew-hash-linux-arm64 update-homebrew-hash-linux-amd64 update-homebrew-hash-macos-arm64 update-homebrew-hash-macos-amd64
+update-homebrew: update-homebrew-hash-all
+  @echo 'Updating pkg/homebrew/mado.rb for {{version}}...'
+  @sed -I '' "s/{{prev_version}}/{{version}}/" pkg/homebrew/mado.rb
 
-nix-hash-linux-arm64: (nix-hash "mado-Linux-gnu-arm64.tar.gz")
-nix-hash-linux-amd64: (nix-hash "mado-Linux-gnu-x86_64.tar.gz")
-nix-hash-macos-arm64: (nix-hash "mado-macOS-arm64.tar.gz")
-nix-hash-macos-amd64: (nix-hash "mado-macOS-x86_64.tar.gz")
-nix-hash-windows-amd64: (nix-hash "mado-Windows-msvc-x86_64.zip")
-list-nix-hash: nix-hash-linux-arm64 nix-hash-linux-amd64 nix-hash-macos-arm64 nix-hash-macos-amd64 nix-hash-windows-amd64
+[private]
+update-scoop-hash target: (download-hash prev_version target) (download-hash version target)
+  @echo 'Updating pkg/scoop/mado.json for {{target}}...'
+  @prev_hash=`cut -d ' ' -f 1 {{tempdir}}/v{{prev_version}}-{{target}}` \
+    && new_hash=`cut -d ' ' -f 1 {{tempdir}}/v{{version}}-{{target}}` \
+    && sed -I '' "s/$prev_hash/$new_hash/" pkg/scoop/mado.json
+
+update-scoop-hash-windows-amd64: (update-scoop-hash "mado-Windows-msvc-x86_64.zip.sha256")
+update-scoop-hash-all: update-scoop-hash-windows-amd64
+update-scoop: update-scoop-hash-all
+  @echo 'Updating pkg/scoop/mado.json for {{version}}...'
+  @sed -I '' "s/{{prev_version}}/{{version}}/" pkg/scoop/mado.json
+
+[private]
+nix-hash version target:
+  @echo 'Downloading v{{version}}/{{target}}...'
+  @nix-prefetch-url --unpack https://github.com/akiomik/mado/releases/download/v{{version}}/{{target}} \
+    > {{tempdir}}/v{{version}}-{{target}}.sha256
+
+[private]
+update-flake-hash target: (nix-hash prev_version target) (nix-hash version target)
+  @echo 'Updating flake.nix for {{target}}...'
+  @prev_hash=`cat {{tempdir}}/v{{prev_version}}-{{target}}.sha256` \
+    && new_hash=`cat {{tempdir}}/v{{version}}-{{target}}.sha256` \
+    && sed -I '' "s/$prev_hash/$new_hash/" flake.nix
+
+update-flake-hash-linux-arm64: (update-flake-hash "mado-Linux-gnu-arm64.tar.gz")
+update-flake-hash-linux-amd64: (update-flake-hash "mado-Linux-gnu-x86_64.tar.gz")
+update-flake-hash-macos-arm64: (update-flake-hash "mado-macOS-arm64.tar.gz")
+update-flake-hash-macos-amd64: (update-flake-hash "mado-macOS-x86_64.tar.gz")
+update-flake-hash-all: update-flake-hash-linux-arm64 update-flake-hash-linux-amd64 update-flake-hash-macos-arm64 update-flake-hash-macos-amd64
+update-flake: update-flake-hash-all
+  @echo 'Updating flake.nix for {{version}}...'
+  @sed -I '' "s/{{prev_version}}/{{version}}/" flake.nix

@@ -25,17 +25,17 @@
         packages = {
           mado = pkgs.stdenv.mkDerivation rec {
             pname = "mado";
-            version = "0.1.3";
+            version = "0.1.4";
 
             src = pkgs.fetchzip {
               stripRoot = false;
               url = "https://github.com/akiomik/mado/releases/download/v${version}/mado-${os}-${arch}.tar.gz";
               sha256 =
                 {
-                  x86_64-linux = "0irf7c8c4z5h68yrq32xbv6xq7gpbszp76a9zki5iy3g83rnghl9";
-                  aarch64-linux = "1z4i8hxbjhg29ldjjq4wdf3k3yp2r0mpcs621zm205ppx21cha7c";
-                  x86_64-darwin = "1fdh2sxnv02bnnfa29ci20iyl7krk76dfpivdyzn82378nffwsw5";
-                  aarch64-darwin = "1fkvin93z9xjq0mhh04qjfy2vc8n9p4glg7hi333qd79nmzwiv7m";
+                  x86_64-linux = "11l0ldgb610kplf3iyphqvibmgllsd0r51ig8m47l94lh7rqr8h3";
+                  aarch64-linux = "18kkprx08bblhp600z2mx7qzg96smz0im92cz1dfw91yzl0p5c1i";
+                  x86_64-darwin = "0mw9y4fry15jaga9jlgc81978l8iyvdnn43h1852znxpi4dawrqy";
+                  aarch64-darwin = "0vk8d62prr220fwdxbqkzivrd1ymhwxiacl91skfsfh42h5z5scj";
                 }
                 .${system} or (throw "unsupported system ${system}");
             };
