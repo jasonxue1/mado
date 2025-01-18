@@ -1,8 +1,5 @@
-use std::sync::LazyLock;
-
 use comrak::nodes::Sourcepos;
 use miette::Result;
-use regex::Regex;
 
 use crate::violation::Violation;
 use crate::Document;
@@ -36,16 +33,11 @@ impl RuleLike for MD010 {
 
     #[inline]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
-        static RE: LazyLock<Regex> = LazyLock::new(|| {
-            #[allow(clippy::unwrap_used)]
-            Regex::new("\t").unwrap()
-        });
-
         let mut violations = vec![];
         for (i, line) in doc.lines.iter().enumerate() {
             let lineno = i + 1;
-            if let Some(m) = RE.find(line) {
-                let position = Sourcepos::from((lineno, m.start() + 1, lineno, m.end()));
+            if let Some(idx) = line.find('\t') {
+                let position = Sourcepos::from((lineno, idx + 1, lineno, idx + 1));
                 let violation = self.to_violation(doc.path.clone(), position);
                 violations.push(violation);
             }
