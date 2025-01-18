@@ -63,10 +63,9 @@ impl RuleLike for MD046 {
                 let is_violated = match self.style {
                     CodeBlockStyle::Fenced => !code.fenced,
                     CodeBlockStyle::Indented => code.fenced,
-                    CodeBlockStyle::Consistent => match maybe_first_fenced {
-                        Some(fenced) => code.fenced != fenced,
-                        None => false,
-                    },
+                    CodeBlockStyle::Consistent => {
+                        maybe_first_fenced.is_some_and(|fenced| code.fenced != fenced)
+                    }
                 };
 
                 if is_violated {
