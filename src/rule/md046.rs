@@ -33,7 +33,7 @@ impl MD046 {
 
     #[inline]
     #[must_use]
-    pub fn new(style: CodeBlockStyle) -> Self {
+    pub const fn new(style: CodeBlockStyle) -> Self {
         Self { style }
     }
 }

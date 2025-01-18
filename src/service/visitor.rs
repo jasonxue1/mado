@@ -16,7 +16,7 @@ pub struct MarkdownLintVisitor {
 impl MarkdownLintVisitor {
     #[inline]
     #[must_use]
-    pub fn new(linter: Linter, tx: SyncSender<Vec<Violation>>) -> Self {
+    pub const fn new(linter: Linter, tx: SyncSender<Vec<Violation>>) -> Self {
         Self { linter, tx }
     }
 
@@ -55,7 +55,7 @@ pub struct MarkdownLintVisitorFactory {
 impl MarkdownLintVisitorFactory {
     #[inline]
     #[must_use]
-    pub fn new(config: Config, tx: SyncSender<Vec<Violation>>) -> Self {
+    pub const fn new(config: Config, tx: SyncSender<Vec<Violation>>) -> Self {
         Self { config, tx }
     }
 }

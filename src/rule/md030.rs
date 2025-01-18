@@ -31,7 +31,7 @@ impl MD030 {
 
     #[inline]
     #[must_use]
-    pub fn new(ul_single: usize, ol_single: usize, ul_multi: usize, ol_multi: usize) -> Self {
+    pub const fn new(ul_single: usize, ol_single: usize, ul_multi: usize, ol_multi: usize) -> Self {
         Self {
             ul_single,
             ol_single,

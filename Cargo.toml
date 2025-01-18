@@ -57,7 +57,6 @@ perf = { level = "warn", priority = -1 }
 suspicious = { level = "warn", priority = -1 }
 pedantic = { level = "warn", priority = -1 }
 nursery = { level = "warn", priority = -1 }
-missing_const_for_fn = "allow"
 # pedantic
 module_name_repetitions = "allow"
 # restrictions

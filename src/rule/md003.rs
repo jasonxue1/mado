@@ -36,7 +36,7 @@ impl MD003 {
 
     #[inline]
     #[must_use]
-    pub fn new(style: HeadingStyle) -> Self {
+    pub const fn new(style: HeadingStyle) -> Self {
         Self { style }
     }
 }

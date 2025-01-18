@@ -13,7 +13,7 @@ pub struct Linter {
 impl Linter {
     #[inline]
     #[must_use]
-    pub fn new(rules: Vec<Rule>) -> Self {
+    pub const fn new(rules: Vec<Rule>) -> Self {
         Self { rules }
     }
 

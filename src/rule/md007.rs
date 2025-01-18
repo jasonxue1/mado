@@ -23,7 +23,7 @@ impl MD007 {
 
     #[inline]
     #[must_use]
-    pub fn new(indent: usize) -> Self {
+    pub const fn new(indent: usize) -> Self {
         Self { indent }
     }
 }

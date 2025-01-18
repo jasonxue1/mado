@@ -23,7 +23,7 @@ impl MD026 {
 
     #[inline]
     #[must_use]
-    pub fn new(punctuation: String) -> Self {
+    pub const fn new(punctuation: String) -> Self {
         Self { punctuation }
     }
 }

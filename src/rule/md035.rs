@@ -32,7 +32,7 @@ impl MD035 {
 
     #[inline]
     #[must_use]
-    pub fn new(style: HorizontalRuleStyle) -> Self {
+    pub const fn new(style: HorizontalRuleStyle) -> Self {
         Self { style }
     }
 }

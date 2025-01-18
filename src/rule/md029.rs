@@ -34,7 +34,7 @@ impl MD029 {
 
     #[inline]
     #[must_use]
-    pub fn new(style: OrderedListStyle) -> Self {
+    pub const fn new(style: OrderedListStyle) -> Self {
         Self { style }
     }
 

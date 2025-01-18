@@ -15,7 +15,7 @@ pub struct Violation {
 impl Violation {
     #[inline]
     #[must_use]
-    pub fn new(path: PathBuf, metadata: &'static Metadata, position: Sourcepos) -> Self {
+    pub const fn new(path: PathBuf, metadata: &'static Metadata, position: Sourcepos) -> Self {
         Self {
             path,
             metadata,
@@ -25,31 +25,31 @@ impl Violation {
 
     #[inline]
     #[must_use]
-    pub fn path(&self) -> &PathBuf {
+    pub const fn path(&self) -> &PathBuf {
         &self.path
     }
 
     #[inline]
     #[must_use]
-    pub fn name(&self) -> &str {
+    pub const fn name(&self) -> &str {
         self.metadata.name
     }
 
     #[inline]
     #[must_use]
-    pub fn alias(&self) -> &str {
+    pub const fn alias(&self) -> &str {
         self.metadata.aliases[0]
     }
 
     #[inline]
     #[must_use]
-    pub fn description(&self) -> &str {
+    pub const fn description(&self) -> &str {
         self.metadata.description
     }
 
     #[inline]
     #[must_use]
-    pub fn position(&self) -> &Sourcepos {
+    pub const fn position(&self) -> &Sourcepos {
         &self.position
     }
 }
