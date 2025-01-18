@@ -194,7 +194,7 @@ mod tests {
     fn partial_eq_true() {
         let ranges = [0..10, 20..30, 25..35];
         let set0 = RangeSet::from(ranges.clone());
-        let set1 = RangeSet::from(ranges.clone());
+        let set1 = RangeSet::from(ranges);
         assert_eq!(set0, set1);
     }
 
@@ -202,8 +202,8 @@ mod tests {
     fn partial_eq_false() {
         let ranges0 = [0..10, 20..30, 25..35];
         let ranges1 = [0..10, 20..30, 35..45];
-        let set0 = RangeSet::from(ranges0.clone());
-        let set1 = RangeSet::from(ranges1.clone());
+        let set0 = RangeSet::from(ranges0);
+        let set1 = RangeSet::from(ranges1);
         assert_ne!(set0, set1);
     }
 

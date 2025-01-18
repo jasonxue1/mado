@@ -86,7 +86,7 @@ mod tests {
         let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD025::default();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(path.clone(), Sourcepos::from((3, 1, 3, 26)))];
+        let expected = vec![rule.to_violation(path, Sourcepos::from((3, 1, 3, 26)))];
         assert_eq!(actual, expected);
     }
 
@@ -101,7 +101,7 @@ mod tests {
         let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD025::new(2);
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(path.clone(), Sourcepos::from((3, 1, 3, 27)))];
+        let expected = vec![rule.to_violation(path, Sourcepos::from((3, 1, 3, 27)))];
         assert_eq!(actual, expected);
     }
 

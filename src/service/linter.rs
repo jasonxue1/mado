@@ -78,7 +78,7 @@ description: Some text
         let mut config = Config::default();
         config.lint.rules = rules;
         let linter = Linter::from(&config);
-        let expected = vec![Rule::MD026(md026.clone())];
+        let expected = vec![Rule::MD026(md026)];
         assert_eq!(linter.rules, expected);
     }
 }

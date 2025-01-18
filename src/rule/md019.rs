@@ -102,7 +102,7 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD019::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -119,7 +119,7 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD019::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -133,7 +133,7 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD019::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -145,7 +145,7 @@ mod tests {
         let text = "# Header with `code` and text".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD019::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

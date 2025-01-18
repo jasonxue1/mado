@@ -128,7 +128,7 @@ mod tests {
             rule.to_violation(path.clone(), Sourcepos::from((4, 4, 4, 9))),
             rule.to_violation(path.clone(), Sourcepos::from((5, 4, 5, 13))),
             rule.to_violation(path.clone(), Sourcepos::from((6, 5, 6, 8))),
-            rule.to_violation(path.clone(), Sourcepos::from((7, 4, 7, 30))),
+            rule.to_violation(path, Sourcepos::from((7, 4, 7, 30))),
         ];
         assert_eq!(actual, expected);
     }
@@ -147,7 +147,7 @@ mod tests {
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((1, 4, 1, 8))),
-            rule.to_violation(path.clone(), Sourcepos::from((4, 4, 4, 8))),
+            rule.to_violation(path, Sourcepos::from((4, 4, 4, 8))),
         ];
         assert_eq!(actual, expected);
     }
@@ -166,7 +166,7 @@ mod tests {
         let rule = MD027::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
-            rule.to_violation(path.clone(), Sourcepos::from((1, 4, 5, 6))),
+            rule.to_violation(path, Sourcepos::from((1, 4, 5, 6))),
             // TODO: This results are expected
             // rule.to_violation(path.clone(), Sourcepos::from((1, 4, 1, 6))),
             // rule.to_violation(path.clone(), Sourcepos::from((2, 4, 1, 6))),
@@ -188,7 +188,7 @@ mod tests {
         let rule = MD027::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
-            rule.to_violation(path.clone(), Sourcepos::from((1, 4, 3, 10))),
+            rule.to_violation(path, Sourcepos::from((1, 4, 3, 10))),
             // TODO: This results are expected
             // rule.to_violation(path.clone(), Sourcepos::from((1, 4, 1, 8))),
             // rule.to_violation(path, Sourcepos::from((3, 4, 3, 9))),
@@ -210,7 +210,7 @@ mod tests {
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((1, 6, 1, 55))),
-            rule.to_violation(path.clone(), Sourcepos::from((3, 6, 3, 52))),
+            rule.to_violation(path, Sourcepos::from((3, 6, 3, 52))),
         ];
         assert_eq!(actual, expected);
     }

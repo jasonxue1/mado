@@ -187,7 +187,7 @@ Setext style H1
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((1, 1, 1, 14))),
-            rule.to_violation(path.clone(), Sourcepos::from((3, 1, 3, 25))),
+            rule.to_violation(path, Sourcepos::from((3, 1, 3, 25))),
         ];
         assert_eq!(actual, expected);
     }

@@ -106,10 +106,10 @@ mod tests {
         let violation6 = md001.to_violation(path2.clone(), position2);
         let violation7 = md010.to_violation(path1.clone(), position0);
         let violation8 = md010.to_violation(path1.clone(), position1);
-        let violation9 = md010.to_violation(path1.clone(), position2);
+        let violation9 = md010.to_violation(path1, position2);
         let violation10 = md010.to_violation(path2.clone(), position0);
         let violation11 = md010.to_violation(path2.clone(), position1);
-        let violation12 = md010.to_violation(path2.clone(), position2);
+        let violation12 = md010.to_violation(path2, position2);
         let mut actual = vec![
             violation1.clone(),
             violation2.clone(),
