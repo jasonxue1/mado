@@ -36,7 +36,7 @@ impl MD003 {
 
     #[inline]
     #[must_use]
-    pub fn new(style: HeadingStyle) -> Self {
+    pub const fn new(style: HeadingStyle) -> Self {
         Self { style }
     }
 }
@@ -63,14 +63,12 @@ impl RuleLike for MD003 {
 
         for node in doc.ast.children() {
             if let NodeValue::Heading(heading) = node.data.borrow().value {
-                let is_atx_closed = if let Some(child_node) = node.last_child() {
+                // TODO: Handle unmatched case
+                let is_atx_closed = node.last_child().map_or(!heading.setext, |child_node| {
                     let heading_position = node.data.borrow().sourcepos;
                     let inner_position = child_node.data.borrow().sourcepos;
                     !heading.setext && heading_position.end.column > inner_position.end.column
-                } else {
-                    // TODO: Handle this case
-                    !heading.setext
-                };
+                });
 
                 let is_violated = match (&self.style, maybe_heading_style) {
                     (HeadingStyle::Consistent, Some((expected_setext, expected_atx_closed))) => {
@@ -187,7 +185,7 @@ Setext style H1
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((1, 1, 1, 14))),
-            rule.to_violation(path.clone(), Sourcepos::from((3, 1, 3, 25))),
+            rule.to_violation(path, Sourcepos::from((3, 1, 3, 25))),
         ];
         assert_eq!(actual, expected);
     }

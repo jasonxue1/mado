@@ -23,7 +23,7 @@ impl MD026 {
 
     #[inline]
     #[must_use]
-    pub fn new(punctuation: String) -> Self {
+    pub const fn new(punctuation: String) -> Self {
         Self { punctuation }
     }
 }
@@ -84,7 +84,7 @@ mod tests {
         let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD026::default();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(path.clone(), Sourcepos::from((1, 1, 1, 19)))];
+        let expected = vec![rule.to_violation(path, Sourcepos::from((1, 1, 1, 19)))];
         assert_eq!(actual, expected);
     }
 
@@ -96,7 +96,7 @@ mod tests {
         let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD026::default();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(path.clone(), Sourcepos::from((1, 1, 1, 41)))];
+        let expected = vec![rule.to_violation(path, Sourcepos::from((1, 1, 1, 41)))];
         assert_eq!(actual, expected);
     }
 
@@ -108,7 +108,7 @@ mod tests {
         let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD026::default();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(path.clone(), Sourcepos::from((1, 1, 1, 21)))];
+        let expected = vec![rule.to_violation(path, Sourcepos::from((1, 1, 1, 21)))];
         assert_eq!(actual, expected);
     }
 
@@ -120,7 +120,7 @@ mod tests {
         let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD026::default();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(path.clone(), Sourcepos::from((1, 1, 1, 21)))];
+        let expected = vec![rule.to_violation(path, Sourcepos::from((1, 1, 1, 21)))];
         assert_eq!(actual, expected);
     }
 
@@ -129,7 +129,7 @@ mod tests {
         let text = "# This is a header".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD026::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

@@ -8,6 +8,7 @@ use regex::Regex;
 
 static RE: LazyLock<Regex> = LazyLock::new(|| {
     #[allow(clippy::unwrap_used)]
+    #[allow(clippy::trivial_regex)]
     Regex::new("\t").unwrap()
 });
 

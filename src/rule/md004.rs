@@ -36,7 +36,7 @@ impl MD004 {
 
     #[inline]
     #[must_use]
-    pub fn new(style: ListStyle) -> Self {
+    pub const fn new(style: ListStyle) -> Self {
         Self { style }
     }
 }

@@ -7,8 +7,8 @@ use rand::distributions::DistString as _;
 use rand::distributions::Standard;
 
 // TODO: Test `println!` and use actually stdout
-
 fn string_push_str_with_format(ss: &[String]) {
+    #[allow(clippy::collection_is_never_read)]
     let mut buf = String::new();
 
     for s in ss {
@@ -17,6 +17,7 @@ fn string_push_str_with_format(ss: &[String]) {
 }
 
 fn string_push_str_without_format(ss: &[String]) {
+    #[allow(clippy::collection_is_never_read)]
     let mut buf = String::new();
 
     for s in ss {

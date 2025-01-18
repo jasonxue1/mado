@@ -14,11 +14,13 @@ impl Default for MD046 {
     #[inline]
     fn default() -> Self {
         Self {
+            #[allow(clippy::use_self)]
             style: rule::MD046::DEFAULT_STYLE,
         }
     }
 }
 
+#[allow(clippy::use_self)]
 impl From<&MD046> for rule::MD046 {
     #[inline]
     fn from(config: &MD046) -> rule::MD046 {

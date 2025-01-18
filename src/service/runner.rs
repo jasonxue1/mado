@@ -21,7 +21,7 @@ pub struct ParallelLintRunner {
 impl ParallelLintRunner {
     #[inline]
     #[must_use]
-    pub fn new(walker: WalkParallel, config: Config, capacity: usize) -> Self {
+    pub const fn new(walker: WalkParallel, config: Config, capacity: usize) -> Self {
         Self {
             walker,
             config,
@@ -57,7 +57,8 @@ impl ParallelLintRunner {
             .map_err(|err| miette!("Failed to join thread. {:?}", err))?;
 
         // Take ownership of violations
-        let lock = Arc::into_inner(mutex_violations).ok_or(miette!("Failed to unwrap Arc"))?;
+        let lock =
+            Arc::into_inner(mutex_violations).ok_or_else(|| miette!("Failed to unwrap Arc"))?;
         lock.into_inner().into_diagnostic()
     }
 }

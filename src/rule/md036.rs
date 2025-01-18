@@ -23,7 +23,7 @@ impl MD036 {
 
     #[inline]
     #[must_use]
-    pub fn new(punctuation: String) -> Self {
+    pub const fn new(punctuation: String) -> Self {
         Self { punctuation }
     }
 }
@@ -48,7 +48,7 @@ impl RuleLike for MD036 {
         let mut violations = vec![];
 
         for node in doc.ast.descendants() {
-            if let NodeValue::Paragraph = &node.data.borrow().value {
+            if node.data.borrow().value == NodeValue::Paragraph {
                 if node.children().count() > 1 {
                     continue;
                 }

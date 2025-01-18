@@ -13,11 +13,13 @@ impl Default for MD002 {
     #[inline]
     fn default() -> Self {
         Self {
+            #[allow(clippy::use_self)]
             level: rule::MD002::DEFAULT_LEVEL,
         }
     }
 }
 
+#[allow(clippy::use_self)]
 impl From<&MD002> for rule::MD002 {
     #[inline]
     fn from(config: &MD002) -> rule::MD002 {

@@ -24,7 +24,7 @@ impl MD002 {
 
     #[inline]
     #[must_use]
-    pub fn new(level: u8) -> Self {
+    pub const fn new(level: u8) -> Self {
         Self { level }
     }
 }

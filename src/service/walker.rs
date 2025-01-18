@@ -13,7 +13,7 @@ impl WalkParallelBuilder {
     pub fn build(patterns: &[PathBuf]) -> Result<WalkParallel> {
         let (head_pattern, tail_patterns) = patterns
             .split_first()
-            .ok_or(miette!("files must be non-empty"))?;
+            .ok_or_else(|| miette!("files must be non-empty"))?;
         let mut builder = WalkBuilder::new(head_pattern);
         for pattern in tail_patterns {
             builder.add(pattern);

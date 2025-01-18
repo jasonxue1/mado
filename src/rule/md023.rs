@@ -19,7 +19,7 @@ impl MD023 {
 
     #[inline]
     #[must_use]
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {}
     }
 }
@@ -68,7 +68,7 @@ mod tests {
         let doc = Document::new(&arena, path.clone(), text).unwrap();
         let rule = MD023::new();
         let actual = rule.check(&doc).unwrap();
-        let expected = vec![rule.to_violation(path.clone(), Sourcepos::from((3, 3, 3, 19)))];
+        let expected = vec![rule.to_violation(path, Sourcepos::from((3, 3, 3, 19)))];
         assert_eq!(actual, expected);
     }
 

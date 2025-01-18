@@ -21,7 +21,7 @@ impl MD028 {
 
     #[inline]
     #[must_use]
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {}
     }
 
@@ -33,8 +33,8 @@ impl MD028 {
     ) {
         for node in root.children() {
             if let Some(prev_node) = node.previous_sibling() {
-                if let (NodeValue::BlockQuote, NodeValue::BlockQuote) =
-                    (&prev_node.data.borrow().value, &node.data.borrow().value)
+                if (&prev_node.data.borrow().value, &node.data.borrow().value)
+                    == (&NodeValue::BlockQuote, &NodeValue::BlockQuote)
                 {
                     let prev_position = prev_node.data.borrow().sourcepos;
                     let position = node.data.borrow().sourcepos;

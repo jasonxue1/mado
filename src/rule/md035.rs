@@ -32,7 +32,7 @@ impl MD035 {
 
     #[inline]
     #[must_use]
-    pub fn new(style: HorizontalRuleStyle) -> Self {
+    pub const fn new(style: HorizontalRuleStyle) -> Self {
         Self { style }
     }
 }
@@ -61,7 +61,7 @@ impl RuleLike for MD035 {
         let mut maybe_hr = None;
 
         for node in doc.ast.children() {
-            if let NodeValue::ThematicBreak = &node.data.borrow().value {
+            if node.data.borrow().value == NodeValue::ThematicBreak {
                 positions.push(node.data.borrow().sourcepos.start.line);
             }
         }

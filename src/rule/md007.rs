@@ -23,7 +23,7 @@ impl MD007 {
 
     #[inline]
     #[must_use]
-    pub fn new(indent: usize) -> Self {
+    pub const fn new(indent: usize) -> Self {
         Self { indent }
     }
 }
@@ -98,7 +98,7 @@ mod tests {
         let actual = rule.check(&doc).unwrap();
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((2, 4, 3, 51))),
-            rule.to_violation(path.clone(), Sourcepos::from((5, 4, 6, 51))),
+            rule.to_violation(path, Sourcepos::from((5, 4, 6, 51))),
         ];
         assert_eq!(actual, expected);
     }

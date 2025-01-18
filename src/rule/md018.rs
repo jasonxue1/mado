@@ -20,7 +20,7 @@ impl MD018 {
 
     #[inline]
     #[must_use]
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {}
     }
 }
@@ -36,7 +36,7 @@ impl RuleLike for MD018 {
         let mut violations = vec![];
 
         for node in doc.ast.children() {
-            if let NodeValue::Paragraph = node.data.borrow().value {
+            if node.data.borrow().value == NodeValue::Paragraph {
                 for child_node in node.children() {
                     if let NodeValue::Text(text) = &child_node.data.borrow().value {
                         let position = node.data.borrow().sourcepos;
@@ -91,7 +91,7 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD018::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -108,7 +108,7 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD018::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -123,7 +123,7 @@ See [#4649](https://example.com) for details."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD018::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -135,7 +135,7 @@ See [#4649](https://example.com) for details."
         let text = "* #Header 1".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD018::default();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
@@ -151,7 +151,7 @@ See [#4649](https://example.com) for details."
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD018::new();
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];

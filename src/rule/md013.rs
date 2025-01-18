@@ -30,7 +30,7 @@ impl MD013 {
 
     #[inline]
     #[must_use]
-    pub fn new(line_length: usize, code_blocks: bool, tables: bool) -> Self {
+    pub const fn new(line_length: usize, code_blocks: bool, tables: bool) -> Self {
         Self {
             line_length,
             code_blocks,

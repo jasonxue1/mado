@@ -13,11 +13,13 @@ impl Default for MD026 {
     #[inline]
     fn default() -> Self {
         Self {
+            #[allow(clippy::use_self)]
             punctuation: rule::MD026::DEFAULT_PUNCTUATION.to_owned(),
         }
     }
 }
 
+#[allow(clippy::use_self)]
 impl From<&MD026> for rule::MD026 {
     #[inline]
     fn from(config: &MD026) -> rule::MD026 {

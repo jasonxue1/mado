@@ -34,7 +34,7 @@ impl MD029 {
 
     #[inline]
     #[must_use]
-    pub fn new(style: OrderedListStyle) -> Self {
+    pub const fn new(style: OrderedListStyle) -> Self {
         Self { style }
     }
 
@@ -53,10 +53,8 @@ impl MD029 {
                         if list.list_type == ListType::Ordered {
                             let is_violated = match self.style {
                                 OrderedListStyle::One => item.start != 1,
-                                OrderedListStyle::Ordered => match maybe_prev_start {
-                                    Some(prev_start) => item.start != prev_start + 1,
-                                    None => false,
-                                },
+                                OrderedListStyle::Ordered => maybe_prev_start
+                                    .is_some_and(|prev_start| item.start != prev_start + 1),
                             };
 
                             if is_violated {

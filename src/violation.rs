@@ -15,7 +15,7 @@ pub struct Violation {
 impl Violation {
     #[inline]
     #[must_use]
-    pub fn new(path: PathBuf, metadata: &'static Metadata, position: Sourcepos) -> Self {
+    pub const fn new(path: PathBuf, metadata: &'static Metadata, position: Sourcepos) -> Self {
         Self {
             path,
             metadata,
@@ -25,31 +25,31 @@ impl Violation {
 
     #[inline]
     #[must_use]
-    pub fn path(&self) -> &PathBuf {
+    pub const fn path(&self) -> &PathBuf {
         &self.path
     }
 
     #[inline]
     #[must_use]
-    pub fn name(&self) -> &str {
+    pub const fn name(&self) -> &str {
         self.metadata.name
     }
 
     #[inline]
     #[must_use]
-    pub fn alias(&self) -> &str {
+    pub const fn alias(&self) -> &str {
         self.metadata.aliases[0]
     }
 
     #[inline]
     #[must_use]
-    pub fn description(&self) -> &str {
+    pub const fn description(&self) -> &str {
         self.metadata.description
     }
 
     #[inline]
     #[must_use]
-    pub fn position(&self) -> &Sourcepos {
+    pub const fn position(&self) -> &Sourcepos {
         &self.position
     }
 }
@@ -106,10 +106,10 @@ mod tests {
         let violation6 = md001.to_violation(path2.clone(), position2);
         let violation7 = md010.to_violation(path1.clone(), position0);
         let violation8 = md010.to_violation(path1.clone(), position1);
-        let violation9 = md010.to_violation(path1.clone(), position2);
+        let violation9 = md010.to_violation(path1, position2);
         let violation10 = md010.to_violation(path2.clone(), position0);
         let violation11 = md010.to_violation(path2.clone(), position1);
-        let violation12 = md010.to_violation(path2.clone(), position2);
+        let violation12 = md010.to_violation(path2, position2);
         let mut actual = vec![
             violation1.clone(),
             violation2.clone(),
