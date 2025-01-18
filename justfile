@@ -1,8 +1,8 @@
-default: fmt test lint
-
 prev_version := "0.1.3"
 version := "0.1.4"
 tempdir := `mktemp -d`
+
+default: fmt test lint
 
 fmt:
     cargo fmt --all --check
