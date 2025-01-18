@@ -50,7 +50,7 @@ impl Config {
             return Self::load(&config_path);
         }
 
-        Ok(Config::default())
+        Ok(Self::default())
     }
 }
 
