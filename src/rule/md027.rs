@@ -37,7 +37,7 @@ impl RuleLike for MD027 {
         let mut violations = vec![];
 
         for node in doc.ast.descendants() {
-            if let NodeValue::BlockQuote = node.data.borrow().value {
+            if node.data.borrow().value == NodeValue::BlockQuote {
                 if let Some(child_node) = node.first_child() {
                     match &child_node.data.borrow().value {
                         NodeValue::Paragraph => {

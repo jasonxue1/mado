@@ -56,11 +56,9 @@ impl MD030 {
                         // Check for single Paragraph with multiple lines
                         if !is_multi {
                             if let Some(child_node) = item_node.first_child() {
-                                if let NodeValue::Paragraph = child_node.data.borrow().value {
+                                if child_node.data.borrow().value == NodeValue::Paragraph {
                                     for inline_node in child_node.children() {
-                                        if let NodeValue::SoftBreak =
-                                            inline_node.data.borrow().value
-                                        {
+                                        if inline_node.data.borrow().value == NodeValue::SoftBreak {
                                             is_multi = true;
                                         }
                                     }

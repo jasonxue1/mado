@@ -36,7 +36,7 @@ impl RuleLike for MD020 {
         let mut violations = vec![];
 
         for node in doc.ast.children() {
-            if let NodeValue::Paragraph = node.data.borrow().value {
+            if node.data.borrow().value == NodeValue::Paragraph {
                 for child_node in node.children() {
                     if let NodeValue::Text(text) = &child_node.data.borrow().value {
                         let position = node.data.borrow().sourcepos;
