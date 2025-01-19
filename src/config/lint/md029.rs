@@ -14,17 +14,15 @@ impl Default for MD029 {
     #[inline]
     fn default() -> Self {
         Self {
-            #[allow(clippy::use_self)]
             style: rule::MD029::DEFAULT_STYLE,
         }
     }
 }
 
-#[allow(clippy::use_self)]
 impl From<&MD029> for rule::MD029 {
     #[inline]
-    fn from(config: &MD029) -> rule::MD029 {
-        rule::MD029::new(config.style.clone())
+    fn from(config: &MD029) -> Self {
+        Self::new(config.style.clone())
     }
 }
 

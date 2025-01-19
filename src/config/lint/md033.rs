@@ -13,17 +13,15 @@ impl Default for MD033 {
     #[inline]
     fn default() -> Self {
         Self {
-            #[allow(clippy::use_self)]
             allowed_elements: rule::MD033::DEFAULT_ALLOWED_ELEMENTS,
         }
     }
 }
 
-#[allow(clippy::use_self)]
 impl From<&MD033> for rule::MD033 {
     #[inline]
-    fn from(config: &MD033) -> rule::MD033 {
-        rule::MD033::new(&config.allowed_elements)
+    fn from(config: &MD033) -> Self {
+        Self::new(&config.allowed_elements)
     }
 }
 

@@ -14,7 +14,6 @@ pub struct MD013 {
 impl Default for MD013 {
     #[inline]
     fn default() -> Self {
-        #[allow(clippy::use_self)]
         Self {
             line_length: rule::MD013::DEFAULT_LINE_LENGTH,
             code_blocks: rule::MD013::DEFAULT_CODE_BLOCKS,
@@ -23,11 +22,10 @@ impl Default for MD013 {
     }
 }
 
-#[allow(clippy::use_self)]
 impl From<&MD013> for rule::MD013 {
     #[inline]
-    fn from(config: &MD013) -> rule::MD013 {
-        rule::MD013::new(config.line_length, config.code_blocks, config.tables)
+    fn from(config: &MD013) -> Self {
+        Self::new(config.line_length, config.code_blocks, config.tables)
     }
 }
 
