@@ -62,3 +62,24 @@ impl ParallelLintRunner {
         lock.into_inner().into_diagnostic()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::path::Path;
+
+    use crate::service::walker::WalkParallelBuilder;
+
+    use super::*;
+
+    #[test]
+    fn parallel_lint_runner_run() {
+        let mut config = Config::default();
+        config.lint.rules = vec![];
+
+        let patterns = [Path::new(".").to_path_buf()];
+        let walker = WalkParallelBuilder::build(&patterns).unwrap();
+        let runner = ParallelLintRunner::new(walker, config, 0);
+        let actual = runner.run().unwrap();
+        assert_eq!(actual, vec![]);
+    }
+}
