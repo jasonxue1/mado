@@ -15,7 +15,6 @@ pub struct MD030 {
 impl Default for MD030 {
     #[inline]
     fn default() -> Self {
-        #[allow(clippy::use_self)]
         Self {
             ul_single: rule::MD030::DEFAULT_UL_SINGLE,
             ol_single: rule::MD030::DEFAULT_OL_SINGLE,
@@ -25,11 +24,10 @@ impl Default for MD030 {
     }
 }
 
-#[allow(clippy::use_self)]
 impl From<&MD030> for rule::MD030 {
     #[inline]
-    fn from(config: &MD030) -> rule::MD030 {
-        rule::MD030::new(
+    fn from(config: &MD030) -> Self {
+        Self::new(
             config.ul_single,
             config.ol_single,
             config.ul_multi,

@@ -13,17 +13,15 @@ impl Default for MD007 {
     #[inline]
     fn default() -> Self {
         Self {
-            #[allow(clippy::use_self)]
             indent: rule::MD007::DEFAULT_INDENT,
         }
     }
 }
 
-#[allow(clippy::use_self)]
 impl From<&MD007> for rule::MD007 {
     #[inline]
-    fn from(config: &MD007) -> rule::MD007 {
-        rule::MD007::new(config.indent)
+    fn from(config: &MD007) -> Self {
+        Self::new(config.indent)
     }
 }
 

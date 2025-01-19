@@ -14,17 +14,15 @@ impl Default for MD003 {
     #[inline]
     fn default() -> Self {
         Self {
-            #[allow(clippy::use_self)]
             style: rule::MD003::DEFAULT_HEADING_STYLE,
         }
     }
 }
 
-#[allow(clippy::use_self)]
 impl From<&MD003> for rule::MD003 {
     #[inline]
-    fn from(config: &MD003) -> rule::MD003 {
-        rule::MD003::new(config.style.clone())
+    fn from(config: &MD003) -> Self {
+        Self::new(config.style.clone())
     }
 }
 
