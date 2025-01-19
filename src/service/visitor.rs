@@ -89,4 +89,22 @@ mod tests {
         drop(visitor);
         assert!(rx.recv().is_err()); // Because rx has not received any messages
     }
+
+    #[test]
+    fn markdown_lint_visitor_factory_build() {
+        let mut config = Config::default();
+        config.lint.rules = vec![];
+
+        let (tx, rx) = mpsc::sync_channel::<Vec<Violation>>(0);
+        let mut factory = MarkdownLintVisitorFactory::new(config, tx);
+        let mut visitor = factory.build();
+
+        for entry in Walk::new(".") {
+            visitor.visit(entry);
+        }
+
+        drop(visitor);
+        drop(factory);
+        assert!(rx.recv().is_err()); // Because rx has not received any messages
+    }
 }
