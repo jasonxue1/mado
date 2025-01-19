@@ -66,6 +66,10 @@ nix profile install github:akiomik/mado
 scoop install https://raw.githubusercontent.com/akiomik/mado/refs/heads/main/pkg/scoop/mado.json
 ```
 
+### Manually
+
+Pre-built binaries are available for download from [the release page](https://github.com/akiomik/mado/releases/latest).
+
 ## Supported Rules
 
 Mado supports most [markdownlint rules](https://github.com/markdownlint/markdownlint/blob/main/docs/RULES.md).
