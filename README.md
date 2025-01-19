@@ -66,6 +66,17 @@ nix profile install github:akiomik/mado
 scoop install https://raw.githubusercontent.com/akiomik/mado/refs/heads/main/pkg/scoop/mado.json
 ```
 
+### WinGet (Windows)
+
+```bash
+# For security reasons, installing from local manifest files requires that this feature be enabled by an administrator.
+# For more details, see https://learn.microsoft.com/en-us/windows/package-manager/winget/install#local-install
+winget settings --enable LocalManifestFiles
+
+curl.exe -o mado.yml https://raw.githubusercontent.com/akiomik/mado/refs/heads/main/pkg/winget/mado.yml
+winget install -m mado.yml
+```
+
 ### Manually
 
 Pre-built binaries are available for download from [the release page](https://github.com/akiomik/mado/releases/latest).

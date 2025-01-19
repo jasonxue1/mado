@@ -43,6 +43,25 @@ jobs:
       - name: Install Mado via Scoop
         run: scoop install pkg\scoop\mado.json
 
+  winget:
+    name: Test WinGet
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      # NOTE: Cyberboss/install-winget@1 may reach rate limit and not install winget,
+      #       so use scoop instead
+      - name: Setup Scoop
+        uses: MinoruSekine/setup-scoop@v4.0.1
+      - name: Install WinGet
+        run: scoop install winget
+      - name: Run winget validate
+        run: winget validate pkg\winget\mado.yml
+      - name: Enable LocalManifestFiles for WinGet
+        run: winget settings --enable LocalManifestFiles
+      - name: Install Mado via WinGet
+        run: winget install -m pkg\winget\mado.yml
+
   nix:
     name: Test Nix
     runs-on: ubuntu-latest
