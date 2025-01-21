@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.1.5 (2025-01-22)
+
+### Features
+
+* Winget by @akiomik in #74
+* feat: add --quiet flag by @hougesen in #78
+* feat: add Serialize for Config by @akiomik in #81
+
+### Bug Fixes
+
+* fix: respect config with --quiet by @akiomik in #80
+
+### Other Changes
+
+* Run justfile --fmt by @akiomik in #68
+* Update packages to v0.1.4 by @akiomik in #67
+* Remove .cargo/config.toml by @akiomik in #69
+* Use rust 1.84 by @akiomik in #70
+* Nursery by @akiomik in #71
+* Update README.md by @akiomik in #72
+* Fix use_self by @akiomik in #73
+* Add test for MarkdownLintVisitorFactory#build by @akiomik in #75
+* Add test for ParallelLintRunner#run by @akiomik in #76
+* ci: update .github/release.yml by @akiomik in #79
+
 ## 0.1.4 (2025-01-17)
 
 * Minor improvements (#41, #42, #45, #46, #49)
