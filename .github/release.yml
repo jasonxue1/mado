@@ -1,20 +1,38 @@
 changelog:
   categories:
-    - title: Improvements
+    - title: Features
       labels:
         - enhancement
     - title: Bug Fixes
       labels:
         - bug
-    - title: Miscellaneous
+    - title: Performance Improvements
       labels:
-        - misc
-    - title: Documentation
-      labels:
-        - documentation
+        - performance
     - title: Dependencies
       labels:
         - dependencies
+    - title: Styles
+      labels:
+        - style
+    - title: Miscellaneous Chores
+      labels:
+        - chore
+    - title: Code Refactoring
+      labels:
+        - refactoring
+    - title: Tests
+      labels:
+        - test
+    - title: Documentation
+      labels:
+        - documentation
+    - title: Build System
+      labels:
+        - build
+    - title: Continuous Integration
+      labels:
+        - ci
     - title: Other Changes
       labels:
         - "*"
