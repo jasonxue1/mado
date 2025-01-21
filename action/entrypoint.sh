@@ -1,7 +1,7 @@
 #!/bin/bash
 
 COMMAND="mado"
-VERSION="v0.1.4"
+VERSION="v0.1.5"
 INSTALL_DIR="$HOME/bin"
 COMMAND_PATH="$INSTALL_DIR/$COMMAND"
 
