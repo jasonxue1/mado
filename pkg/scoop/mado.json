@@ -1,12 +1,12 @@
 {
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A fast Markdown linter written in Rust",
   "homepage": "https://github.com/akiomik/mado",
   "license": "Apache-2.0",
   "architecture": {
     "64bit": {
-      "url": "https://github.com/akiomik/mado/releases/download/v0.1.4/mado-Windows-msvc-x86_64.zip",
-      "hash": "4000dd6f30cdf731ba610dbe9ff2abf25ada2e1c917703a2b6f949f3c7bba664"
+      "url": "https://github.com/akiomik/mado/releases/download/v0.1.5/mado-Windows-msvc-x86_64.zip",
+      "hash": "0dd327b2835ac6dd53d2257f613e00f267fff35e70dceea85f45508d236d53dc"
     }
   },
   "bin": "mado.exe",
