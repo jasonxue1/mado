@@ -72,6 +72,21 @@ update-scoop: update-scoop-hash-all
     @sed -I '' "s/{{ prev_version }}/{{ version }}/" pkg/scoop/mado.json
 
 [private]
+update-winget-hash target: (download-hash prev_version target) (download-hash version target)
+    @echo 'Updating pkg/winget/mado.yml for {{ target }}...'
+    @prev_hash=`cut -d ' ' -f 1 {{ tempdir }}/v{{ prev_version }}-{{ target }}` \
+      && new_hash=`cut -d ' ' -f 1 {{ tempdir }}/v{{ version }}-{{ target }}` \
+      && sed -I '' "s/$prev_hash/$new_hash/" pkg/winget/mado.yml
+
+update-winget-hash-windows-amd64: (update-winget-hash "mado-Windows-msvc-x86_64.zip.sha256")
+
+update-winget-hash-all: update-winget-hash-windows-amd64
+
+update-winget: update-winget-hash-all
+    @echo 'Updating pkg/winget/mado.yml for {{ version }}...'
+    @sed -I '' "s/{{ prev_version }}/{{ version }}/" pkg/winget/mado.yml
+
+[private]
 nix-hash version target:
     @echo 'Downloading v{{ version }}/{{ target }}...'
     @nix-prefetch-url --unpack https://github.com/akiomik/mado/releases/download/v{{ version }}/{{ target }} \
