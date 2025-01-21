@@ -39,9 +39,11 @@ mimalloc = "0.1.39"
 tikv-jemallocator = "0.6.0"
 
 [dev-dependencies]
+assert_cmd = "2.0"
 criterion = "0.5"
 pretty_assertions = "1"
 rand = "0.8"
+tempfile = "3.15"
 
 [profile.release]
 lto = "thin"

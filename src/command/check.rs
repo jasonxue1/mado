@@ -32,7 +32,8 @@ impl Options {
             config.lint.output_format = format;
         }
 
-        config.lint.quiet = self.quiet;
+        // Respect config
+        config.lint.quiet |= self.quiet;
 
         Ok(config)
     }
@@ -98,7 +99,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn options_to_config_none_none() {
+    fn options_to_config_none_none_false() {
         let options = Options {
             config_path: None,
             output_format: None,
@@ -112,44 +113,16 @@ mod tests {
     }
 
     #[test]
-    fn options_to_config_none_some() {
+    fn options_to_config_some_some_true() {
         let options = Options {
-            config_path: None,
+            config_path: Some(Path::new("mado.toml").to_path_buf()),
             output_format: Some(Format::Mdl),
-            quiet: false,
+            quiet: true,
         };
         let actual = options.to_config().unwrap();
         let mut expected = Config::default();
         expected.lint.output_format = Format::Mdl;
-        expected.lint.md013.code_blocks = false;
-        expected.lint.md013.tables = false;
-        assert_eq!(actual, expected);
-    }
-
-    #[test]
-    fn options_to_config_some_none() {
-        let options = Options {
-            config_path: Some(Path::new("mado.toml").to_path_buf()),
-            output_format: None,
-            quiet: false,
-        };
-        let actual = options.to_config().unwrap();
-        let mut expected = Config::default();
-        expected.lint.md013.code_blocks = false;
-        expected.lint.md013.tables = false;
-        assert_eq!(actual, expected);
-    }
-
-    #[test]
-    fn options_to_config_some_some() {
-        let options = Options {
-            config_path: Some(Path::new("mado.toml").to_path_buf()),
-            output_format: Some(Format::Mdl),
-            quiet: false,
-        };
-        let actual = options.to_config().unwrap();
-        let mut expected = Config::default();
-        expected.lint.output_format = Format::Mdl;
+        expected.lint.quiet = true;
         expected.lint.md013.code_blocks = false;
         expected.lint.md013.tables = false;
         assert_eq!(actual, expected);
