@@ -1,5 +1,6 @@
 [lint]
 output-format = "concise"
+quiet = false
 rules = [
   "MD001",
   "MD002",
