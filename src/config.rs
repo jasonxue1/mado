@@ -11,8 +11,9 @@ use serde::Deserialize;
 pub mod lint;
 
 pub use lint::Lint;
+use serde::Serialize;
 
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 #[serde(default)]
 #[allow(clippy::exhaustive_structs)]
 pub struct Config {

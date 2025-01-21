@@ -2,13 +2,13 @@ use std::path::PathBuf;
 
 use comrak::nodes::{AstNode, ListType, NodeValue};
 use miette::Result;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::{violation::Violation, Document};
 
 use super::{Metadata, RuleLike};
 
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 #[non_exhaustive]
 pub enum OrderedListStyle {

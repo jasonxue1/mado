@@ -1,13 +1,13 @@
 use core::cmp::Ordering;
 
 use clap::ValueEnum;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 mod concise;
 mod markdownlint;
 mod mdl;
 
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize, ValueEnum)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, ValueEnum)]
 #[serde(rename_all = "lowercase")]
 pub enum Format {
     Concise,
