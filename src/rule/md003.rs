@@ -1,13 +1,13 @@
 use comrak::nodes::NodeValue;
 use miette::Result;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::violation::Violation;
 use crate::Document;
 
 use super::{Metadata, RuleLike};
 
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 #[non_exhaustive]
 pub enum HeadingStyle {

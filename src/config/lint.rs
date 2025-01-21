@@ -1,4 +1,4 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::{output::Format, rule, rule::Rule};
 
@@ -32,7 +32,7 @@ pub use md036::MD036;
 pub use md041::MD041;
 pub use md046::MD046;
 
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(default, rename_all = "kebab-case")]
 #[allow(clippy::exhaustive_structs)]
 pub struct Lint {
@@ -55,7 +55,7 @@ pub struct Lint {
     pub md046: MD046,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum RuleSet {
     MD001,
