@@ -7,12 +7,14 @@ default: fmt test lint
 fmt:
     cargo fmt --all --check
     nix fmt flake.nix
+    taplo format
 
 test:
     cargo test --all-features --workspace
 
 lint:
     cargo clippy --all-targets --all-features --workspace -- -D warnings
+    taplo lint
 
 cov:
     cargo llvm-cov --open
