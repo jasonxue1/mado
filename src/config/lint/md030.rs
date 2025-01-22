@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::rule;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(default)]
+#[serde(default, rename_all = "kebab-case")]
 #[allow(clippy::exhaustive_structs)]
 pub struct MD030 {
     pub ul_single: usize,
