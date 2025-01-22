@@ -33,6 +33,20 @@ mod tests {
     use super::*;
 
     #[test]
+    fn deserialize_for_horizontal_rule_style_consistent() {
+        let text = r#"style = "consistent""#;
+        let config: MD035 = toml::from_str(text).unwrap();
+        assert_eq!(config.style, HorizontalRuleStyle::Consistent);
+    }
+
+    #[test]
+    fn deserialize_for_horizontal_rule_style_custom() {
+        let text = r#"style = "~~~""#;
+        let config: MD035 = toml::from_str(text).unwrap();
+        assert_eq!(config.style, HorizontalRuleStyle::Custom("~~~".to_owned()));
+    }
+
+    #[test]
     fn from_for_rule_md035() {
         let style = HorizontalRuleStyle::Custom("~~~".to_owned());
         let config = MD035 {

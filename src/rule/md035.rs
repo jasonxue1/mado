@@ -1,3 +1,5 @@
+use core::result;
+
 use comrak::nodes::{NodeValue, Sourcepos};
 use miette::Result;
 use serde::{Deserialize, Serialize};
@@ -6,12 +8,27 @@ use crate::{violation::Violation, Document};
 
 use super::{Metadata, RuleLike};
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "lowercase")]
 #[non_exhaustive]
 pub enum HorizontalRuleStyle {
     Consistent,
     Custom(String),
+}
+
+impl<'de> Deserialize<'de> for HorizontalRuleStyle {
+    #[inline]
+    fn deserialize<D>(deserializer: D) -> result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let s = String::deserialize(deserializer)?;
+        if s == "consistent" {
+            Ok(Self::Consistent)
+        } else {
+            Ok(Self::Custom(s))
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

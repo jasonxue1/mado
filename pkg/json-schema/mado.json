@@ -248,18 +248,7 @@
           "properties": {
             "style": {
               "description": "Horizontal rule style",
-              "oneOf": [{
-                "type": "string",
-                "enum": ["consistent"]
-              }, {
-                "type": "object",
-                "additionalProperties": false,
-                "properties": {
-                  "custom": {
-                    "type": "string"
-                  }
-                }
-              }],
+              "type": "string",
               "default": "consistent"
             }
           }
