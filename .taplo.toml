@@ -1,1 +1,7 @@
 exclude = [".git/**/*"]
+
+[[rule]]
+include = ["**/mado.toml"]
+
+[rule.schema]
+path = "./pkg/json-schema/mado.json"
