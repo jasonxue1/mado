@@ -140,7 +140,9 @@ You can also use global configuration files located in:
 * `macOS`: `~/.config/mado/mado.toml`
 * `Windows`: `~\AppData\Roaming\mado\mado.toml`
 
-For more details, see [the example mado.toml](https://github.com/akiomik/mado/blob/main/mado.toml).
+For more details,
+see [the example `mado.toml`](https://github.com/akiomik/mado/blob/main/mado.toml)
+and [the JSON Schema for `mado.toml`](https://github.com/akiomik/mado/blob/main/pkg/json-schema/mado.json).
 
 ## GitHub Actions
 
