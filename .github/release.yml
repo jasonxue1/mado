@@ -1,5 +1,8 @@
 changelog:
   categories:
+    - title: ⚠️ BREAKING CHANGES
+      labels:
+        - "breaking change"
     - title: Features
       labels:
         - enhancement
