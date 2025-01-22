@@ -1,15 +1,12 @@
-use std::io::Write as _;
-use std::io::{self, BufWriter};
+use std::io::{self, BufWriter, IsTerminal as _, Write as _};
 use std::path::PathBuf;
 use std::process::ExitCode;
 
-use ignore::WalkParallel;
 use miette::IntoDiagnostic as _;
 use miette::Result;
 
 use crate::output::{Concise, Format, Markdownlint, Mdl};
-use crate::service::runner::ParallelLintRunner;
-use crate::service::walker::WalkParallelBuilder;
+use crate::service::runner::{LintRunner, ParallelLintRunner, StdinLintRunner};
 use crate::Config;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -40,22 +37,26 @@ impl Options {
 }
 
 pub struct Checker {
-    walker: WalkParallel,
+    runner: LintRunner,
     config: Config,
 }
 
 impl Checker {
     #[inline]
     pub fn new(patterns: &[PathBuf], config: Config) -> Result<Self> {
-        let walker = WalkParallelBuilder::build(patterns)?;
+        let stdin = io::stdin();
+        let runner = if stdin.is_terminal() {
+            LintRunner::Parallel(ParallelLintRunner::new(patterns, config.clone(), 100)?)
+        } else {
+            LintRunner::Stdin(StdinLintRunner::new(config.clone()))
+        };
 
-        Ok(Self { walker, config })
+        Ok(Self { runner, config })
     }
 
     #[inline]
     pub fn check(self) -> Result<ExitCode> {
-        let runner = ParallelLintRunner::new(self.walker, self.config.clone(), 100);
-        let mut violations = runner.run()?;
+        let mut violations = self.runner.run()?;
         violations.sort_by(self.config.lint.output_format.sorter());
 
         if violations.is_empty() {

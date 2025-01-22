@@ -1,16 +1,37 @@
 extern crate alloc;
 
 use alloc::sync::Arc;
+use comrak::Arena;
+use std::io::Read as _;
+use std::path::{Path, PathBuf};
 use std::sync::{mpsc, Mutex};
-use std::thread;
+use std::{io, thread};
 
 use ignore::WalkParallel;
 use miette::miette;
 use miette::{IntoDiagnostic as _, Result};
 
 use super::visitor::MarkdownLintVisitorFactory;
+use super::walker::WalkParallelBuilder;
+use super::Linter;
 use crate::config::Config;
-use crate::Violation;
+use crate::{Document, Violation};
+
+#[non_exhaustive]
+pub enum LintRunner {
+    Parallel(ParallelLintRunner),
+    Stdin(StdinLintRunner),
+}
+
+impl LintRunner {
+    #[inline]
+    pub fn run(self) -> Result<Vec<Violation>> {
+        match self {
+            Self::Parallel(runner) => runner.run(),
+            Self::Stdin(runner) => runner.run(),
+        }
+    }
+}
 
 pub struct ParallelLintRunner {
     walker: WalkParallel,
@@ -20,13 +41,14 @@ pub struct ParallelLintRunner {
 
 impl ParallelLintRunner {
     #[inline]
-    #[must_use]
-    pub const fn new(walker: WalkParallel, config: Config, capacity: usize) -> Self {
-        Self {
+    pub fn new(patterns: &[PathBuf], config: Config, capacity: usize) -> Result<Self> {
+        let walker = WalkParallelBuilder::build(patterns)?;
+
+        Ok(Self {
             walker,
             config,
             capacity,
-        }
+        })
     }
 
     #[inline]
@@ -63,11 +85,36 @@ impl ParallelLintRunner {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct StdinLintRunner {
+    config: Config,
+}
+
+impl StdinLintRunner {
+    #[inline]
+    #[must_use]
+    pub const fn new(config: Config) -> Self {
+        Self { config }
+    }
+
+    #[inline]
+    pub fn run(&self) -> Result<Vec<Violation>> {
+        let mut buffer = String::new();
+        io::stdin()
+            .lock()
+            .read_to_string(&mut buffer)
+            .into_diagnostic()?;
+        let arena = Arena::new();
+        let path = Path::new("(stdin)").to_path_buf();
+        let doc = Document::new(&arena, path, buffer)?;
+        let linter = Linter::from(&self.config);
+        linter.check(&doc)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::path::Path;
-
-    use crate::service::walker::WalkParallelBuilder;
 
     use super::*;
 
@@ -77,8 +124,7 @@ mod tests {
         config.lint.rules = vec![];
 
         let patterns = [Path::new(".").to_path_buf()];
-        let walker = WalkParallelBuilder::build(&patterns).unwrap();
-        let runner = ParallelLintRunner::new(walker, config, 0);
+        let runner = ParallelLintRunner::new(&patterns, config, 0).unwrap();
         let actual = runner.run().unwrap();
         assert_eq!(actual, vec![]);
     }
