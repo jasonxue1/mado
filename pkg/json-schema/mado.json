@@ -1,0 +1,309 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/akiomik/mado/blob/main/pkg/json-schema/mado.json",
+  "title": "mado.toml",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "lint": {
+      "description": "Lint configuration",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "output-format": {
+          "description": "Output format for violations",
+          "type": "string",
+          "enum": ["concise", "mdl", "markdownlint"],
+          "default": "concise"
+        },
+        "quiet": {
+          "description": "Only log errors",
+          "type": "boolean",
+          "default": false
+        },
+        "rules": {
+          "description": "List of rules",
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "MD001",
+              "MD002",
+              "MD003",
+              "MD004",
+              "MD005",
+              "MD006",
+              "MD007",
+              "MD009",
+              "MD010",
+              "MD012",
+              "MD013",
+              "MD014",
+              "MD018",
+              "MD019",
+              "MD020",
+              "MD021",
+              "MD022",
+              "MD023",
+              "MD024",
+              "MD025",
+              "MD026",
+              "MD027",
+              "MD028",
+              "MD029",
+              "MD030",
+              "MD031",
+              "MD032",
+              "MD033",
+              "MD034",
+              "MD035",
+              "MD036",
+              "MD037",
+              "MD038",
+              "MD039",
+              "MD040",
+              "MD041",
+              "MD046",
+              "MD047"
+            ]
+          }
+        },
+        "md002": {
+          "description": "Lint configuration for MD002",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "level": {
+              "description": "Heading level",
+              "type": "number",
+              "minimum": 1,
+              "maximum": 6,
+              "default": 1
+            }
+          }
+        },
+        "md003": {
+          "description": "Lint configuration for MD003",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "style": {
+              "description": "Heading style",
+              "type": "string",
+              "enum": [
+                "consistent",
+                "atx",
+                "atx-closed",
+                "setext",
+                "setext-with-atx"
+              ],
+              "default": "consistent"
+            }
+          }
+        },
+        "md004": {
+          "description": "Lint configuration for MD004",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "style": {
+              "description": "List style",
+              "type": "string",
+              "enum": [
+                "consistent",
+                "asterisk",
+                "plus",
+                "dash"
+              ],
+              "default": "consistent"
+            }
+          }
+        },
+        "md007": {
+          "description": "Lint configuration for MD007",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "indent": {
+              "description": "Spaces for indent",
+              "type": "number",
+              "minimum": 2,
+              "default": 4
+            }
+          }
+        },
+        "md013": {
+          "description": "Lint configuration for MD013",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "line-length": {
+              "description": "Number of characters",
+              "type": "number",
+              "minimum": 0,
+              "default": 80
+            },
+            "code-blocks": {
+              "description": "Include code blocks",
+              "type": "boolean",
+              "default": true
+            },
+            "tables": {
+              "description": "Include tables",
+              "type": "boolean",
+              "default": true
+            }
+          }
+        },
+        "md025": {
+          "description": "Lint configuration for MD025",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "level": {
+              "description": "Heading level",
+              "type": "number",
+              "minimum": 1,
+              "maximum": 6,
+              "default": 1
+            }
+          }
+        },
+        "md026": {
+          "description": "Lint configuration for MD026",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "punctuation": {
+              "description": "Punctuation characters",
+              "type": "string",
+              "default": ".,;:!?"
+            }
+          }
+        },
+        "md029": {
+          "description": "Lint configuration for MD029",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "style": {
+              "description": "List style",
+              "type": "string",
+              "enum": ["one", "ordered"],
+              "default": "one"
+            }
+          }
+        },
+        "md030": {
+          "description": "Lint configuration for MD030",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "ul-single": {
+              "description": "Spaces for single-line unordered list items",
+              "type": "number",
+              "minimum": 1,
+              "default": 1
+            },
+            "ol-single": {
+              "description": "Spaces for single-line ordered list items",
+              "type": "number",
+              "minimum": 1,
+              "default": 1
+            },
+            "ul-multi": {
+              "description": "Spaces for multi-line unordered list items",
+              "type": "number",
+              "minimum": 1,
+              "default": 1
+            },
+            "ol-multi": {
+              "description": "Spaces for multi-line ordered list items",
+              "type": "number",
+              "minimum": 1,
+              "default": 1
+            }
+          }
+        },
+        "md033": {
+          "description": "Lint configuration for MD033",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "allowed-elements": {
+              "description": "Allowed elements",
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "default": []
+            }
+          }
+        },
+        "md035": {
+          "description": "Lint configuration for MD035",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "style": {
+              "description": "Horizontal rule style",
+              "oneOf": [{
+                "type": "string",
+                "enum": ["consistent"]
+              }, {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "custom": {
+                    "type": "string"
+                  }
+                }
+              }],
+              "default": "consistent"
+            }
+          }
+        },
+        "md036": {
+          "description": "Lint configuration for MD036",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "punctuation": {
+              "description": "Punctuation characters",
+              "type": "string",
+              "default": ".,;:!?"
+            }
+          }
+        },
+        "md041": {
+          "description": "Lint configuration for MD041",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "level": {
+              "description": "Heading level",
+              "type": "number",
+              "minimum": 1,
+              "maximum": 6,
+              "default": 1
+            }
+          }
+        },
+        "md046": {
+          "description": "Lint configuration for MD046",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "style": {
+              "description": "Block style",
+              "type": "string",
+              "enum": ["fenced", "indented", "consistent"],
+              "default": "fenced"
+            }
+          }
+        }
+      }
+    }
+  }
+}
