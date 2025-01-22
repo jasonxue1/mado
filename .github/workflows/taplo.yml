@@ -1,0 +1,19 @@
+name: Taplo
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+
+  taplo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: uncenter/setup-taplo@v1
+        with:
+          version: "0.9.3"
+      - name: Run Taplo
+        run: taplo format --check
