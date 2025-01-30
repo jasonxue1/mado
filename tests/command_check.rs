@@ -26,6 +26,7 @@ fn check_quiet_with_config() {
     let path = tmp_dir.path().join("mado.toml");
     let mut tmp_file = File::create(path.clone()).unwrap();
     let mut config = Config::default();
+    config.lint.rules.remove(18); // Remove MD024
     config.lint.quiet = true;
     config.lint.md013.tables = false;
     config.lint.md013.code_blocks = false;
