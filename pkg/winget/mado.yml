@@ -1,5 +1,5 @@
 PackageIdentifier: AkiomiKamakura.Mado
-PackageVersion: 0.1.5
+PackageVersion: 0.2.0
 PackageLocale: en-US
 PackageName: Mado
 ShortDescription: A fast Markdown linter written in Rust.
@@ -17,7 +17,7 @@ UpgradeBehavior: install
 ReleaseDate: 2025-01-17
 Installers:
   - Architecture: x64
-    InstallerUrl: https://github.com/akiomik/mado/releases/download/v0.1.5/mado-Windows-msvc-x86_64.zip
-    InstallerSha256: 0dd327b2835ac6dd53d2257f613e00f267fff35e70dceea85f45508d236d53dc
+    InstallerUrl: https://github.com/akiomik/mado/releases/download/v0.2.0/mado-Windows-msvc-x86_64.zip
+    InstallerSha256: 0cc6a17965f7dcc0de43246af100fae1d56af57808c48b526564495f0aa3b14c
 ManifestType: singleton
 ManifestVersion: 1.9.0
