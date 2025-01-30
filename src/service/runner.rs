@@ -2,10 +2,9 @@ extern crate alloc;
 
 use alloc::sync::Arc;
 use comrak::Arena;
-use std::io::Read as _;
 use std::path::{Path, PathBuf};
 use std::sync::{mpsc, Mutex};
-use std::{io, thread};
+use std::thread;
 
 use ignore::WalkParallel;
 use miette::miette;
@@ -20,7 +19,7 @@ use crate::{Document, Violation};
 #[non_exhaustive]
 pub enum LintRunner {
     Parallel(ParallelLintRunner),
-    Stdin(StdinLintRunner),
+    String(Box<StringLintRunner>),
 }
 
 impl LintRunner {
@@ -28,7 +27,7 @@ impl LintRunner {
     pub fn run(self) -> Result<Vec<Violation>> {
         match self {
             Self::Parallel(runner) => runner.run(),
-            Self::Stdin(runner) => runner.run(),
+            Self::String(runner) => runner.run(),
         }
     }
 }
@@ -86,27 +85,23 @@ impl ParallelLintRunner {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct StdinLintRunner {
+pub struct StringLintRunner {
+    string: String,
     config: Config,
 }
 
-impl StdinLintRunner {
+impl StringLintRunner {
     #[inline]
     #[must_use]
-    pub const fn new(config: Config) -> Self {
-        Self { config }
+    pub const fn new(string: String, config: Config) -> Self {
+        Self { string, config }
     }
 
     #[inline]
-    pub fn run(&self) -> Result<Vec<Violation>> {
-        let mut buffer = String::new();
-        io::stdin()
-            .lock()
-            .read_to_string(&mut buffer)
-            .into_diagnostic()?;
+    pub fn run(self) -> Result<Vec<Violation>> {
         let arena = Arena::new();
         let path = Path::new("(stdin)").to_path_buf();
-        let doc = Document::new(&arena, path, buffer)?;
+        let doc = Document::new(&arena, path, self.string)?;
         let linter = Linter::from(&self.config);
         linter.check(&doc)
     }

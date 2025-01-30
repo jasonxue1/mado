@@ -1,3 +1,4 @@
+use std::io::Read as _;
 use std::io::{self, BufWriter, IsTerminal as _, Write as _};
 use std::path::PathBuf;
 use std::process::ExitCode;
@@ -6,7 +7,7 @@ use miette::IntoDiagnostic as _;
 use miette::Result;
 
 use crate::output::{Concise, Format, Markdownlint, Mdl};
-use crate::service::runner::{LintRunner, ParallelLintRunner, StdinLintRunner};
+use crate::service::runner::{LintRunner, ParallelLintRunner, StringLintRunner};
 use crate::Config;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -41,14 +42,30 @@ pub struct Checker {
     config: Config,
 }
 
+fn stdin_input() -> Option<String> {
+    let stdin = io::stdin();
+    if stdin.is_terminal() {
+        return None;
+    }
+
+    let mut buffer = String::new();
+    io::stdin().lock().read_to_string(&mut buffer).ok()?;
+
+    if buffer.is_empty() {
+        None
+    } else {
+        Some(buffer)
+    }
+}
+
 impl Checker {
     #[inline]
     pub fn new(patterns: &[PathBuf], config: Config) -> Result<Self> {
-        let stdin = io::stdin();
-        let runner = if stdin.is_terminal() {
-            LintRunner::Parallel(ParallelLintRunner::new(patterns, config.clone(), 100)?)
-        } else {
-            LintRunner::Stdin(StdinLintRunner::new(config.clone()))
+        let runner = match stdin_input() {
+            Some(input) => {
+                LintRunner::String(Box::new(StringLintRunner::new(input, config.clone())))
+            }
+            None => LintRunner::Parallel(ParallelLintRunner::new(patterns, config.clone(), 100)?),
         };
 
         Ok(Self { runner, config })
