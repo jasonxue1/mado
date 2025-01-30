@@ -3,8 +3,8 @@ use std::io::BufWriter;
 use std::io::Write as _;
 
 use criterion::{criterion_group, criterion_main, Criterion};
-use rand::distributions::DistString as _;
-use rand::distributions::Standard;
+use rand::distr::SampleString as _;
+use rand::distr::StandardUniform;
 
 // TODO: Test `println!` and use actually stdout
 fn string_push_str_with_format(ss: &[String]) {
@@ -124,7 +124,7 @@ fn criterion_benchmark(c: &mut Criterion) {
 
     let mut ss = vec![];
     for _ in 0..50000 {
-        let s = Standard.sample_string(&mut rand::thread_rng(), 128);
+        let s = StandardUniform.sample_string(&mut rand::rng(), 128);
         ss.push(s);
     }
 

@@ -2,8 +2,8 @@ use core::hint::black_box;
 use std::sync::LazyLock;
 
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion};
-use rand::distributions::DistString as _;
-use rand::distributions::Standard;
+use rand::distr::SampleString as _;
+use rand::distr::StandardUniform;
 use regex::Regex;
 
 static RE: LazyLock<Regex> = LazyLock::new(|| {
@@ -61,7 +61,7 @@ fn criterion_benchmark(c: &mut Criterion) {
     let mut group = c.benchmark_group("hard_tab_search");
 
     for i in 1..=3 {
-        let string = Standard.sample_string(&mut rand::thread_rng(), (i as usize).pow(i) * 100);
+        let string = StandardUniform.sample_string(&mut rand::rng(), (i as usize).pow(i) * 100);
 
         group.bench_with_input(BenchmarkId::new("regex_captures", i), &string, |b, s| {
             b.iter(|| regex_captures(black_box(s)));
