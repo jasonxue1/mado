@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.2.0 (2025-01-30)
+
+### ⚠️ BREAKING CHANGES
+
+* fix!: rename config keys in [lint.md030] by @akiomik in #86
+* feat!: change style format for [lint.md035] by @akiomik in #91
+
+### Features
+
+* feat: add stdin support to check by @akiomik in #89
+* feat: json schema support by @akiomik in #88
+
+### Bug Fixes
+
+* fix: check command with empty stdin by @akiomik in #96
+
+### Other Changes
+
+* chore: update packages to 0.1.5 by @akiomik in #85
+* chore: add update-winget to justfile by @akiomik in #84
+* chore: add breaking change to .github/release.yml by @akiomik in #87
+* Taplo ci by @akiomik in #90
+* build(deps): bump clap from 4.5.26 to 4.5.27 by @dependabot in #94
+* build(deps): bump comrak from 0.33.0 to 0.35.0 by @dependabot in #95
+* build(deps): bump rand from 0.8.5 to 0.9.0 by @dependabot in #93
+
 ## 0.1.5 (2025-01-22)
 
 ### Features
