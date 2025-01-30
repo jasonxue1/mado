@@ -67,6 +67,7 @@ mod tests {
         let path = Path::new("mado.toml");
         let actual = Config::load(path).unwrap();
         let mut expected = Config::default();
+        expected.lint.rules.remove(18); // Remove MD024
         expected.lint.md013.code_blocks = false;
         expected.lint.md013.tables = false;
         assert_eq!(actual, expected);
