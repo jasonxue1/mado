@@ -1,7 +1,6 @@
-use std::collections::HashSet;
-
 use comrak::nodes::NodeValue;
 use miette::Result;
+use rustc_hash::FxHashSet;
 
 use crate::{violation::Violation, Document};
 
@@ -36,7 +35,7 @@ impl RuleLike for MD024 {
     #[inline]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let mut violations = vec![];
-        let mut contents: HashSet<String> = HashSet::new();
+        let mut contents: FxHashSet<String> = FxHashSet::default();
 
         for node in doc.ast.children() {
             if let NodeValue::Heading(_) = node.data.borrow().value {
