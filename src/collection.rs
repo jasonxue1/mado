@@ -2,11 +2,12 @@ use core::hash::Hash;
 use core::marker::PhantomData;
 use core::ops::RangeBounds;
 use std::collections::hash_set::Iter;
-use std::collections::HashSet;
+
+use rustc_hash::FxHashSet;
 
 #[derive(Debug, Default, Clone)]
 pub struct RangeSet<R: RangeBounds<Idx>, Idx> {
-    data: HashSet<R>,
+    data: FxHashSet<R>,
     phantom: PhantomData<Idx>,
 }
 
@@ -17,7 +18,7 @@ where
     #[inline]
     #[must_use]
     pub fn new() -> Self {
-        let data = HashSet::new();
+        let data = FxHashSet::default();
         let phantom = PhantomData;
         Self { data, phantom }
     }
@@ -79,7 +80,7 @@ where
     R: RangeBounds<Idx>,
 {
     type Item = R;
-    type IntoIter = <HashSet<R, Idx> as IntoIterator>::IntoIter;
+    type IntoIter = <FxHashSet<R> as IntoIterator>::IntoIter;
 
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
@@ -106,7 +107,7 @@ where
 {
     #[inline]
     fn from(value: [R; N]) -> Self {
-        let data = HashSet::from(value);
+        let data = FxHashSet::from_iter(value);
         let phantom = PhantomData;
         Self { data, phantom }
     }
@@ -138,8 +139,8 @@ mod tests {
     fn iter() {
         let ranges = [0..10, 20..30, 25..35];
         let set = RangeSet::from(ranges.clone());
-        let actual: HashSet<_> = set.iter().collect();
-        let expected: HashSet<_> = ranges.iter().collect();
+        let actual: FxHashSet<_> = set.iter().collect();
+        let expected: FxHashSet<_> = ranges.iter().collect();
         assert_eq!(actual, expected);
     }
 
@@ -147,8 +148,8 @@ mod tests {
     fn into_iter() {
         let ranges = [0..10, 20..30, 25..35];
         let set = RangeSet::from(ranges.clone());
-        let actual: HashSet<_> = set.into_iter().collect();
-        let expected: HashSet<_> = ranges.into_iter().collect();
+        let actual: FxHashSet<_> = set.into_iter().collect();
+        let expected: FxHashSet<_> = ranges.into_iter().collect();
         assert_eq!(actual, expected);
     }
 
@@ -157,8 +158,8 @@ mod tests {
     fn into_iter_ref() {
         let ranges = &[0..10, 20..30, 25..35];
         let set = &RangeSet::from(ranges.clone());
-        let actual: HashSet<_> = set.into_iter().collect();
-        let expected: HashSet<_> = ranges.into_iter().collect();
+        let actual: FxHashSet<_> = set.into_iter().collect();
+        let expected: FxHashSet<_> = ranges.into_iter().collect();
         assert_eq!(actual, expected);
     }
 
@@ -211,7 +212,7 @@ mod tests {
     fn from_array() {
         let ranges = [0..10, 20..30, 25..35];
         let set = RangeSet::from(ranges.clone());
-        let expected: HashSet<_> = ranges.iter().map(ToOwned::to_owned).collect();
+        let expected: FxHashSet<_> = ranges.iter().map(ToOwned::to_owned).collect();
         assert_eq!(set.data, expected);
     }
 }

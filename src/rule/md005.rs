@@ -1,7 +1,8 @@
-use std::{collections::HashMap, path::PathBuf};
+use std::path::PathBuf;
 
 use comrak::nodes::{AstNode, NodeValue, Sourcepos};
 use miette::Result;
+use rustc_hash::FxHashMap;
 
 use crate::{violation::Violation, Document};
 
@@ -30,7 +31,7 @@ impl MD005 {
         root: &'a AstNode<'a>,
         path: &PathBuf,
         violations: &mut Vec<Violation>,
-        levels: &mut HashMap<usize, Sourcepos>,
+        levels: &mut FxHashMap<usize, Sourcepos>,
         level: usize,
     ) {
         for node in root.children() {
@@ -67,7 +68,7 @@ impl RuleLike for MD005 {
     #[inline]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let mut violations = vec![];
-        let mut levels: HashMap<usize, Sourcepos> = HashMap::new();
+        let mut levels: FxHashMap<usize, Sourcepos> = FxHashMap::default();
 
         self.check_recursive(doc.ast, &doc.path, &mut violations, &mut levels, 0);
 

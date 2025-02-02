@@ -1,7 +1,6 @@
-use std::collections::HashSet;
-
 use comrak::nodes::NodeValue;
 use miette::Result;
+use rustc_hash::FxHashSet;
 
 use crate::{violation::Violation, Document};
 
@@ -41,7 +40,7 @@ impl RuleLike for MD027 {
                 if let Some(child_node) = node.first_child() {
                     match &child_node.data.borrow().value {
                         NodeValue::Paragraph => {
-                            let mut lines = HashSet::new();
+                            let mut lines = FxHashSet::default();
                             for inline_node in child_node.children() {
                                 let block_quote_position = node.data.borrow().sourcepos;
                                 let inline_position = inline_node.data.borrow().sourcepos;
