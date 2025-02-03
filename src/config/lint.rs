@@ -7,6 +7,7 @@ mod md003;
 mod md004;
 mod md007;
 mod md013;
+mod md024;
 mod md025;
 mod md026;
 mod md029;
@@ -22,6 +23,7 @@ pub use md003::MD003;
 pub use md004::MD004;
 pub use md007::MD007;
 pub use md013::MD013;
+pub use md024::MD024;
 pub use md025::MD025;
 pub use md026::MD026;
 pub use md029::MD029;
@@ -44,6 +46,7 @@ pub struct Lint {
     pub md004: MD004,
     pub md007: MD007,
     pub md013: MD013,
+    pub md024: MD024,
     pub md025: MD025,
     pub md026: MD026,
     pub md029: MD029,
@@ -149,6 +152,7 @@ impl Default for Lint {
             md004: MD004::default(),
             md007: MD007::default(),
             md013: MD013::default(),
+            md024: MD024::default(),
             md025: MD025::default(),
             md026: MD026::default(),
             md029: MD029::default(),
@@ -188,7 +192,7 @@ impl From<&Lint> for Vec<Rule> {
                 RuleSet::MD021 => Rule::MD021(rule::MD021::new()),
                 RuleSet::MD022 => Rule::MD022(rule::MD022::new()),
                 RuleSet::MD023 => Rule::MD023(rule::MD023::new()),
-                RuleSet::MD024 => Rule::MD024(rule::MD024::new()),
+                RuleSet::MD024 => Rule::MD024(rule::MD024::from(&config.md024)),
                 RuleSet::MD025 => Rule::MD025(rule::MD025::from(&config.md025)),
                 RuleSet::MD026 => Rule::MD026(rule::MD026::from(&config.md026)),
                 RuleSet::MD027 => Rule::MD027(rule::MD027::new()),
@@ -241,7 +245,7 @@ mod tests {
             Rule::MD021(rule::MD021::new()),
             Rule::MD022(rule::MD022::new()),
             Rule::MD023(rule::MD023::new()),
-            Rule::MD024(rule::MD024::new()),
+            Rule::MD024(rule::MD024::default()),
             Rule::MD025(rule::MD025::default()),
             Rule::MD026(rule::MD026::default()),
             Rule::MD027(rule::MD027::new()),
