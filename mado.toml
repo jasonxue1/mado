@@ -59,6 +59,9 @@ line-length = 80
 code-blocks = false
 tables = false
 
+[lint.md024]
+allow-different-nesting = true
+
 [lint.md025]
 level = 1
 

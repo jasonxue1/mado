@@ -156,6 +156,18 @@
             }
           }
         },
+        "md024": {
+          "description": "Lint configuration for MD024",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "allow-different-nesting": {
+              "description": "Allow header duplication under different nesting",
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
         "md025": {
           "description": "Lint configuration for MD025",
           "type": "object",

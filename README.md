@@ -110,7 +110,7 @@ Mado supports most [markdownlint rules](https://github.com/markdownlint/markdown
 | MD021 | :white_check_mark: |                                                |
 | MD022 | :white_check_mark: |                                                |
 | MD023 | :white_check_mark: |                                                |
-| MD024 | :warning: :hammer: | `allow_different_nesting` option not supported |
+| MD024 | :white_check_mark: |                                                |
 | MD025 | :white_check_mark: |                                                |
 | MD026 | :white_check_mark: |                                                |
 | MD027 | :hammer:           |                                                |
