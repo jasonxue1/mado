@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.1 (2025-02-04)
+
+### Features
+
+* feat: add allow-different-nesting to [lint.md024] by @akiomik in #104
+
+### Other Changes
+
+* chore: bump packages to v0.2.0 by @akiomik in #100
+* use rustc-hash by @akiomik in #101
+* build(deps): bump miette from 7.4.0 to 7.5.0 by @dependabot in #102
+* build(deps): bump tempfile from 3.15.0 to 3.16.0 by @dependabot in #103
+
 ## 0.2.0 (2025-01-30)
 
 ### ⚠️ BREAKING CHANGES
