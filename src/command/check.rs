@@ -125,7 +125,6 @@ mod tests {
         };
         let actual = options.to_config().unwrap();
         let mut expected = Config::default();
-        expected.lint.rules.remove(18); // Remove MD024
         expected.lint.md013.code_blocks = false;
         expected.lint.md013.tables = false;
         expected.lint.md024.allow_different_nesting = true;
@@ -141,7 +140,6 @@ mod tests {
         };
         let actual = options.to_config().unwrap();
         let mut expected = Config::default();
-        expected.lint.rules.remove(18); // Remove MD024
         expected.lint.output_format = Format::Mdl;
         expected.lint.quiet = true;
         expected.lint.md013.code_blocks = false;
