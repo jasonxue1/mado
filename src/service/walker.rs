@@ -10,7 +10,11 @@ pub struct WalkParallelBuilder;
 
 impl WalkParallelBuilder {
     #[inline]
-    pub fn build(patterns: &[PathBuf], respect_gitignore: bool) -> Result<WalkParallel> {
+    pub fn build(
+        patterns: &[PathBuf],
+        respect_ignore: bool,
+        respect_gitignore: bool,
+    ) -> Result<WalkParallel> {
         let (head_pattern, tail_patterns) = patterns
             .split_first()
             .ok_or_else(|| miette!("files must be non-empty"))?;
@@ -19,6 +23,7 @@ impl WalkParallelBuilder {
             builder.add(pattern);
         }
 
+        builder.ignore(respect_ignore);
         builder.git_ignore(respect_gitignore);
 
         Ok(builder.build_parallel())
@@ -44,7 +49,7 @@ mod tests {
             Path::new("mado.toml").to_path_buf(),
             Path::new("README.md").to_path_buf(),
         ];
-        let builder = WalkParallelBuilder::build(&paths, true).unwrap();
+        let builder = WalkParallelBuilder::build(&paths, true, true).unwrap();
         let shared_paths = Arc::new(Mutex::new(vec![]));
         let walker = |either_entry: Result<DirEntry, _>| {
             if let Ok(entry) = either_entry {
@@ -67,7 +72,7 @@ mod tests {
 
     #[test]
     fn build_empty_patterns() {
-        let result = WalkParallelBuilder::build(&[], true);
+        let result = WalkParallelBuilder::build(&[], true, true);
         assert!(result.is_err());
     }
 }

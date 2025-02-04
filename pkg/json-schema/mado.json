@@ -10,8 +10,13 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "respect-ignore": {
+          "description": "Exclude files that are ignored by .ignore",
+          "type": "boolean",
+          "default": true
+        },
         "respect-gitignore": {
-          "description": "Exclude files that are ignored by .gitignore and .ignore files",
+          "description": "Exclude files that are ignored by .gitignore",
           "type": "boolean",
           "default": true
         },
