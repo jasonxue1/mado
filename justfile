@@ -17,7 +17,7 @@ lint:
     taplo lint
 
 cov:
-    cargo llvm-cov --open
+    CLICOLOR_FORCE=true cargo llvm-cov --open
 
 [linux]
 flamegraph target="scripts/benchmarks/data/gitlab":
