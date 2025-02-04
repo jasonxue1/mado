@@ -1,4 +1,5 @@
 [lint]
+respect-gitignore = true
 output-format = "concise"
 quiet = false
 rules = [

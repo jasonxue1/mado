@@ -10,6 +10,11 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "respect-gitignore": {
+          "description": "Exclude files that are ignored by .gitignore and .ignore files",
+          "type": "boolean",
+          "default": true
+        },
         "output-format": {
           "description": "Output format for violations",
           "type": "string",

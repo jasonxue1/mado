@@ -41,7 +41,7 @@ pub struct ParallelLintRunner {
 impl ParallelLintRunner {
     #[inline]
     pub fn new(patterns: &[PathBuf], config: Config, capacity: usize) -> Result<Self> {
-        let walker = WalkParallelBuilder::build(patterns)?;
+        let walker = WalkParallelBuilder::build(patterns, config.lint.respect_gitignore)?;
 
         Ok(Self {
             walker,
