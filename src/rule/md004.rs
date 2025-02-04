@@ -1,5 +1,8 @@
-use comrak::nodes::{ListType, NodeList, NodeValue};
+use std::path::PathBuf;
+
+use comrak::nodes::{AstNode, ListType, NodeList, NodeValue};
 use miette::Result;
+use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
 
 use crate::violation::Violation;
@@ -15,7 +18,7 @@ pub enum ListStyle {
     Asterisk,
     Plus,
     Dash,
-    // Sublist, // TODO
+    Sublist,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -39,6 +42,65 @@ impl MD004 {
     pub const fn new(style: ListStyle) -> Self {
         Self { style }
     }
+
+    fn check_recursive<'a>(
+        &self,
+        root: &'a AstNode<'a>,
+        path: &PathBuf,
+        violations: &mut Vec<Violation>,
+        initial_maybe_list_char: Option<char>,
+        levels: &mut FxHashMap<usize, char>,
+        level: usize,
+    ) {
+        let mut maybe_list_char = initial_maybe_list_char;
+
+        for node in root.children() {
+            if let NodeValue::List(_) = node.data.borrow().value {
+                for item_node in node.children() {
+                    if let NodeValue::Item(NodeList {
+                        list_type: ListType::Bullet,
+                        bullet_char,
+                        ..
+                    }) = item_node.data.borrow().value
+                    {
+                        let is_violated = match &self.style {
+                            ListStyle::Consistent => maybe_list_char
+                                .is_some_and(|list_char| bullet_char as char != list_char),
+                            ListStyle::Asterisk => bullet_char != b'*',
+                            ListStyle::Plus => bullet_char != b'+',
+                            ListStyle::Dash => bullet_char != b'-',
+                            ListStyle::Sublist => levels
+                                .get(&level)
+                                .is_some_and(|list_char| bullet_char as char != *list_char),
+                        };
+
+                        if is_violated {
+                            let position = item_node.data.borrow().sourcepos;
+                            let violation = self.to_violation(path.clone(), position);
+                            violations.push(violation);
+                        }
+
+                        if maybe_list_char.is_none() {
+                            maybe_list_char = Some(bullet_char as char);
+                        }
+
+                        if self.style == ListStyle::Sublist {
+                            levels.entry(level).or_insert(bullet_char as char);
+                        }
+                    }
+
+                    self.check_recursive(
+                        item_node,
+                        path,
+                        violations,
+                        maybe_list_char,
+                        levels,
+                        level + 1,
+                    );
+                }
+            }
+        }
+    }
 }
 
 impl Default for MD004 {
@@ -59,34 +121,9 @@ impl RuleLike for MD004 {
     #[inline]
     fn check(&self, doc: &Document) -> Result<Vec<Violation>> {
         let mut violations = vec![];
-        let mut maybe_list_char = None;
+        let mut levels = FxHashMap::default();
 
-        for node in doc.ast.descendants() {
-            if let NodeValue::Item(NodeList {
-                list_type: ListType::Bullet,
-                bullet_char,
-                ..
-            }) = node.data.borrow().value
-            {
-                let is_violated = match (&self.style, maybe_list_char) {
-                    (ListStyle::Consistent, Some(list_char)) => bullet_char != list_char,
-                    (ListStyle::Asterisk, _) => bullet_char != b'*',
-                    (ListStyle::Plus, _) => bullet_char != b'+',
-                    (ListStyle::Dash, _) => bullet_char != b'-',
-                    _ => false,
-                };
-
-                if is_violated {
-                    let position = node.data.borrow().sourcepos;
-                    let violation = self.to_violation(doc.path.clone(), position);
-                    violations.push(violation);
-                }
-
-                if maybe_list_char.is_none() {
-                    maybe_list_char = Some(bullet_char);
-                }
-            }
-        }
+        self.check_recursive(doc.ast, &doc.path, &mut violations, None, &mut levels, 1);
 
         Ok(violations)
     }
@@ -174,6 +211,32 @@ mod tests {
     }
 
     #[test]
+    fn check_errors_for_sublist() {
+        let text = "* Item 1
+* Item 2
+  - Item 2a
+    + Item 2a1
+  - Item 2b
+* Item 3
+
+Other stuff
+
+- Item 1
+- Item 2"
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let rule = MD004::new(ListStyle::Sublist);
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![
+            rule.to_violation(path.clone(), Sourcepos::from((10, 1, 10, 8))),
+            rule.to_violation(path, Sourcepos::from((11, 1, 11, 8))),
+        ];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
     fn check_no_errors_for_consistent() {
         let text = "* Item 1
 * Item 2
@@ -228,6 +291,29 @@ mod tests {
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text).unwrap();
         let rule = MD004::new(ListStyle::Dash);
+        let actual = rule.check(&doc).unwrap();
+        let expected = vec![];
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn check_no_errors_for_sublist() {
+        let text = "* Item 1
+* Item 2
+  - Item 2a
+    + Item 2a1
+  - Item 2b
+* Item 3
+
+Other stuff
+
+* Item 1
+* Item 2"
+            .to_owned();
+        let path = Path::new("test.md").to_path_buf();
+        let arena = Arena::new();
+        let doc = Document::new(&arena, path, text).unwrap();
+        let rule = MD004::new(ListStyle::Sublist);
         let actual = rule.check(&doc).unwrap();
         let expected = vec![];
         assert_eq!(actual, expected);
