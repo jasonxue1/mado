@@ -95,7 +95,7 @@ Mado supports most [markdownlint rules](https://github.com/markdownlint/markdown
 | MD001 | :white_check_mark: |                                                |
 | MD002 | :white_check_mark: |                                                |
 | MD003 | :hammer:           |                                                |
-| MD004 | :warning:          | `:sublist` option not supported.               |
+| MD004 | :hammer:           |                                                |
 | MD005 | :white_check_mark: |                                                |
 | MD006 | :white_check_mark: |                                                |
 | MD007 | :hammer:           |                                                |

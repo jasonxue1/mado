@@ -114,7 +114,8 @@
                 "consistent",
                 "asterisk",
                 "plus",
-                "dash"
+                "dash",
+                "sublist"
               ],
               "default": "consistent"
             }
