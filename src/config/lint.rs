@@ -38,6 +38,8 @@ pub use md046::MD046;
 #[serde(default, rename_all = "kebab-case")]
 #[allow(clippy::exhaustive_structs)]
 pub struct Lint {
+    pub respect_ignore: bool,
+    pub respect_gitignore: bool,
     pub output_format: Format,
     pub quiet: bool,
     pub rules: Vec<RuleSet>,
@@ -105,6 +107,8 @@ impl Default for Lint {
     #[inline]
     fn default() -> Self {
         Self {
+            respect_ignore: true,
+            respect_gitignore: true,
             output_format: Format::Concise,
             quiet: false,
             rules: vec![
