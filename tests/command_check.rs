@@ -1,9 +1,26 @@
 use std::fs::File;
 use std::io::Write as _;
+use std::path::PathBuf;
 
 use assert_cmd::Command;
 use mado::Config;
+use miette::IntoDiagnostic as _;
+use miette::Result;
 use tempfile::tempdir;
+
+fn with_tmp_file<F>(name: &str, content: &str, f: F) -> Result<()>
+where
+    F: FnOnce(PathBuf) -> Result<()>,
+{
+    let tmp_dir = tempdir().into_diagnostic()?;
+    let path = tmp_dir.path().join(name);
+    let mut tmp_file = File::create(path.clone()).into_diagnostic()?;
+    write!(tmp_file, "{content}").into_diagnostic()?;
+
+    f(path)?;
+
+    tmp_dir.close().into_diagnostic()
+}
 
 #[test]
 fn check() {
@@ -20,26 +37,21 @@ fn check_quiet() {
 }
 
 #[test]
-fn check_quiet_with_config() {
-    // Create new mado.toml
-    let tmp_dir = tempdir().unwrap();
-    let path = tmp_dir.path().join("mado.toml");
-    let mut tmp_file = File::create(path.clone()).unwrap();
+fn check_quiet_with_config() -> Result<()> {
     let mut config = Config::default();
-    config.lint.rules.remove(18); // Remove MD024
     config.lint.quiet = true;
     config.lint.md013.tables = false;
     config.lint.md013.code_blocks = false;
+    config.lint.md024.allow_different_nesting = true;
     let content = toml::to_string(&config).unwrap();
-    write!(tmp_file, "{content}").unwrap();
 
-    let mut cmd = Command::cargo_bin("mado").unwrap();
-    let assert = cmd
-        .args(["--config", path.to_str().unwrap(), "check", "."])
-        .assert();
-    assert.success().stdout("");
-
-    tmp_dir.close().unwrap();
+    with_tmp_file("mado.toml", &content, |path| {
+        let mut cmd = Command::cargo_bin("mado").into_diagnostic()?;
+        let path_str = path.to_str().unwrap();
+        let assert = cmd.args(["--config", path_str, "check", "."]).assert();
+        assert.success().stdout("");
+        Ok(())
+    })
 }
 
 #[test]
@@ -63,50 +75,40 @@ fn check_empty_stdin() {
 }
 
 #[test]
-fn check_empty_stdin_with_file() {
-    // Create test.md
-    let tmp_dir = tempdir().unwrap();
-    let path = tmp_dir.path().join("test.md");
-    let mut tmp_file = File::create(path.clone()).unwrap();
-    write!(tmp_file, "#Hello.").unwrap();
-
-    let mut cmd = Command::cargo_bin("mado").unwrap();
-    let path_str = path.to_str().unwrap();
-    let assert = cmd.write_stdin("").args(["check", path_str]).assert();
-    assert.failure().stdout(
-        format!(
-        "\u{1b}[1m{path_str}\u{1b}[0m\u{1b}[34m:\u{1b}[0m1\u{1b}[34m:\u{1b}[0m1\u{1b}[34m:\u{1b}[0m \u{1b}[1;31mMD018\u{1b}[0m No space after hash on atx style header
+fn check_empty_stdin_with_file() -> Result<()> {
+    with_tmp_file("test.md", "#Hello.", |path| {
+        let mut cmd = Command::cargo_bin("mado").into_diagnostic()?;
+        let path_str = path.to_str().unwrap();
+        let assert = cmd.write_stdin("").args(["check", path_str]).assert();
+        assert.failure().stdout(
+            format!(
+                "\u{1b}[1m{path_str}\u{1b}[0m\u{1b}[34m:\u{1b}[0m1\u{1b}[34m:\u{1b}[0m1\u{1b}[34m:\u{1b}[0m \u{1b}[1;31mMD018\u{1b}[0m No space after hash on atx style header
 \u{1b}[1m{path_str}\u{1b}[0m\u{1b}[34m:\u{1b}[0m1\u{1b}[34m:\u{1b}[0m1\u{1b}[34m:\u{1b}[0m \u{1b}[1;31mMD041\u{1b}[0m First line in file should be a top level header
 \u{1b}[1m{path_str}\u{1b}[0m\u{1b}[34m:\u{1b}[0m1\u{1b}[34m:\u{1b}[0m1\u{1b}[34m:\u{1b}[0m \u{1b}[1;31mMD047\u{1b}[0m File should end with a single newline character
 
 Found 3 errors.\n",
-        )
-    );
-
-    tmp_dir.close().unwrap();
+            )
+        );
+        Ok(())
+    })
 }
 
 #[test]
-fn check_stdin_with_file() {
-    // Create test.md
-    let tmp_dir = tempdir().unwrap();
-    let path = tmp_dir.path().join("test.md");
-    let mut tmp_file = File::create(path.clone()).unwrap();
-    write!(tmp_file, "#Hello.").unwrap();
-
-    let mut cmd = Command::cargo_bin("mado").unwrap();
-    let path_str = path.to_str().unwrap();
-    let assert = cmd
-        .write_stdin("#Hello.")
-        .args(["check", path_str])
-        .assert();
-    assert.failure().stdout(
-        "\u{1b}[1m(stdin)\u{1b}[0m\u{1b}[34m:\u{1b}[0m1\u{1b}[34m:\u{1b}[0m1\u{1b}[34m:\u{1b}[0m \u{1b}[1;31mMD018\u{1b}[0m No space after hash on atx style header
+fn check_stdin_with_file() -> Result<()> {
+    with_tmp_file("test.md", "#Hello.", |path| {
+        let mut cmd = Command::cargo_bin("mado").into_diagnostic()?;
+        let path_str = path.to_str().unwrap();
+        let assert = cmd
+            .write_stdin("#Hello.")
+            .args(["check", path_str])
+            .assert();
+        assert.failure().stdout(
+            "\u{1b}[1m(stdin)\u{1b}[0m\u{1b}[34m:\u{1b}[0m1\u{1b}[34m:\u{1b}[0m1\u{1b}[34m:\u{1b}[0m \u{1b}[1;31mMD018\u{1b}[0m No space after hash on atx style header
 \u{1b}[1m(stdin)\u{1b}[0m\u{1b}[34m:\u{1b}[0m1\u{1b}[34m:\u{1b}[0m1\u{1b}[34m:\u{1b}[0m \u{1b}[1;31mMD041\u{1b}[0m First line in file should be a top level header
 \u{1b}[1m(stdin)\u{1b}[0m\u{1b}[34m:\u{1b}[0m1\u{1b}[34m:\u{1b}[0m1\u{1b}[34m:\u{1b}[0m \u{1b}[1;31mMD047\u{1b}[0m File should end with a single newline character
 
 Found 3 errors.\n",
-    );
-
-    tmp_dir.close().unwrap();
+        );
+        Ok(())
+    })
 }
