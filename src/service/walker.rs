@@ -1,8 +1,10 @@
 use std::path::PathBuf;
 
+use ignore::types::TypesBuilder;
 use ignore::WalkBuilder;
 use ignore::WalkParallel;
 use miette::miette;
+use miette::IntoDiagnostic as _;
 use miette::Result;
 
 #[non_exhaustive]
@@ -25,6 +27,14 @@ impl WalkParallelBuilder {
 
         builder.ignore(respect_ignore);
         builder.git_ignore(respect_gitignore);
+
+        // NOTE: Expect performance improvements with pre-filtering
+        let types = TypesBuilder::new()
+            .add_defaults()
+            .select("markdown")
+            .build()
+            .into_diagnostic()?;
+        builder.types(types);
 
         Ok(builder.build_parallel())
     }
@@ -64,7 +74,6 @@ mod tests {
         let expected = vec![
             Path::new("README.md").to_path_buf(),
             Path::new("action").to_path_buf(),
-            Path::new("action/entrypoint.sh").to_path_buf(),
             Path::new("mado.toml").to_path_buf(),
         ];
         assert_eq!(actual, expected);
