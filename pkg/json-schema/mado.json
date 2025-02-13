@@ -31,6 +31,15 @@
           "type": "boolean",
           "default": false
         },
+        "exclude": {
+          "description": "List of patterns to exclude from linting",
+          "type": "array",
+          "uniqueItems": false,
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
         "rules": {
           "description": "List of rules",
           "type": "array",

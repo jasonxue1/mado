@@ -1,3 +1,5 @@
+use globset::{Glob, GlobSet, GlobSetBuilder};
+use miette::{IntoDiagnostic as _, Result};
 use serde::{Deserialize, Serialize};
 
 use crate::{output::Format, rule, rule::Rule};
@@ -42,6 +44,7 @@ pub struct Lint {
     pub respect_gitignore: bool,
     pub output_format: Format,
     pub quiet: bool,
+    pub exclude: Vec<Glob>,
     pub rules: Vec<RuleSet>,
     pub md002: MD002,
     pub md003: MD003,
@@ -58,6 +61,17 @@ pub struct Lint {
     pub md036: MD036,
     pub md041: MD041,
     pub md046: MD046,
+}
+
+impl Lint {
+    #[inline]
+    pub fn exclude_set(&self) -> Result<GlobSet> {
+        let mut builder = GlobSetBuilder::new();
+        for glob in &self.exclude {
+            builder.add(glob.clone());
+        }
+        builder.build().into_diagnostic()
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -111,6 +125,7 @@ impl Default for Lint {
             respect_gitignore: true,
             output_format: Format::Concise,
             quiet: false,
+            exclude: vec![],
             rules: vec![
                 RuleSet::MD001,
                 RuleSet::MD002,
@@ -226,6 +241,22 @@ mod tests {
     use pretty_assertions::assert_eq;
 
     use super::*;
+
+    #[test]
+    fn exclude_set() {
+        let config = Lint {
+            exclude: vec![
+                Glob::new("*.md").unwrap(),
+                Glob::new("foo/bar/baz/test.md").unwrap(),
+                Glob::new("foo/**/test.md").unwrap(),
+            ],
+            ..Lint::default()
+        };
+
+        let set = config.exclude_set().unwrap();
+
+        assert_eq!(set.matches("foo/bar/test.md"), vec![0, 2]);
+    }
 
     #[test]
     fn from_lint_for_vec_rule() {

@@ -72,7 +72,7 @@ impl ParallelLintRunner {
             }
         });
 
-        let mut builder = MarkdownLintVisitorFactory::new(self.config, tx);
+        let mut builder = MarkdownLintVisitorFactory::new(self.config, tx)?;
         self.walker.visit(&mut builder);
 
         // Wait for the completion

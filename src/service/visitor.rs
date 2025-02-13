@@ -2,6 +2,7 @@ use core::result::Result;
 use std::sync::mpsc::SyncSender;
 
 use comrak::Arena;
+use globset::GlobSet;
 use ignore::{DirEntry, Error, ParallelVisitor, ParallelVisitorBuilder, WalkState};
 use miette::IntoDiagnostic as _;
 
@@ -10,20 +11,28 @@ use crate::{config::Config, Document, Violation};
 
 pub struct MarkdownLintVisitor {
     linter: Linter,
+    exclusion: GlobSet,
     tx: SyncSender<Vec<Violation>>,
 }
 
 impl MarkdownLintVisitor {
     #[inline]
     #[must_use]
-    pub const fn new(linter: Linter, tx: SyncSender<Vec<Violation>>) -> Self {
-        Self { linter, tx }
+    pub const fn new(linter: Linter, exclusion: GlobSet, tx: SyncSender<Vec<Violation>>) -> Self {
+        Self {
+            linter,
+            exclusion,
+            tx,
+        }
     }
 
     fn visit_inner(&self, either_entry: Result<DirEntry, Error>) -> miette::Result<()> {
         let entry = either_entry.into_diagnostic()?;
         let path = entry.path();
-        if path.is_file() && path.extension() == Some("md".as_ref()) {
+        if path.is_file()
+            && path.extension() == Some("md".as_ref())
+            && !self.exclusion.is_match(path)
+        {
             let arena = Arena::new();
             let doc = Document::open(&arena, path)?;
             let violations = self.linter.check(&doc)?;
@@ -49,14 +58,19 @@ impl ParallelVisitor for MarkdownLintVisitor {
 
 pub struct MarkdownLintVisitorFactory {
     config: Config,
+    exclusion: GlobSet,
     tx: SyncSender<Vec<Violation>>,
 }
 
 impl MarkdownLintVisitorFactory {
     #[inline]
-    #[must_use]
-    pub const fn new(config: Config, tx: SyncSender<Vec<Violation>>) -> Self {
-        Self { config, tx }
+    pub fn new(config: Config, tx: SyncSender<Vec<Violation>>) -> miette::Result<Self> {
+        let exclusion = config.lint.exclude_set()?;
+        Ok(Self {
+            config,
+            exclusion,
+            tx,
+        })
     }
 }
 
@@ -64,7 +78,11 @@ impl<'s> ParallelVisitorBuilder<'s> for MarkdownLintVisitorFactory {
     #[inline]
     fn build(&mut self) -> Box<dyn ParallelVisitor + 's> {
         let linter = Linter::from(&self.config);
-        Box::new(MarkdownLintVisitor::new(linter, self.tx.clone()))
+        Box::new(MarkdownLintVisitor::new(
+            linter,
+            self.exclusion.clone(),
+            self.tx.clone(),
+        ))
     }
 }
 
@@ -80,7 +98,8 @@ mod tests {
     fn markdown_lint_visitor_visit_inner() {
         let (tx, rx) = mpsc::sync_channel::<Vec<Violation>>(0);
         let linter = Linter::new(vec![]);
-        let visitor = MarkdownLintVisitor::new(linter, tx);
+        let exclusion = GlobSet::empty();
+        let visitor = MarkdownLintVisitor::new(linter, exclusion, tx);
 
         for entry in Walk::new(".") {
             visitor.visit_inner(entry).unwrap();
@@ -96,7 +115,7 @@ mod tests {
         config.lint.rules = vec![];
 
         let (tx, rx) = mpsc::sync_channel::<Vec<Violation>>(0);
-        let mut factory = MarkdownLintVisitorFactory::new(config, tx);
+        let mut factory = MarkdownLintVisitorFactory::new(config, tx).unwrap();
         let mut visitor = factory.build();
 
         for entry in Walk::new(".") {

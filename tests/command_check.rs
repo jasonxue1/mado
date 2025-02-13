@@ -112,3 +112,14 @@ Found 3 errors.\n",
         Ok(())
     })
 }
+
+#[test]
+fn check_exclusion() -> Result<()> {
+    with_tmp_file("test.md", "#Hello.", |path| {
+        let mut cmd = Command::cargo_bin("mado").into_diagnostic()?;
+        let path_str = path.to_str().unwrap();
+        let assert = cmd.args(["check", path_str, "--exclude", "*.md"]).assert();
+        assert.success().stdout("All checks passed!\n");
+        Ok(())
+    })
+}
