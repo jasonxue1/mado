@@ -69,28 +69,31 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors_false() -> Result<()> {
-        let text = "# A
+        let text = indoc! {"
+            # A
 
-## A
+            ## A
 
-## B
+            ## B
 
-### C
+            ### C
 
-## D
+            ## D
 
-### C
+            ### C
 
-## E
+            ## E
 
-#### C"
-            .to_owned();
+            #### C
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -107,22 +110,24 @@ mod tests {
 
     #[test]
     fn check_errors_true() -> Result<()> {
-        let text = "# A
+        let text = indoc! {"
+            # A
 
-## A
+            ## A
 
-## B
+            ## B
 
-### C
+            ### C
 
-## D
+            ## D
 
-### C
+            ### C
 
-## E
+            ## E
 
-#### C"
-            .to_owned();
+            #### C
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -138,22 +143,24 @@ mod tests {
 
     #[test]
     fn check_no_errors_false() -> Result<()> {
-        let text = "# A
+        let text = indoc! {"
+            # A
 
-## B
+            ## B
 
-## C
+            ## C
 
-### D
+            ### D
 
-## E
+            ## E
 
-### F
+            ### F
 
-## G
+            ## G
 
-#### H"
-            .to_owned();
+            #### H
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -166,22 +173,24 @@ mod tests {
 
     #[test]
     fn check_no_errors_true() -> Result<()> {
-        let text = "# A
+        let text = indoc! {"
+            # A
 
-## B
+            ## B
 
-## C
+            ## C
 
-### D
+            ### D
 
-## E
+            ## E
 
-### D
+            ### D
 
-## F
+            ## F
 
-#### G"
-            .to_owned();
+            #### G
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;

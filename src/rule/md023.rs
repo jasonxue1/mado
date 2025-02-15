@@ -53,16 +53,19 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors() -> Result<()> {
-        let text = "Some text
+        let text = indoc! {"
+            Some text
 
-  # Indented header"
-            .to_owned();
+              # Indented header
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -75,10 +78,12 @@ mod tests {
 
     #[test]
     fn check_no_errors() -> Result<()> {
-        let text = "Some text
+        let text = indoc! {"
+            Some text
 
-# Header"
-            .to_owned();
+            # Header
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -91,11 +96,13 @@ mod tests {
 
     #[test]
     fn check_no_errors_with_indented_code_block_comment() -> Result<()> {
-        let text = "Some text
+        let text = indoc! {"
+            Some text
 
-   ```
-   # Header
-   ```"
+               ```
+               # Header
+               ```
+        "}
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();

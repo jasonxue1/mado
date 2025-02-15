@@ -54,18 +54,21 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors() -> Result<()> {
-        let text = "` some text `
+        let text = indoc! {"
+            ` some text `
 
-`some text `
+            `some text `
 
-` some text`"
-            .to_owned();
+            ` some text`
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;

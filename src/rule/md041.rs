@@ -67,6 +67,7 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
@@ -86,10 +87,12 @@ mod tests {
 
     #[test]
     fn check_no_errors() -> Result<()> {
-        let text = "# File with header
+        let text = indoc! {"
+            # File with header
 
-This is a file with a top level header"
-            .to_owned();
+            This is a file with a top level header
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;

@@ -53,15 +53,18 @@ mod tests {
     use std::path::Path;
 
     use comrak::Arena;
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors() -> Result<()> {
-        let text = "Text with a trailing space 
-And text with some trailing spaces   "
-            .to_owned();
+        let text = indoc! {"
+            Text with a trailing space 
+            And text with some trailing spaces   
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;

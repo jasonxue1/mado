@@ -54,18 +54,21 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors() -> Result<()> {
-        let text = "```
-$ ls
-$ cat foo
+        let text = indoc! {"
+            ```
+            $ ls
+            $ cat foo
 
-$ less bar
-```"
+            $ less bar
+            ```
+        "}
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -79,13 +82,15 @@ $ less bar
 
     #[test]
     fn check_errors_with_list() -> Result<()> {
-        let text = "* List
+        let text = indoc! {"
+            * List
 
-  ```
-  $ ls
-  $ cat foo
-  $ less bar
-  ```"
+              ```
+              $ ls
+              $ cat foo
+              $ less bar
+              ```
+        "}
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -99,12 +104,14 @@ $ less bar
 
     #[test]
     fn check_no_errors_no_dollars() -> Result<()> {
-        let text = "```
-ls
-cat foo
+        let text = indoc! {"
+            ```
+            ls
+            cat foo
 
-less bar
-```"
+            less bar
+            ```
+        "}
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -118,10 +125,12 @@ less bar
 
     #[test]
     fn check_no_errors_variables() -> Result<()> {
-        let text = "```
-$foo=bar
-$baz=quz
-```"
+        let text = indoc! {"
+            ```
+            $foo=bar
+            $baz=quz
+            ```
+        "}
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -135,14 +144,16 @@ $baz=quz
 
     #[test]
     fn check_no_errors_showing_outputs() -> Result<()> {
-        let text = "```
-$ ls
-foo bar
-$ cat foo
-Hello world
-$ cat bar
-baz
-```"
+        let text = indoc! {"
+            ```
+            $ ls
+            foo bar
+            $ cat foo
+            Hello world
+            $ cat bar
+            baz
+            ```
+        "}
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -156,12 +167,14 @@ baz
 
     #[test]
     fn check_no_errors_no_dollars_with_list() -> Result<()> {
-        let text = "* List
-  ```
-  ls
-  cat foo
-  less bar
-  ```"
+        let text = indoc! {"
+            * List
+              ```
+              ls
+              cat foo
+              less bar
+              ```
+        "}
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -175,15 +188,17 @@ baz
 
     #[test]
     fn check_no_errors_showing_outputs_with_list() -> Result<()> {
-        let text = "* List
-  ```
-  $ ls
-  foo bar
-  $ cat foo
-  Hello world
-  $ cat bar
-  baz
-  ```"
+        let text = indoc! {"
+            * List
+              ```
+              $ ls
+              foo bar
+              $ cat foo
+              Hello world
+              $ cat bar
+              baz
+              ```
+        "}
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();

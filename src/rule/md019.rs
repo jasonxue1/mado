@@ -72,16 +72,19 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors() -> Result<()> {
-        let text = "#  Header 1
+        let text = indoc! {"
+            #  Header 1
 
-##  Header 2"
-            .to_owned();
+            ##  Header 2
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -97,10 +100,12 @@ mod tests {
 
     #[test]
     fn check_no_errors() -> Result<()> {
-        let text = "# Header 1
+        let text = indoc! {"
+            # Header 1
 
-## Header 2"
-            .to_owned();
+            ## Header 2
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -113,12 +118,14 @@ mod tests {
 
     #[test]
     fn check_no_errors_with_atx_closed() -> Result<()> {
-        let text = "#  Header 1  #
+        let text = indoc! {"
+            #  Header 1  #
 
-## Header 2  ##
+            ## Header 2  ##
 
-##  Header 3 ##"
-            .to_owned();
+            ##  Header 3 ##
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -131,9 +138,11 @@ mod tests {
 
     #[test]
     fn check_no_errors_with_setext() -> Result<()> {
-        let text = "  Header 1
-========"
-            .to_owned();
+        let text = indoc! {"
+              Header 1
+            ==========
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;

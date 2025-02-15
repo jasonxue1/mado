@@ -102,19 +102,22 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors_for_consistent() -> Result<()> {
-        let text = "# ATX style H1
+        let text = indoc! {"
+            # ATX style H1
 
-## Closed ATX style H2 ##
+            ## Closed ATX style H2 ##
 
-Setext style H1
-==============="
-            .to_owned();
+            Setext style H1
+            ===============
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -130,13 +133,15 @@ Setext style H1
 
     #[test]
     fn check_errors_for_atx() -> Result<()> {
-        let text = "# ATX style H1
+        let text = indoc! {"
+            # ATX style H1
 
-## Closed ATX style H2 ##
+            ## Closed ATX style H2 ##
 
-Setext style H1
-==============="
-            .to_owned();
+            Setext style H1
+            ===============
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -152,13 +157,15 @@ Setext style H1
 
     #[test]
     fn check_errors_for_atx_closed() -> Result<()> {
-        let text = "# ATX style H1
+        let text = indoc! {"
+            # ATX style H1
 
-## Closed ATX style H2 ##
+            ## Closed ATX style H2 ##
 
-Setext style H1
-==============="
-            .to_owned();
+            Setext style H1
+            ===============
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -174,13 +181,15 @@ Setext style H1
 
     #[test]
     fn check_errors_for_setext() -> Result<()> {
-        let text = "# ATX style H1
+        let text = indoc! {"
+            # ATX style H1
 
-## Closed ATX style H2 ##
+            ## Closed ATX style H2 ##
 
-Setext style H1
-==============="
-            .to_owned();
+            Setext style H1
+            ===============
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -196,12 +205,14 @@ Setext style H1
 
     #[test]
     fn check_errors_for_setext_with_atx() -> Result<()> {
-        let text = "# ATX style H1
+        let text = indoc! {"
+            # ATX style H1
 
-## ATX style H2
+            ## ATX style H2
 
-### ATX style H3"
-            .to_owned();
+            ### ATX style H3
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -217,10 +228,12 @@ Setext style H1
 
     #[test]
     fn check_no_errors_for_consistent() -> Result<()> {
-        let text = "# ATX style H1
+        let text = indoc! {"
+            # ATX style H1
 
-## ATX style H2"
-            .to_owned();
+            ## ATX style H2
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -233,10 +246,12 @@ Setext style H1
 
     #[test]
     fn check_no_errors_for_atx() -> Result<()> {
-        let text = "# ATX style H1
+        let text = indoc! {"
+            # ATX style H1
 
-## ATX style H2"
-            .to_owned();
+            ## ATX style H2
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -249,10 +264,12 @@ Setext style H1
 
     #[test]
     fn check_no_errors_for_atx_closed() -> Result<()> {
-        let text = "# ATX style H1 #
+        let text = indoc! {"
+            # ATX style H1 #
 
-## ATX style H2 ##"
-            .to_owned();
+            ## ATX style H2 ##
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -265,12 +282,14 @@ Setext style H1
 
     #[test]
     fn check_no_errors_for_setext() -> Result<()> {
-        let text = "Setext style H1
-===============
+        let text = indoc! {"
+            Setext style H1
+            ===============
 
-Setext style H2
----------------"
-            .to_owned();
+            Setext style H2
+            ---------------
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -283,14 +302,16 @@ Setext style H2
 
     #[test]
     fn check_no_errors_for_setext_with_atx() -> Result<()> {
-        let text = "Setext style H1
-===============
+        let text = indoc! {"
+            Setext style H1
+            ===============
 
-Setext style H2
----------------
+            Setext style H2
+            ---------------
 
-### ATX style H3"
-            .to_owned();
+            ### ATX style H3
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -303,12 +324,14 @@ Setext style H2
 
     #[test]
     fn check_no_errors_with_front_matter() -> Result<()> {
-        let text = r#"---
-author: "John Smith"
----
+        let text = indoc! {r#"
+            ---
+            author: "John Smith"
+            ---
 
-# Header 1"#
-            .to_owned();
+            # Header 1
+        "#}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;

@@ -134,16 +134,19 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors_for_consistent() -> Result<()> {
-        let text = "* Item 1
-+ Item 2
-- Item 3"
-            .to_owned();
+        let text = indoc! {"
+            * Item 1
+            + Item 2
+            - Item 3
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -159,10 +162,12 @@ mod tests {
 
     #[test]
     fn check_errors_for_asterisk() -> Result<()> {
-        let text = "* Item 1
-+ Item 2
-- Item 3"
-            .to_owned();
+        let text = indoc! {"
+            * Item 1
+            + Item 2
+            - Item 3
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -178,10 +183,12 @@ mod tests {
 
     #[test]
     fn check_errors_for_plus() -> Result<()> {
-        let text = "* Item 1
-+ Item 2
-- Item 3"
-            .to_owned();
+        let text = indoc! {"
+            * Item 1
+            + Item 2
+            - Item 3
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -197,10 +204,12 @@ mod tests {
 
     #[test]
     fn check_errors_for_dash() -> Result<()> {
-        let text = "* Item 1
-+ Item 2
-- Item 3"
-            .to_owned();
+        let text = indoc! {"
+            * Item 1
+            + Item 2
+            - Item 3
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -216,18 +225,20 @@ mod tests {
 
     #[test]
     fn check_errors_for_sublist() -> Result<()> {
-        let text = "* Item 1
-* Item 2
-  - Item 2a
-    + Item 2a1
-  - Item 2b
-* Item 3
+        let text = indoc! {"
+            * Item 1
+            * Item 2
+              - Item 2a
+                + Item 2a1
+              - Item 2b
+            * Item 3
 
-Other stuff
+            Other stuff
 
-- Item 1
-- Item 2"
-            .to_owned();
+            - Item 1
+            - Item 2
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -243,10 +254,12 @@ Other stuff
 
     #[test]
     fn check_no_errors_for_consistent() -> Result<()> {
-        let text = "* Item 1
-* Item 2
-* Item 3"
-            .to_owned();
+        let text = indoc! {"
+            * Item 1
+            * Item 2
+            * Item 3
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -259,10 +272,12 @@ Other stuff
 
     #[test]
     fn check_no_errors_for_asterisk() -> Result<()> {
-        let text = "* Item 1
-* Item 2
-* Item 3"
-            .to_owned();
+        let text = indoc! {"
+            * Item 1
+            * Item 2
+            * Item 3
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -275,10 +290,12 @@ Other stuff
 
     #[test]
     fn check_no_errors_for_plus() -> Result<()> {
-        let text = "+ Item 1
-+ Item 2
-+ Item 3"
-            .to_owned();
+        let text = indoc! {"
+            + Item 1
+            + Item 2
+            + Item 3
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -291,10 +308,12 @@ Other stuff
 
     #[test]
     fn check_no_errors_for_dash() -> Result<()> {
-        let text = "- Item 1
-- Item 2
-- Item 3"
-            .to_owned();
+        let text = indoc! {"
+            - Item 1
+            - Item 2
+            - Item 3
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -307,18 +326,20 @@ Other stuff
 
     #[test]
     fn check_no_errors_for_sublist() -> Result<()> {
-        let text = "* Item 1
-* Item 2
-  - Item 2a
-    + Item 2a1
-  - Item 2b
-* Item 3
+        let text = indoc! {"
+            * Item 1
+            * Item 2
+              - Item 2a
+                + Item 2a1
+              - Item 2b
+            * Item 3
 
-Other stuff
+            Other stuff
 
-* Item 1
-* Item 2"
-            .to_owned();
+            * Item 1
+            * Item 2
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -332,10 +353,12 @@ Other stuff
     // NOTE: This test case is marked as a violation in markdownlint
     #[test]
     fn check_no_errors_with_blockquote() -> Result<()> {
-        let text = ">- Item 1
->- Item 2
->- Item 3"
-            .to_owned();
+        let text = indoc! {"
+            >- Item 1
+            >- Item 2
+            >- Item 3
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;

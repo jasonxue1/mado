@@ -69,18 +69,21 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors_for_atx() -> Result<()> {
-        let text = "# Header 1
-Some text
+        let text = indoc! {"
+            # Header 1
+            Some text
 
-Some more text
-## Header 2"
-            .to_owned();
+            Some more text
+            ## Header 2
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -96,16 +99,18 @@ Some more text
 
     #[test]
     fn check_errors_for_setext() -> Result<()> {
-        let text = "Setext style H1
-===============
-Some text
+        let text = indoc! {"
+            Setext style H1
+            ===============
+            Some text
 
-```
-Some code block
-```
-Setext style H2
----------------"
-            .to_owned();
+            ```
+            Some code block
+            ```
+            Setext style H2
+            ---------------
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -121,14 +126,16 @@ Setext style H2
 
     #[test]
     fn check_no_errors() -> Result<()> {
-        let text = "# Header 1
+        let text = indoc! {"
+            # Header 1
 
-Some text
+            Some text
 
-Some more text
+            Some more text
 
-## Header 2"
-            .to_owned();
+            ## Header 2
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -141,18 +148,20 @@ Some more text
 
     #[test]
     fn check_no_errors_for_setext() -> Result<()> {
-        let text = "Setext style H1
-===============
+        let text = indoc! {"
+            Setext style H1
+            ===============
 
-Some text
+            Some text
 
-```
-Some code block
-```
+            ```
+            Some code block
+            ```
 
-Setext style H2
----------------"
-            .to_owned();
+            Setext style H2
+            ---------------
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -165,13 +174,15 @@ Setext style H2
 
     #[test]
     fn check_no_errors_for_list() -> Result<()> {
-        let text = "# Header 1
+        let text = indoc! {"
+            # Header 1
 
-- Some list item
-- Some more list item
+            - Some list item
+            - Some more list item
 
-## Header 2"
-            .to_owned();
+            ## Header 2
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;

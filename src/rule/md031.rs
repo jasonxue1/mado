@@ -76,6 +76,7 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
@@ -175,26 +176,28 @@ code
 
     #[test]
     fn check_no_errors() -> Result<()> {
-        let text = "text
+        let text = indoc! {"
+            text
 
-```
-code
-```
+            ```
+            code
+            ```
 
-text
+            text
 
-```
-code
-```
+            ```
+            code
+            ```
 
-text
+            text
 
-```
-code
-```
+            ```
+            code
+            ```
 
-text"
-            .to_owned();
+            text
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -207,17 +210,19 @@ text"
 
     #[test]
     fn check_noerrors_code() -> Result<()> {
-        let text = "```
-code
-```
+        let text = indoc! {"
+            ```
+            code
+            ```
 
-```
-code
-```
+            ```
+            code
+            ```
 
-```
-code
-```"
+            ```
+            code
+            ```
+        "}
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -231,12 +236,14 @@ code
 
     #[test]
     fn check_no_errors_indented() -> Result<()> {
-        let text = "Some text
-    Code block
+        let text = indoc! {"
+            Some text
+                Code block
 
-    Another code block
-Some more text"
-            .to_owned();
+                Another code block
+            Some more text
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -249,18 +256,20 @@ Some more text"
 
     #[test]
     fn check_no_errors_with_list() -> Result<()> {
-        let text = "* List
+        let text = indoc! {"
+            * List
 
-```
-Code block
-```
+            ```
+            Code block
+            ```
 
-```
-Another code block
-```
+            ```
+            Another code block
+            ```
 
-Some more text"
-            .to_owned();
+            Some more text
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;

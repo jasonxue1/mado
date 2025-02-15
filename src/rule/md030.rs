@@ -120,16 +120,19 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors_ul() -> Result<()> {
-        let text = "*   Foo
-    Second paragraph
-*   Bar"
-            .to_owned();
+        let text = indoc! {"
+            *   Foo
+                Second paragraph
+            *   Bar
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -145,12 +148,14 @@ mod tests {
 
     #[test]
     fn check_errors_ul_with_newline() -> Result<()> {
-        let text = "*   Foo
+        let text = indoc! {"
+            *   Foo
 
-    Second paragraph
+                Second paragraph
 
-*   Bar"
-            .to_owned();
+            *   Bar
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -166,10 +171,12 @@ mod tests {
 
     #[test]
     fn check_errors_ul_with_ul_single() -> Result<()> {
-        let text = "*   Foo
-    Second paragraph
-*   Bar"
-            .to_owned();
+        let text = indoc! {"
+            *   Foo
+                Second paragraph
+            *   Bar
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -182,10 +189,12 @@ mod tests {
 
     #[test]
     fn check_errors_ul_with_ul_multi() -> Result<()> {
-        let text = "*   Foo
-    Second paragraph
-*   Bar"
-            .to_owned();
+        let text = indoc! {"
+            *   Foo
+                Second paragraph
+            *   Bar
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -198,10 +207,12 @@ mod tests {
 
     #[test]
     fn check_errors_ol() -> Result<()> {
-        let text = "1.   Foo
-     Second paragraph
-1.   Bar"
-            .to_owned();
+        let text = indoc! {"
+            1.   Foo
+                 Second paragraph
+            1.   Bar
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -217,12 +228,14 @@ mod tests {
 
     #[test]
     fn check_errors_ol_with_newline() -> Result<()> {
-        let text = "1.   Foo
+        let text = indoc! {"
+            1.   Foo
 
-     Second paragraph
+                 Second paragraph
 
-1.   Bar"
-            .to_owned();
+            1.   Bar
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -238,10 +251,12 @@ mod tests {
 
     #[test]
     fn check_errors_ol_with_ol_single() -> Result<()> {
-        let text = "1.   Foo
-     Second paragraph
-1.   Bar"
-            .to_owned();
+        let text = indoc! {"
+            1.   Foo
+                 Second paragraph
+            1.   Bar
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -254,10 +269,12 @@ mod tests {
 
     #[test]
     fn check_errors_ol_with_ol_multi() -> Result<()> {
-        let text = "1.   Foo
-     Second paragraph
-1.   Bar"
-            .to_owned();
+        let text = indoc! {"
+            1.   Foo
+                 Second paragraph
+            1.   Bar
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -270,11 +287,13 @@ mod tests {
 
     #[test]
     fn check_errors_nested() -> Result<()> {
-        let text = "* Parent list
-    1.  Foo
-        Second paragraph
-    2.  Bar"
-            .to_owned();
+        let text = indoc! {"
+            * Parent list
+                1.  Foo
+                    Second paragraph
+                2.  Bar
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -290,19 +309,21 @@ mod tests {
 
     #[test]
     fn check_no_errors() -> Result<()> {
-        let text = "* Foo
-* Bar
-* Baz
+        let text = indoc! {"
+            * Foo
+            * Bar
+            * Baz
 
-1. Foo
-1. Bar
-1. Baz
+            1. Foo
+            1. Bar
+            1. Baz
 
-1. Foo
-   * Bar
-   * Baz
-1. Qux"
-            .to_owned();
+            1. Foo
+               * Bar
+               * Baz
+            1. Qux
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;

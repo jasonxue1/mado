@@ -53,16 +53,19 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors() -> Result<()> {
-        let text = "```
-#!/bin/bash
-echo Hello world
-```"
+        let text = indoc! {"
+            ```
+            #!/bin/bash
+            echo Hello world
+            ```
+        "}
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -76,10 +79,12 @@ echo Hello world
 
     #[test]
     fn check_no_errors() -> Result<()> {
-        let text = "```bash
-#!/bin/bash
-echo Hello world
-```"
+        let text = indoc! {"
+            ```bash
+            #!/bin/bash
+            echo Hello world
+            ```
+        "}
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -93,12 +98,14 @@ echo Hello world
 
     #[test]
     fn check_no_errors_with_indented() -> Result<()> {
-        let text = "Some text
+        let text = indoc! {"
+            Some text
 
-    Code block
+                Code block
 
-Some more text"
-            .to_owned();
+            Some more text
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;

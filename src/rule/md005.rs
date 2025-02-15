@@ -81,17 +81,20 @@ mod tests {
     use std::path::Path;
 
     use comrak::Arena;
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors() -> Result<()> {
-        let text = "* Item 1
-    * Nested item 1
-    * Nested item 2
-   * A misaligned item"
-            .to_owned();
+        let text = indoc! {"
+            * Item 1
+                * Nested item 1
+                * Nested item 2
+               * A misaligned item
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -104,10 +107,12 @@ mod tests {
 
     #[test]
     fn check_errors_for_empty_item_text() -> Result<()> {
-        let text = "*
-    *
-    *
-   *"
+        let text = indoc! {"
+            *
+                *
+                *
+               *
+        "}
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -121,16 +126,18 @@ mod tests {
 
     #[test]
     fn check_errors_for_lists() -> Result<()> {
-        let text = "* List 1
-  * item 1
-  * item 2
+        let text = indoc! {"
+            * List 1
+              * item 1
+              * item 2
 
-Some text
+            Some text
 
-1. List 2
-   1. A misaligned item
-   1. More misaligned item"
-            .to_owned();
+            1. List 2
+               1. A misaligned item
+               1. More misaligned item
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -147,15 +154,17 @@ Some text
     // NOTE: This test case is not marked as a violation in markdownlint
     #[test]
     fn check_errors_with_test_and_list_in_list() -> Result<()> {
-        let text = "* List 1
-  * Item 1
-  * Item 2
+        let text = indoc! {"
+            * List 1
+              * Item 1
+              * Item 2
 
-1. List 2
-   Text in list
-   * item 3
-   * item 4"
-            .to_owned();
+            1. List 2
+               Text in list
+               * item 3
+               * item 4
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -171,11 +180,13 @@ Some text
 
     #[test]
     fn check_no_errors() -> Result<()> {
-        let text = "* Item 1
-    * Nested item 1
-    * Nested item 2
-    * Nested item 3"
-            .to_owned();
+        let text = indoc! {"
+            * Item 1
+                * Nested item 1
+                * Nested item 2
+                * Nested item 3
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -188,16 +199,18 @@ Some text
 
     #[test]
     fn check_no_errors_for_lists() -> Result<()> {
-        let text = "* List 1
-    * item 1
-    * item 2
+        let text = indoc! {"
+            * List 1
+                * item 1
+                * item 2
 
-Some text
+            Some text
 
-* List 2
-    1. item 3
-    2. item 4"
-            .to_owned();
+            * List 2
+                1. item 3
+                2. item 4
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;

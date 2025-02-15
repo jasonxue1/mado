@@ -50,6 +50,7 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
@@ -69,8 +70,10 @@ mod tests {
 
     #[test]
     fn check_no_errors() -> Result<()> {
-        let text = "Some text
-"
+        let text = indoc! {"
+            Some text
+
+        "}
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
