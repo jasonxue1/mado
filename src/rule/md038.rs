@@ -59,7 +59,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_errors() {
+    fn check_errors() -> Result<()> {
         let text = "` some text `
 
 `some text `
@@ -68,26 +68,28 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD038::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((1, 2, 1, 12))),
             rule.to_violation(path.clone(), Sourcepos::from((3, 2, 3, 11))),
             rule.to_violation(path, Sourcepos::from((5, 2, 5, 11))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors() {
+    fn check_no_errors() -> Result<()> {
         let text = "`some text`".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD038::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 }

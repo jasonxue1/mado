@@ -79,7 +79,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_errors() {
+    fn check_errors() -> Result<()> {
         let text = "#Header 1#
 
 ## Header 2##
@@ -88,35 +88,37 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD020::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((1, 1, 1, 10))),
             rule.to_violation(path.clone(), Sourcepos::from((3, 1, 3, 13))),
             rule.to_violation(path, Sourcepos::from((5, 1, 5, 13))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors() {
+    fn check_no_errors() -> Result<()> {
         let text = "# Header 1 #
 
 ## Header 2 ##"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD020::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     // TODO: Support escaped hash
     //     #[test]
-    //     fn check_no_errors_with_escaped_hash() {
+    //     fn check_no_errors_with_escaped_hash() -> Result<()> {
     //         let text = "#Header 1\\#
     //
     // \\##Header 2##
@@ -131,15 +133,16 @@ mod tests {
     //             .to_owned();
     //         let path = Path::new("test.md").to_path_buf();
     //         let arena = Arena::new();
-    //         let doc = Document::new(&arena, path, text).unwrap();
+    //         let doc = Document::new(&arena, path, text)?;
     //         let rule = MD020::default();
-    //         let actual = rule.check(&doc).unwrap();
+    //         let actual = rule.check(&doc)?;
     //         let expected = vec![];
     //         assert_eq!(actual, expected);
+    //         Ok(())
     //     }
 
     #[test]
-    fn check_no_errors_with_atx() {
+    fn check_no_errors_with_atx() -> Result<()> {
         let text = "#Header 1
 
 ## Header 2
@@ -148,52 +151,56 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD020::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_with_issue_number() {
+    fn check_no_errors_with_issue_number() -> Result<()> {
         let text = "# Header 1 #
 
 See [#4649](https://example.com) and [#4979](https://example.com) for details."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD020::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_with_list() {
+    fn check_no_errors_with_list() -> Result<()> {
         let text = "* #Header1#".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD020::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_with_code_block_comment() {
+    fn check_no_errors_with_code_block_comment() -> Result<()> {
         let text = "```
 #Header#
 ```"
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD020::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 }

@@ -59,7 +59,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_errors() {
+    fn check_errors() -> Result<()> {
         let text = "```
 $ ls
 $ cat foo
@@ -69,15 +69,16 @@ $ less bar
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD014::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![rule.to_violation(path, Sourcepos::from((1, 1, 6, 3)))];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_with_list() {
+    fn check_errors_with_list() -> Result<()> {
         let text = "* List
 
   ```
@@ -88,15 +89,16 @@ $ less bar
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD014::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![rule.to_violation(path, Sourcepos::from((3, 3, 7, 5)))];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_no_dollars() {
+    fn check_no_errors_no_dollars() -> Result<()> {
         let text = "```
 ls
 cat foo
@@ -106,15 +108,16 @@ less bar
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD014::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_variables() {
+    fn check_no_errors_variables() -> Result<()> {
         let text = "```
 $foo=bar
 $baz=quz
@@ -122,15 +125,16 @@ $baz=quz
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD014::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_showing_outputs() {
+    fn check_no_errors_showing_outputs() -> Result<()> {
         let text = "```
 $ ls
 foo bar
@@ -142,15 +146,16 @@ baz
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD014::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_no_dollars_with_list() {
+    fn check_no_errors_no_dollars_with_list() -> Result<()> {
         let text = "* List
   ```
   ls
@@ -160,15 +165,16 @@ baz
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD014::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_showing_outputs_with_list() {
+    fn check_no_errors_showing_outputs_with_list() -> Result<()> {
         let text = "* List
   ```
   $ ls
@@ -181,10 +187,11 @@ baz
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD014::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 }

@@ -74,7 +74,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_errors_false() {
+    fn check_errors_false() -> Result<()> {
         let text = "# A
 
 ## A
@@ -93,19 +93,20 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD024::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((3, 1, 3, 4))),
             rule.to_violation(path.clone(), Sourcepos::from((11, 1, 11, 5))),
             rule.to_violation(path, Sourcepos::from((15, 1, 15, 6))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_true() {
+    fn check_errors_true() -> Result<()> {
         let text = "# A
 
 ## A
@@ -124,18 +125,19 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD024::new(true);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((3, 1, 3, 4))),
             rule.to_violation(path, Sourcepos::from((15, 1, 15, 6))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_false() {
+    fn check_no_errors_false() -> Result<()> {
         let text = "# A
 
 ## B
@@ -154,15 +156,16 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD024::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_true() {
+    fn check_no_errors_true() -> Result<()> {
         let text = "# A
 
 ## B
@@ -181,10 +184,11 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD024::new(true);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 }

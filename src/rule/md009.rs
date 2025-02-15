@@ -58,43 +58,46 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_errors() {
+    fn check_errors() -> Result<()> {
         let text = "Text with a trailing space 
 And text with some trailing spaces   "
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD009::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((1, 27, 1, 27))),
             rule.to_violation(path, Sourcepos::from((2, 35, 2, 37))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors() {
+    fn check_no_errors() -> Result<()> {
         let text = "Text with no trailing spaces".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD009::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_full_with_space() {
+    fn check_no_errors_full_with_space() -> Result<()> {
         let text = "Text with no trailing spaces　".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD009::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 }

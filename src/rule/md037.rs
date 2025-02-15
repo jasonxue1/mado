@@ -79,7 +79,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_errors() {
+    fn check_errors() -> Result<()> {
         let text = "Here is some ** bold ** text.
 
 Here is some * italic * text.
@@ -90,9 +90,9 @@ Here is some more _ italic _ text."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD037::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((1, 14, 1, 23))),
             rule.to_violation(path.clone(), Sourcepos::from((3, 14, 3, 23))),
@@ -100,10 +100,11 @@ Here is some more _ italic _ text."
             rule.to_violation(path, Sourcepos::from((7, 19, 7, 28))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_with_space() {
+    fn check_errors_with_space() -> Result<()> {
         let text = "Here is some **bold ** text.
 
 Here is some * italic* text.
@@ -114,9 +115,9 @@ Here is some more _ italic_ text."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD037::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((1, 14, 1, 22))),
             rule.to_violation(path.clone(), Sourcepos::from((3, 14, 3, 22))),
@@ -124,10 +125,11 @@ Here is some more _ italic_ text."
             rule.to_violation(path, Sourcepos::from((7, 19, 7, 27))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors() {
+    fn check_no_errors() -> Result<()> {
         let text = "Here is some **bold** text.
 
 Here is some *italic* text.
@@ -138,15 +140,16 @@ Here is some more _italic_ text."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD037::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_nested() {
+    fn check_no_errors_nested() -> Result<()> {
         let text = "Here is ** some **bold** text ** .
 
 Here is * some *italic* text * .
@@ -157,27 +160,29 @@ Here is some _ more _italic_ text _ ."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD037::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_with_emoji() {
+    fn check_no_errors_with_emoji() -> Result<()> {
         let text = "This is an emoji :white_check_mark:".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD037::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_start_marker() {
+    fn check_no_errors_start_marker() -> Result<()> {
         let text = "Here is some **bold **text.
 
 Here is some *italic *text.
@@ -188,15 +193,16 @@ Here is some more _italic _text."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD037::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_end_marker() {
+    fn check_no_errors_end_marker() -> Result<()> {
         let text = "Here is some** bold** text.
 
 Here is some* italic* text.
@@ -207,10 +213,11 @@ Here is some more_ italic_ text."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD037::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 }

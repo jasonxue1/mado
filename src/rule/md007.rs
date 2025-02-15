@@ -83,7 +83,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_errors() {
+    fn check_errors() -> Result<()> {
         let text = "* List item
    * Nested list item indented by 3 spaces
        * More nested list item indented by 4 spaces
@@ -93,18 +93,19 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD007::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((2, 4, 3, 51))),
             rule.to_violation(path, Sourcepos::from((5, 4, 6, 51))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_for_multiple_indentation() {
+    fn check_errors_for_multiple_indentation() -> Result<()> {
         let text = "* List item
     * Nested list item indented by 4 spaces
         * More nested list item indented by 4 spaces
@@ -114,9 +115,9 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD007::new(2);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((2, 5, 3, 52))),
             rule.to_violation(path.clone(), Sourcepos::from((3, 9, 3, 52))),
@@ -124,11 +125,12 @@ mod tests {
             rule.to_violation(path, Sourcepos::from((6, 9, 6, 52))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     // TODO: This should be passed
     //     #[test]
-    //     fn check_errors_with_ol() {
+    //     fn check_errors_with_ol() -> Result<()> {
     //         let text = "* List item
     //    1. Nested list item indented by 3 spaces
     //        * More nested list item indented by 4 spaces
@@ -138,18 +140,19 @@ mod tests {
     //             .to_owned();
     //         let path = Path::new("test.md").to_path_buf();
     //         let arena = Arena::new();
-    //         let doc = Document::new(&arena, path.clone(), text).unwrap();
+    //         let doc = Document::new(&arena, path.clone(), text)?;
     //         let rule = MD007::default();
-    //         let actual = rule.check(&doc).unwrap();
+    //         let actual = rule.check(&doc)?;
     //         let expected = vec![
     //             rule.to_violation(path.clone(), Sourcepos::from((3, 8, 3, 51))),
     //             rule.to_violation(path, Sourcepos::from((6, 8, 6, 51))),
     //         ];
     //         assert_eq!(actual, expected);
+    //         Ok(())
     //     }
 
     #[test]
-    fn check_no_errors() {
+    fn check_no_errors() -> Result<()> {
         let text = "* List item
     * Nested list item indented by 4 spaces
         * More nested list item indented by 4 spaces
@@ -159,15 +162,16 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD007::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_ol() {
+    fn check_no_errors_ol() -> Result<()> {
         let text = "* List item
    1. Nested list item indented by 3 spaces
 * List Item
@@ -175,16 +179,17 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD007::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     // TODO: This should be passed
     //     #[test]
-    //     fn check_no_errors_with_blockquote() {
+    //     fn check_no_errors_with_blockquote() -> Result<()> {
     //         let text = "* List
     // > * List in blockquote
     // >* List in blockquote
@@ -192,10 +197,11 @@ mod tests {
     //         .to_owned();
     //         let path = Path::new("test.md").to_path_buf();
     //         let arena = Arena::new();
-    //         let doc = Document::new(&arena, path, text).unwrap();
+    //         let doc = Document::new(&arena, path, text)?;
     //         let rule = MD007::default();
-    //         let actual = rule.check(&doc).unwrap();
+    //         let actual = rule.check(&doc)?;
     //         let expected = vec![];
     //         assert_eq!(actual, expected);
+    //         Ok(())
     //     }
 }

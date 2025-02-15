@@ -81,7 +81,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_errors() {
+    fn check_errors() -> Result<()> {
         let text = "text
 ```
 code
@@ -100,9 +100,9 @@ text"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD031::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((2, 1, 2, 3))),
             rule.to_violation(path.clone(), Sourcepos::from((7, 1, 7, 3))),
@@ -110,10 +110,11 @@ text"
             rule.to_violation(path, Sourcepos::from((14, 1, 14, 3))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_with_code() {
+    fn check_errors_with_code() -> Result<()> {
         let text = "```
 code
 ```
@@ -126,9 +127,9 @@ code
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD031::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((3, 1, 3, 3))),
             rule.to_violation(path.clone(), Sourcepos::from((4, 1, 4, 3))),
@@ -136,10 +137,11 @@ code
             rule.to_violation(path, Sourcepos::from((7, 1, 7, 3))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_with_list() {
+    fn check_errors_with_list() -> Result<()> {
         let text = "* list
 ```
 code
@@ -158,9 +160,9 @@ code
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD031::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((2, 1, 2, 3))),
             rule.to_violation(path.clone(), Sourcepos::from((7, 1, 7, 3))),
@@ -168,10 +170,11 @@ code
             rule.to_violation(path, Sourcepos::from((14, 1, 14, 3))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors() {
+    fn check_no_errors() -> Result<()> {
         let text = "text
 
 ```
@@ -194,15 +197,16 @@ text"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD031::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_noerrors_code() {
+    fn check_noerrors_code() -> Result<()> {
         let text = "```
 code
 ```
@@ -217,15 +221,16 @@ code
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD031::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_indented() {
+    fn check_no_errors_indented() -> Result<()> {
         let text = "Some text
     Code block
 
@@ -234,15 +239,16 @@ Some more text"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD031::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_with_list() {
+    fn check_no_errors_with_list() -> Result<()> {
         let text = "* List
 
 ```
@@ -257,10 +263,11 @@ Some more text"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD031::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 }

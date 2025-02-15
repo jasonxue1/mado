@@ -123,31 +123,32 @@ mod tests {
     use super::*;
 
     #[test]
-    fn options_to_config_none_none_false_none() {
+    fn options_to_config_none_none_false_none() -> Result<()> {
         let options = Options {
             config_path: None,
             output_format: None,
             quiet: false,
             exclude: None,
         };
-        let actual = options.to_config().unwrap();
+        let actual = options.to_config()?;
         let mut expected = Config::default();
         expected.lint.md013.code_blocks = false;
         expected.lint.md013.tables = false;
         expected.lint.md024.allow_different_nesting = true;
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn options_to_config_some_some_true_some() {
-        let exclude = vec![Glob::new("README.md").unwrap()];
+    fn options_to_config_some_some_true_some() -> Result<()> {
+        let exclude = vec![Glob::new("README.md").into_diagnostic()?];
         let options = Options {
             config_path: Some(Path::new("mado.toml").to_path_buf()),
             output_format: Some(Format::Mdl),
             quiet: true,
             exclude: Some(exclude.clone()),
         };
-        let actual = options.to_config().unwrap();
+        let actual = options.to_config()?;
         let mut expected = Config::default();
         expected.lint.output_format = Format::Mdl;
         expected.lint.quiet = true;
@@ -156,5 +157,6 @@ mod tests {
         expected.lint.md013.tables = false;
         expected.lint.md024.allow_different_nesting = true;
         assert_eq!(actual, expected);
+        Ok(())
     }
 }

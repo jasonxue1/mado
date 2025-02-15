@@ -109,43 +109,45 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_errors_one() {
+    fn check_errors_one() -> Result<()> {
         let text = "1. Do this.
 2. Do that.
 3. Done."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD029::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((2, 1, 2, 11))),
             rule.to_violation(path, Sourcepos::from((3, 1, 3, 8))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_ordered() {
+    fn check_errors_ordered() -> Result<()> {
         let text = "1. Do this.
 1. Do that.
 1. Done."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD029::new(OrderedListStyle::Ordered);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((2, 1, 2, 11))),
             rule.to_violation(path, Sourcepos::from((3, 1, 3, 8))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_recursive() {
+    fn check_errors_recursive() -> Result<()> {
         let text = "* Parent list
     1. Do this.
     2. Do that.
@@ -153,48 +155,51 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD029::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((3, 5, 3, 15))),
             rule.to_violation(path, Sourcepos::from((4, 5, 4, 12))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_one() {
+    fn check_no_errors_one() -> Result<()> {
         let text = "1. Do this.
 1. Do that.
 1. Done."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD029::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_ordered() {
+    fn check_no_errors_ordered() -> Result<()> {
         let text = "1. Do this.
 2. Do that.
 3. Done."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD029::new(OrderedListStyle::Ordered);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_recursive() {
+    fn check_no_errors_recursive() -> Result<()> {
         let text = "* Parent list
     1. Do this.
     1. Do that.
@@ -202,10 +207,11 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD029::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 }

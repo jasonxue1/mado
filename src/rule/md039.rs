@@ -73,27 +73,28 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_errors() {
+    fn check_errors() -> Result<()> {
         let text = "[ a link ](http://www.example.com/)
 [a link ](http://www.example.com/)
 [ a link](http://www.example.com/)"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD039::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((1, 2, 1, 9))),
             rule.to_violation(path.clone(), Sourcepos::from((2, 2, 2, 8))),
             rule.to_violation(path, Sourcepos::from((3, 2, 3, 8))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     // NOTE: These results may differ from mdl
     #[test]
-    fn check_errors_code() {
+    fn check_errors_code() -> Result<()> {
         let text = "[ a `link` ](http://www.example.com/)
 [ `link` ](http://www.example.com)
 [`link` ](http://www.example.com)
@@ -101,9 +102,9 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD039::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((1, 2, 1, 4))),
             rule.to_violation(path.clone(), Sourcepos::from((2, 2, 2, 2))),
@@ -111,55 +112,60 @@ mod tests {
             rule.to_violation(path, Sourcepos::from((4, 2, 4, 2))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors() {
+    fn check_no_errors() -> Result<()> {
         let text = "[a link](http://www.example.com/)".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD039::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_url() {
+    fn check_no_errors_url() -> Result<()> {
         let text = "[a link]( http://www.example.com/ )".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD039::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_bracket() {
+    fn check_no_errors_bracket() -> Result<()> {
         let text = "< http://www.example.com/ >".to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD039::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_code() {
+    fn check_no_errors_code() -> Result<()> {
         let text = "[a `link`](http://www.example.com)
 [`link`](http://www.example.com)"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD039::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 }

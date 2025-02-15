@@ -84,7 +84,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_errors() {
+    fn check_errors() -> Result<()> {
         let text = "Some text
 
 > a quote
@@ -113,9 +113,9 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD028::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((5, 1, 5, 1))),
             // NOTE: This ranged result may differ from mdl
@@ -124,10 +124,11 @@ mod tests {
             rule.to_violation(path, Sourcepos::from((17, 1, 17, 1))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors() {
+    fn check_no_errors() -> Result<()> {
         let text = "Some text
 
 > a quote
@@ -156,15 +157,16 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD028::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_with_some_text_in_between() {
+    fn check_no_errors_with_some_text_in_between() -> Result<()> {
         let text = "> This is a blockquote.
 
 And Jimmy also said:
@@ -173,16 +175,17 @@ And Jimmy also said:
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD028::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     // NOTE: This case may differ from mdl
     // #[test]
-    // fn check_no_errors_nested() {
+    // fn check_no_errors_nested() -> Result<()> {
     //     let text = "* List
     // > This is a blockquote
     // > which is immediately followed by
@@ -192,10 +195,11 @@ And Jimmy also said:
     //         .to_owned();
     //     let path = Path::new("test.md").to_path_buf();
     //     let arena = Arena::new();
-    //     let doc = Document::new(&arena, path, text).unwrap();
+    //     let doc = Document::new(&arena, path, text)?;
     //     let rule = MD028::new();
-    //     let actual = rule.check(&doc).unwrap();
+    //     let actual = rule.check(&doc)?;
     //     let expected = vec![];
     //     assert_eq!(actual, expected);
+    //     Ok(())
     // }
 }

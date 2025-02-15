@@ -86,7 +86,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_errors() {
+    fn check_errors() -> Result<()> {
         let text = "* Item 1
     * Nested item 1
     * Nested item 2
@@ -94,15 +94,16 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD005::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![rule.to_violation(path, Sourcepos::from((4, 4, 4, 22)))];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_for_empty_item_text() {
+    fn check_errors_for_empty_item_text() -> Result<()> {
         let text = "*
     *
     *
@@ -110,15 +111,16 @@ mod tests {
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD005::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![rule.to_violation(path, Sourcepos::from((4, 4, 4, 4)))];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_for_lists() {
+    fn check_errors_for_lists() -> Result<()> {
         let text = "* List 1
   * item 1
   * item 2
@@ -131,19 +133,20 @@ Some text
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD005::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((8, 4, 8, 23))),
             rule.to_violation(path, Sourcepos::from((9, 4, 9, 26))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     // NOTE: This test case is not marked as a violation in markdownlint
     #[test]
-    fn check_errors_with_test_and_list_in_list() {
+    fn check_errors_with_test_and_list_in_list() -> Result<()> {
         let text = "* List 1
   * Item 1
   * Item 2
@@ -155,18 +158,19 @@ Some text
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD005::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((7, 4, 7, 11))),
             rule.to_violation(path, Sourcepos::from((8, 4, 8, 11))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors() {
+    fn check_no_errors() -> Result<()> {
         let text = "* Item 1
     * Nested item 1
     * Nested item 2
@@ -174,15 +178,16 @@ Some text
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD005::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_for_lists() {
+    fn check_no_errors_for_lists() -> Result<()> {
         let text = "* List 1
     * item 1
     * item 2
@@ -195,10 +200,11 @@ Some text
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD005::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 }

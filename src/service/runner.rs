@@ -120,13 +120,14 @@ mod tests {
     use super::*;
 
     #[test]
-    fn parallel_lint_runner_run() {
+    fn parallel_lint_runner_run() -> Result<()> {
         let mut config = Config::default();
         config.lint.rules = vec![];
 
         let patterns = [Path::new(".").to_path_buf()];
-        let runner = ParallelLintRunner::new(&patterns, config, 0).unwrap();
-        let actual = runner.run().unwrap();
+        let runner = ParallelLintRunner::new(&patterns, config, 0)?;
+        let actual = runner.run()?;
         assert_eq!(actual, vec![]);
+        Ok(())
     }
 }

@@ -53,13 +53,14 @@ mod tests {
     use super::WalkParallelBuilder;
 
     #[test]
-    fn build() {
+    #[allow(clippy::unwrap_used)]
+    fn build() -> miette::Result<()> {
         let paths = vec![
             Path::new("action").to_path_buf(),
             Path::new("mado.toml").to_path_buf(),
             Path::new("README.md").to_path_buf(),
         ];
-        let builder = WalkParallelBuilder::build(&paths, true, true).unwrap();
+        let builder = WalkParallelBuilder::build(&paths, true, true)?;
         let shared_paths = Arc::new(Mutex::new(vec![]));
         let walker = |either_entry: Result<DirEntry, _>| {
             if let Ok(entry) = either_entry {
@@ -77,6 +78,7 @@ mod tests {
             Path::new("mado.toml").to_path_buf(),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]

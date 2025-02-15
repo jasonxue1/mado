@@ -243,19 +243,20 @@ mod tests {
     use super::*;
 
     #[test]
-    fn exclude_set() {
+    fn exclude_set() -> Result<()> {
         let config = Lint {
             exclude: vec![
-                Glob::new("*.md").unwrap(),
-                Glob::new("foo/bar/baz/test.md").unwrap(),
-                Glob::new("foo/**/test.md").unwrap(),
+                Glob::new("*.md").into_diagnostic()?,
+                Glob::new("foo/bar/baz/test.md").into_diagnostic()?,
+                Glob::new("foo/**/test.md").into_diagnostic()?,
             ],
             ..Lint::default()
         };
 
-        let set = config.exclude_set().unwrap();
+        let set = config.exclude_set()?;
 
         assert_eq!(set.matches("foo/bar/test.md"), vec![0, 2]);
+        Ok(())
     }
 
     #[test]

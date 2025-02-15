@@ -64,26 +64,28 @@ mod tests {
     use pretty_assertions::assert_eq;
 
     #[test]
-    fn load() {
+    fn load() -> Result<()> {
         let path = Path::new("mado.toml");
-        let actual = Config::load(path).unwrap();
+        let actual = Config::load(path)?;
         let mut expected = Config::default();
         expected.lint.md013.code_blocks = false;
         expected.lint.md013.tables = false;
         expected.lint.md024.allow_different_nesting = true;
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn resolve() {
-        let actual = Config::resolve().unwrap();
+    fn resolve() -> Result<()> {
+        let actual = Config::resolve()?;
         let path = Path::new("mado.toml");
-        let expected = Config::load(path).unwrap();
+        let expected = Config::load(path)?;
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn deserialize() {
+    fn deserialize() -> Result<()> {
         let text = r#"[lint]
 output-format = "mdl"
 rules = ["MD027"]
@@ -91,11 +93,12 @@ rules = ["MD027"]
 [lint.md002]
 level = 2
 "#;
-        let actual: Config = toml::from_str(text).unwrap();
+        let actual: Config = toml::from_str(text).into_diagnostic()?;
         let mut expected = Config::default();
         expected.lint.output_format = Format::Mdl;
         expected.lint.rules = vec![RuleSet::MD027];
         expected.lint.md002 = MD002 { level: 2 };
         assert_eq!(actual, expected);
+        Ok(())
     }
 }

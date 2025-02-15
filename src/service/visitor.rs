@@ -95,27 +95,28 @@ mod tests {
     use super::*;
 
     #[test]
-    fn markdown_lint_visitor_visit_inner() {
+    fn markdown_lint_visitor_visit_inner() -> miette::Result<()> {
         let (tx, rx) = mpsc::sync_channel::<Vec<Violation>>(0);
         let linter = Linter::new(vec![]);
         let exclusion = GlobSet::empty();
         let visitor = MarkdownLintVisitor::new(linter, exclusion, tx);
 
         for entry in Walk::new(".") {
-            visitor.visit_inner(entry).unwrap();
+            visitor.visit_inner(entry)?;
         }
 
         drop(visitor);
         assert!(rx.recv().is_err()); // Because rx has not received any messages
+        Ok(())
     }
 
     #[test]
-    fn markdown_lint_visitor_factory_build() {
+    fn markdown_lint_visitor_factory_build() -> miette::Result<()> {
         let mut config = Config::default();
         config.lint.rules = vec![];
 
         let (tx, rx) = mpsc::sync_channel::<Vec<Violation>>(0);
-        let mut factory = MarkdownLintVisitorFactory::new(config, tx).unwrap();
+        let mut factory = MarkdownLintVisitorFactory::new(config, tx)?;
         let mut visitor = factory.build();
 
         for entry in Walk::new(".") {
@@ -125,5 +126,6 @@ mod tests {
         drop(visitor);
         drop(factory);
         assert!(rx.recv().is_err()); // Because rx has not received any messages
+        Ok(())
     }
 }
