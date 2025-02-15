@@ -139,79 +139,83 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_errors_for_consistent() {
+    fn check_errors_for_consistent() -> Result<()> {
         let text = "* Item 1
 + Item 2
 - Item 3"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD004::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((2, 1, 2, 8))),
             rule.to_violation(path, Sourcepos::from((3, 1, 3, 8))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_for_asterisk() {
+    fn check_errors_for_asterisk() -> Result<()> {
         let text = "* Item 1
 + Item 2
 - Item 3"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD004::new(ListStyle::Asterisk);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((2, 1, 2, 8))),
             rule.to_violation(path, Sourcepos::from((3, 1, 3, 8))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_for_plus() {
+    fn check_errors_for_plus() -> Result<()> {
         let text = "* Item 1
 + Item 2
 - Item 3"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD004::new(ListStyle::Plus);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((1, 1, 1, 8))),
             rule.to_violation(path, Sourcepos::from((3, 1, 3, 8))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_for_dash() {
+    fn check_errors_for_dash() -> Result<()> {
         let text = "* Item 1
 + Item 2
 - Item 3"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD004::new(ListStyle::Dash);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((1, 1, 1, 8))),
             rule.to_violation(path, Sourcepos::from((2, 1, 2, 8))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_for_sublist() {
+    fn check_errors_for_sublist() -> Result<()> {
         let text = "* Item 1
 * Item 2
   - Item 2a
@@ -226,78 +230,83 @@ Other stuff
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD004::new(ListStyle::Sublist);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((10, 1, 10, 8))),
             rule.to_violation(path, Sourcepos::from((11, 1, 11, 8))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_for_consistent() {
+    fn check_no_errors_for_consistent() -> Result<()> {
         let text = "* Item 1
 * Item 2
 * Item 3"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD004::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_for_asterisk() {
+    fn check_no_errors_for_asterisk() -> Result<()> {
         let text = "* Item 1
 * Item 2
 * Item 3"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD004::new(ListStyle::Asterisk);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_for_plus() {
+    fn check_no_errors_for_plus() -> Result<()> {
         let text = "+ Item 1
 + Item 2
 + Item 3"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD004::new(ListStyle::Plus);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_for_dash() {
+    fn check_no_errors_for_dash() -> Result<()> {
         let text = "- Item 1
 - Item 2
 - Item 3"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD004::new(ListStyle::Dash);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_for_sublist() {
+    fn check_no_errors_for_sublist() -> Result<()> {
         let text = "* Item 1
 * Item 2
   - Item 2a
@@ -312,26 +321,28 @@ Other stuff
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD004::new(ListStyle::Sublist);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     // NOTE: This test case is marked as a violation in markdownlint
     #[test]
-    fn check_no_errors_with_blockquote() {
+    fn check_no_errors_with_blockquote() -> Result<()> {
         let text = ">- Item 1
 >- Item 2
 >- Item 3"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD004::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 }

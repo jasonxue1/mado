@@ -107,7 +107,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_errors_for_consistent() {
+    fn check_errors_for_consistent() -> Result<()> {
         let text = "# ATX style H1
 
 ## Closed ATX style H2 ##
@@ -117,18 +117,19 @@ Setext style H1
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD003::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((3, 1, 3, 25))),
             rule.to_violation(path, Sourcepos::from((5, 1, 6, 15))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_for_atx() {
+    fn check_errors_for_atx() -> Result<()> {
         let text = "# ATX style H1
 
 ## Closed ATX style H2 ##
@@ -138,18 +139,19 @@ Setext style H1
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD003::new(HeadingStyle::Atx);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((3, 1, 3, 25))),
             rule.to_violation(path, Sourcepos::from((5, 1, 6, 15))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_for_atx_closed() {
+    fn check_errors_for_atx_closed() -> Result<()> {
         let text = "# ATX style H1
 
 ## Closed ATX style H2 ##
@@ -159,18 +161,19 @@ Setext style H1
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD003::new(HeadingStyle::AtxClosed);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((1, 1, 1, 14))),
             rule.to_violation(path, Sourcepos::from((5, 1, 6, 15))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_for_setext() {
+    fn check_errors_for_setext() -> Result<()> {
         let text = "# ATX style H1
 
 ## Closed ATX style H2 ##
@@ -180,18 +183,19 @@ Setext style H1
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD003::new(HeadingStyle::Setext);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((1, 1, 1, 14))),
             rule.to_violation(path, Sourcepos::from((3, 1, 3, 25))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_for_setext_with_atx() {
+    fn check_errors_for_setext_with_atx() -> Result<()> {
         let text = "# ATX style H1
 
 ## ATX style H2
@@ -200,63 +204,67 @@ Setext style H1
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD003::new(HeadingStyle::SetextWithAtx);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((1, 1, 1, 14))),
             rule.to_violation(path, Sourcepos::from((3, 1, 3, 15))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_for_consistent() {
+    fn check_no_errors_for_consistent() -> Result<()> {
         let text = "# ATX style H1
 
 ## ATX style H2"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD003::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_for_atx() {
+    fn check_no_errors_for_atx() -> Result<()> {
         let text = "# ATX style H1
 
 ## ATX style H2"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD003::new(HeadingStyle::Atx);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_for_atx_closed() {
+    fn check_no_errors_for_atx_closed() -> Result<()> {
         let text = "# ATX style H1 #
 
 ## ATX style H2 ##"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD003::new(HeadingStyle::AtxClosed);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_for_setext() {
+    fn check_no_errors_for_setext() -> Result<()> {
         let text = "Setext style H1
 ===============
 
@@ -265,15 +273,16 @@ Setext style H2
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD003::new(HeadingStyle::Setext);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_for_setext_with_atx() {
+    fn check_no_errors_for_setext_with_atx() -> Result<()> {
         let text = "Setext style H1
 ===============
 
@@ -284,15 +293,16 @@ Setext style H2
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD003::new(HeadingStyle::SetextWithAtx);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_with_front_matter() {
+    fn check_no_errors_with_front_matter() -> Result<()> {
         let text = r#"---
 author: "John Smith"
 ---
@@ -301,10 +311,11 @@ author: "John Smith"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD003::new(HeadingStyle::Consistent);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 }

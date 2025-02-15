@@ -120,22 +120,23 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_errors() {
+    fn check_errors() -> Result<()> {
         let text = "
 IF THIS LINE IS THE MAXIMUM LENGTH
 This line is a violation because there are spaces beyond that length"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD013::new(34, true, true);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![rule.to_violation(path, Sourcepos::from((3, 35, 3, 68)))];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_with_other_nodes() {
+    fn check_errors_with_other_nodes() -> Result<()> {
         let text = "
 IF THIS LINE IS THE MAXIMUM LENGTH
 This line is a violation because [there are spaces beyond that](https://example.com)
@@ -143,18 +144,19 @@ This line is a violation because `there are spaces beyond that`"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD013::new(34, true, true);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((3, 35, 3, 84))),
             rule.to_violation(path, Sourcepos::from((4, 35, 4, 63))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_table() {
+    fn check_errors_table() -> Result<()> {
         let text = "
 IF THIS LINE IS THE MAXIMUM LENGTH
 | foo | bar | baz | foo | bar | baz |
@@ -163,18 +165,19 @@ IF THIS LINE IS THE MAXIMUM LENGTH
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD013::new(34, true, true);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((3, 35, 3, 37))),
             rule.to_violation(path, Sourcepos::from((5, 35, 5, 37))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_code_block() {
+    fn check_errors_code_block() -> Result<()> {
         let text = "
 IF THIS LINE IS THE MAXIMUM LENGTH
 
@@ -184,15 +187,16 @@ puts 'This line is a violation because there are spaces beyond that length'
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD013::new(34, true, true);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![rule.to_violation(path, Sourcepos::from((5, 35, 5, 75)))];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors() {
+    fn check_no_errors() -> Result<()> {
         let text = "
 IF THIS LINE IS THE MAXIMUM LENGTH
 This line is okay because there are-no-spaces-beyond-that-length
@@ -200,15 +204,16 @@ This-line-is-okay-because-there-are-no-spaces-anywhere-within"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD013::new(34, true, true);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_with_other_nodes() {
+    fn check_no_errors_with_other_nodes() -> Result<()> {
         let text = "
 IF THIS LINE IS THE MAXIMUM LENGTH
 This line is okay because there [are-no-spaces-beyond-that-length](https://example.com)
@@ -216,15 +221,16 @@ This line is okay because there `are-no-spaces-beyond-that-length`"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD013::new(34, true, true);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_table() {
+    fn check_no_errors_table() -> Result<()> {
         let text = "
 IF THIS LINE IS THE MAXIMUM LENGTH
 | foo | bar | baz | foo | bar | baz |
@@ -233,15 +239,16 @@ IF THIS LINE IS THE MAXIMUM LENGTH
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD013::new(34, true, false);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_table_without_spaces() {
+    fn check_no_errors_table_without_spaces() -> Result<()> {
         let text = "
 IF THIS LINE IS THE MAXIMUM LENGTH
 |foo|bar|baz|foo|bar|baz|foo|bar|baz|foo|bar|baz|foo|bar|baz|foo|bar|baz|foo|bar|baz|
@@ -250,15 +257,16 @@ IF THIS LINE IS THE MAXIMUM LENGTH
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD013::new(34, true, true);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_code_block() {
+    fn check_no_errors_code_block() -> Result<()> {
         let text = "
 IF THIS LINE IS THE MAXIMUM LENGTH
 
@@ -268,15 +276,16 @@ puts 'This line is a violation because there are spaces beyond that length'
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD013::new(34, false, true);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_code_block_without_spaces() {
+    fn check_no_errors_code_block_without_spaces() -> Result<()> {
         let text = "
 IF THIS LINE IS THE MAXIMUM LENGTH
 
@@ -287,15 +296,16 @@ puts 'This-line-is-okay-because-there-are-no-spaces-anywhere-within'
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD013::new(34, true, true);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_with_tables_false_and_code_blocks_false() {
+    fn check_no_errors_with_tables_false_and_code_blocks_false() -> Result<()> {
         let text = r"
 IF THIS LINE IS THE MAXIMUM LENGTH
 ```ruby
@@ -304,10 +314,11 @@ puts 'This line is a violation because there are spaces beyond that length'
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD013::new(34, false, false);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 }

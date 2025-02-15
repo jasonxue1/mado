@@ -94,7 +94,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_errors_with_fenced() {
+    fn check_errors_with_fenced() -> Result<()> {
         let text = "Some text.
 
     Code block
@@ -103,15 +103,16 @@ Some more text."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD046::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![rule.to_violation(path, Sourcepos::from((3, 5, 4, 0)))];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_with_indented() {
+    fn check_errors_with_indented() -> Result<()> {
         let text = "Some text.
 
 ```ruby
@@ -122,15 +123,16 @@ Some more text."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD046::new(CodeBlockStyle::Indented);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![rule.to_violation(path, Sourcepos::from((3, 1, 5, 3)))];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_with_consistent() {
+    fn check_errors_with_consistent() -> Result<()> {
         let text = "Some text.
 
 ```ruby
@@ -144,15 +146,16 @@ Some more more text."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD046::new(CodeBlockStyle::Consistent);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![rule.to_violation(path, Sourcepos::from((8, 5, 9, 0)))];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_with_fenced() {
+    fn check_no_errors_with_fenced() -> Result<()> {
         let text = "Some text.
 
 ```ruby
@@ -163,15 +166,16 @@ Some more text."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD046::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_with_indented() {
+    fn check_no_errors_with_indented() -> Result<()> {
         let text = "Some text.
 
     Code block
@@ -180,15 +184,16 @@ Some more text."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD046::new(CodeBlockStyle::Indented);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_with_consistent_fenced() {
+    fn check_no_errors_with_consistent_fenced() -> Result<()> {
         let text = "Some text.
 
 ```ruby
@@ -204,15 +209,16 @@ Some more more text."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD046::new(CodeBlockStyle::Consistent);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_with_consistent_indented() {
+    fn check_no_errors_with_consistent_indented() -> Result<()> {
         let text = "Some text.
 
     Code block
@@ -225,10 +231,11 @@ Some more more text."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD046::new(CodeBlockStyle::Consistent);
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 }

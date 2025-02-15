@@ -107,7 +107,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_errors_paragraph() {
+    fn check_errors_paragraph() -> Result<()> {
         let text = ">  Indented text
 >  More indented
 > Not indented
@@ -118,9 +118,9 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD027::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((1, 4, 1, 16))),
             rule.to_violation(path.clone(), Sourcepos::from((2, 4, 2, 16))),
@@ -130,10 +130,11 @@ mod tests {
             rule.to_violation(path, Sourcepos::from((7, 4, 7, 30))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_list() {
+    fn check_errors_list() -> Result<()> {
         let text = ">  * foo
 > * bar
 >   * baz
@@ -141,18 +142,19 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD027::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((1, 4, 1, 8))),
             rule.to_violation(path, Sourcepos::from((4, 4, 4, 8))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_code_block() {
+    fn check_errors_code_block() -> Result<()> {
         let text = ">  ```
 >  foo
 > bar
@@ -161,9 +163,9 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD027::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path, Sourcepos::from((1, 4, 5, 6))),
             // TODO: This results are expected
@@ -173,19 +175,20 @@ mod tests {
             // rule.to_violation(path, Sourcepos::from((5, 4, 5, 6))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_html_block() {
+    fn check_errors_html_block() -> Result<()> {
         let text = ">  <div>
 > <p>some text</p>
 >   </div>"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD027::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path, Sourcepos::from((1, 4, 3, 10))),
             // TODO: This results are expected
@@ -193,38 +196,40 @@ mod tests {
             // rule.to_violation(path, Sourcepos::from((3, 4, 3, 9))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     // NOTE: This case is not an error in markdownlint
     #[test]
-    fn check_errors_with_nested_block_quotes() {
+    fn check_errors_with_nested_block_quotes() -> Result<()> {
         let text = ">>>  This is multiple blockquotes with bad indentation.
 >>> More multiple blockquotes with good indentation.
 >>>  More multiple blockquotes with bad indentation."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD027::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((1, 6, 1, 55))),
             rule.to_violation(path, Sourcepos::from((3, 6, 3, 52))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_with_nested_block_quotes2() {
+    fn check_errors_with_nested_block_quotes2() -> Result<()> {
         let text = ">  >  >  This is multiple blockquote with bad indentation.
 > > > More multiple blockquote with good indentation.
 >  >  >  More multiple blockquote with bad indentation."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD027::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((1, 4, 3, 55))),
             rule.to_violation(path.clone(), Sourcepos::from((1, 7, 3, 55))),
@@ -239,10 +244,11 @@ mod tests {
             // rule.to_violation(path, Sourcepos::from((3, 10, 3, 55))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_paragraph() {
+    fn check_no_errors_paragraph() -> Result<()> {
         let text = "> Text
 > More text
 > *Emph* and text
@@ -252,15 +258,16 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD027::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_list() {
+    fn check_no_errors_list() -> Result<()> {
         let text = "> * foo
 > * bar
 >   * baz
@@ -268,15 +275,16 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD027::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_code_block() {
+    fn check_no_errors_code_block() -> Result<()> {
         let text = "> ```
 > foo
 > bar
@@ -285,70 +293,75 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD027::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_html_block() {
+    fn check_no_errors_html_block() -> Result<()> {
         let text = "> <div>
 > <p>some text</p>
 > </div>"
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD027::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_with_nested_block_quotes() {
+    fn check_no_errors_with_nested_block_quotes() -> Result<()> {
         let text = ">>> This is multiple blockquotes with good indentation.
 >>> More multiple blockquotes with good indentation.
 >>> More multiple blockquotes with good indentation."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD027::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_with_nested_block_quotes2() {
+    fn check_no_errors_with_nested_block_quotes2() -> Result<()> {
         let text = "> > > This is multiple blockquote with good indentation.
 > > > More multiple blockquote with good indentation.
 > > > More multiple blockquote with good indentation."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD027::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_with_nested_block_quotes3() {
+    fn check_no_errors_with_nested_block_quotes3() -> Result<()> {
         let text = ">>> This is multiple blockquote with good indentation.
     More multiple blockquote with good indentation.
     More multiple blockquote with good indentation."
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD027::new();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 }

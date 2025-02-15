@@ -118,7 +118,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_errors_for_consistent() {
+    fn check_errors_for_consistent() -> Result<()> {
         let text = "---
 
 - - -
@@ -131,9 +131,9 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD035::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((3, 1, 3, 5))),
             rule.to_violation(path.clone(), Sourcepos::from((5, 1, 5, 3))),
@@ -141,10 +141,11 @@ mod tests {
             rule.to_violation(path, Sourcepos::from((9, 1, 9, 4))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_errors_for_custom() {
+    fn check_errors_for_custom() -> Result<()> {
         let text = "---
 
 - - -
@@ -157,9 +158,9 @@ mod tests {
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let rule = MD035::new(HorizontalRuleStyle::Custom("***".to_owned()));
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![
             rule.to_violation(path.clone(), Sourcepos::from((1, 1, 1, 3))),
             rule.to_violation(path.clone(), Sourcepos::from((3, 1, 3, 5))),
@@ -167,35 +168,38 @@ mod tests {
             rule.to_violation(path, Sourcepos::from((9, 1, 9, 4))),
         ];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_for_consistent() {
+    fn check_no_errors_for_consistent() -> Result<()> {
         let text = "---
 
 ---"
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD035::default();
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]
-    fn check_no_errors_for_custom() {
+    fn check_no_errors_for_custom() -> Result<()> {
         let text = "***
 
 ***"
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         let rule = MD035::new(HorizontalRuleStyle::Custom("***".to_owned()));
-        let actual = rule.check(&doc).unwrap();
+        let actual = rule.check(&doc)?;
         let expected = vec![];
         assert_eq!(actual, expected);
+        Ok(())
     }
 }

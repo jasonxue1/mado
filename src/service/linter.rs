@@ -52,7 +52,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check() {
+    fn check() -> Result<()> {
         let text = "---
 comments: false
 description: Some text
@@ -62,13 +62,14 @@ description: Some text
             .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
-        let doc = Document::new(&arena, path.clone(), text).unwrap();
+        let doc = Document::new(&arena, path.clone(), text)?;
         let md026 = MD026::default();
         let rules = vec![Rule::MD026(md026.clone())];
         let linter = Linter::new(rules);
-        let actual = linter.check(&doc).unwrap();
+        let actual = linter.check(&doc)?;
         let expected = vec![md026.to_violation(path, Sourcepos::from((6, 1, 6, 19)))];
         assert_eq!(actual, expected);
+        Ok(())
     }
 
     #[test]

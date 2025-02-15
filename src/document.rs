@@ -65,7 +65,7 @@ mod tests {
     }
 
     #[test]
-    fn front_matter_some() {
+    fn front_matter_some() -> Result<()> {
         let front_matter = "---
 foo: bar
 ---
@@ -75,25 +75,28 @@ foo: bar
         let text = format!("{front_matter}text");
         let arena = Arena::new();
         let path = Path::new("test.md").to_path_buf();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         assert_eq!(doc.front_matter(), Some(front_matter));
+        Ok(())
     }
 
     #[test]
-    fn front_matter_none() {
+    fn front_matter_none() -> Result<()> {
         let text = "text".to_owned();
         let arena = Arena::new();
         let path = Path::new("test.md").to_path_buf();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         assert_eq!(doc.front_matter(), None);
+        Ok(())
     }
 
     #[test]
-    fn front_matter_empty() {
+    fn front_matter_empty() -> Result<()> {
         let text = String::new();
         let arena = Arena::new();
         let path = Path::new("test.md").to_path_buf();
-        let doc = Document::new(&arena, path, text).unwrap();
+        let doc = Document::new(&arena, path, text)?;
         assert_eq!(doc.front_matter(), None);
+        Ok(())
     }
 }

@@ -16,19 +16,23 @@ pub fn inline_text_of<'a>(root: &'a AstNode<'a>) -> String {
 #[cfg(test)]
 mod tests {
     use comrak::{parse_document, Arena, Options};
+    use miette::{Context as _, Result};
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     // TODO: Test more inline nodes
     #[test]
-    fn test_inline_text_of() {
+    fn test_inline_text_of() -> Result<()> {
         let text = "# Heading with `code`, [link](http://example.com) and **bold**";
         let arena = Arena::new();
         let ast = parse_document(&arena, text, &Options::default());
-        let heading = ast.first_child().unwrap();
+        let heading = ast
+            .first_child()
+            .wrap_err("failed to get the first child")?;
         let actual = inline_text_of(heading);
         let expected = "Heading with `code`, link and bold";
         assert_eq!(actual, expected);
+        Ok(())
     }
 }

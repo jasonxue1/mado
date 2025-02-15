@@ -28,22 +28,25 @@ impl From<&MD035> for rule::MD035 {
 
 #[cfg(test)]
 mod tests {
+    use miette::{IntoDiagnostic as _, Result};
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
-    fn deserialize_for_horizontal_rule_style_consistent() {
+    fn deserialize_for_horizontal_rule_style_consistent() -> Result<()> {
         let text = r#"style = "consistent""#;
-        let config: MD035 = toml::from_str(text).unwrap();
+        let config: MD035 = toml::from_str(text).into_diagnostic()?;
         assert_eq!(config.style, HorizontalRuleStyle::Consistent);
+        Ok(())
     }
 
     #[test]
-    fn deserialize_for_horizontal_rule_style_custom() {
+    fn deserialize_for_horizontal_rule_style_custom() -> Result<()> {
         let text = r#"style = "~~~""#;
-        let config: MD035 = toml::from_str(text).unwrap();
+        let config: MD035 = toml::from_str(text).into_diagnostic()?;
         assert_eq!(config.style, HorizontalRuleStyle::Custom("~~~".to_owned()));
+        Ok(())
     }
 
     #[test]
