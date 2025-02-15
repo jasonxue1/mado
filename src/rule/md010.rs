@@ -52,16 +52,19 @@ mod tests {
     use std::path::Path;
 
     use comrak::Arena;
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors() -> Result<()> {
-        let text = "Some text
+        let text = indoc! {"
+            Some text
 
-	* hard tab character used to indent the list item"
-            .to_owned();
+            	* hard tab character used to indent the list item
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -74,10 +77,12 @@ mod tests {
 
     #[test]
     fn check_no_errors() -> Result<()> {
-        let text = "Some text
+        let text = indoc! {"
+            Some text
 
-    * Spaces used to indent the list item instead"
-            .to_owned();
+                * Spaces used to indent the list item instead
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;

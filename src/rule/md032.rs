@@ -97,20 +97,23 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors() -> Result<()> {
-        let text = "text
-* list
-text
-- list
-text
-1. list
-text"
-            .to_owned();
+        let text = indoc! {"
+            text
+            * list
+            text
+            - list
+            text
+            1. list
+            text
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -127,16 +130,18 @@ text"
 
     #[test]
     fn check_errors_with_blank_lines() -> Result<()> {
-        let text = "text
-* list
+        let text = indoc! {"
+            text
+            * list
 
-text
-- list
-text
+            text
+            - list
+            text
 
-1. list
-text"
-            .to_owned();
+            1. list
+            text
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -153,12 +158,14 @@ text"
 
     #[test]
     fn check_errors_with_indented_text_and_blank_lines() -> Result<()> {
-        let text = "1. list
-   text
+        let text = indoc! {"
+            1. list
+               text
 
-   text
-text"
-            .to_owned();
+               text
+            text
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -171,10 +178,12 @@ text"
 
     #[test]
     fn check_errors_nested() -> Result<()> {
-        let text = "1. list
-    * nested list
-text"
-            .to_owned();
+        let text = indoc! {"
+            1. list
+                * nested list
+            text
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -187,12 +196,14 @@ text"
 
     #[test]
     fn check_errors_nested_with_blank_line() -> Result<()> {
-        let text = "1. list
-   text
+        let text = indoc! {"
+            1. list
+               text
 
-   * nested list
-text"
-            .to_owned();
+               * nested list
+            text
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -205,23 +216,25 @@ text"
 
     #[test]
     fn check_errors_with_code_block() -> Result<()> {
-        let text = "```
-code
-```
-* list
+        let text = indoc! {"
+            ```
+            code
+            ```
+            * list
 
-```
-code
-```
-- list
-```
-code
-```
+            ```
+            code
+            ```
+            - list
+            ```
+            code
+            ```
 
-* list
-```
-code
-```"
+            * list
+            ```
+            code
+            ```
+        "}
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -241,13 +254,15 @@ code
 
     #[test]
     fn check_errors_with_code_block_and_blank_line() -> Result<()> {
-        let text = "1. list
-   text
+        let text = indoc! {"
+            1. list
+               text
 
-   text
-```
-code
-```"
+               text
+            ```
+            code
+            ```
+        "}
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -261,13 +276,15 @@ code
 
     #[test]
     fn check_errors_nested_with_code_block() -> Result<()> {
-        let text = "1. list
-   text
+        let text = indoc! {"
+            1. list
+               text
 
-   * nested list
-```
-code
-```"
+               * nested list
+            ```
+            code
+            ```
+        "}
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -281,20 +298,22 @@ code
 
     #[test]
     fn check_no_errors() -> Result<()> {
-        let text = "text
+        let text = indoc! {"
+            text
 
-* list
+            * list
 
-text
+            text
 
-- list
+            - list
 
-text
+            text
 
-1. list
+            1. list
 
-text"
-            .to_owned();
+            text
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -307,9 +326,11 @@ text"
 
     #[test]
     fn check_no_errors_with_indented_text() -> Result<()> {
-        let text = "1. list
-   text"
-            .to_owned();
+        let text = indoc! {"
+            1. list
+               text
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -322,11 +343,13 @@ text"
 
     #[test]
     fn check_no_errors_nested() -> Result<()> {
-        let text = "1. list
-    * nested list
+        let text = indoc! {"
+            1. list
+                * nested list
 
-text"
-            .to_owned();
+            text
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -339,13 +362,15 @@ text"
 
     #[test]
     fn check_no_errors_nested_with_blank_line() -> Result<()> {
-        let text = "1. list
-   text
+        let text = indoc! {"
+            1. list
+               text
 
-   * nested list
+               * nested list
 
-text"
-            .to_owned();
+            text
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -358,27 +383,29 @@ text"
 
     #[test]
     fn check_no_errors_with_code_block() -> Result<()> {
-        let text = "```
-code
-```
+        let text = indoc! {"
+            ```
+            code
+            ```
 
-* list
+            * list
 
-```
-code
-```
+            ```
+            code
+            ```
 
-- list
+            - list
 
-```
-code
-```
+            ```
+            code
+            ```
 
-* list
+            * list
 
-```
-code
-```"
+            ```
+            code
+            ```
+        "}
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -393,13 +420,15 @@ code
     // NOTE: mdl triggers a violation
     #[test]
     fn check_no_errors_with_ordered_list_like_paragraph() -> Result<()> {
-        let text = "* list
-  text
+        let text = indoc! {"
+            * list
+              text
 
-text
-10. list
-20. list"
-            .to_owned();
+            text
+            10. list
+            20. list
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;

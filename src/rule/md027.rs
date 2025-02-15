@@ -102,20 +102,23 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors_paragraph() -> Result<()> {
-        let text = ">  Indented text
->  More indented
-> Not indented
->  *Emph* and text
->  **Strong** and text
->  `code` and text
->  [link](https://example.com) and text"
-            .to_owned();
+        let text = indoc! {"
+            >  Indented text
+            >  More indented
+            > Not indented
+            >  *Emph* and text
+            >  **Strong** and text
+            >  `code` and text
+            >  [link](https://example.com) and text
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -135,11 +138,13 @@ mod tests {
 
     #[test]
     fn check_errors_list() -> Result<()> {
-        let text = ">  * foo
-> * bar
->   * baz
->  * quz"
-            .to_owned();
+        let text = indoc! {"
+            >  * foo
+            > * bar
+            >   * baz
+            >  * quz
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -155,12 +160,14 @@ mod tests {
 
     #[test]
     fn check_errors_code_block() -> Result<()> {
-        let text = ">  ```
->  foo
-> bar
->  baz
->  ```"
-            .to_owned();
+        let text = indoc! {"
+            >  ```
+            >  foo
+            > bar
+            >  baz
+            >  ```
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -180,10 +187,12 @@ mod tests {
 
     #[test]
     fn check_errors_html_block() -> Result<()> {
-        let text = ">  <div>
-> <p>some text</p>
->   </div>"
-            .to_owned();
+        let text = indoc! {"
+            >  <div>
+            > <p>some text</p>
+            >   </div>
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -202,10 +211,12 @@ mod tests {
     // NOTE: This case is not an error in markdownlint
     #[test]
     fn check_errors_with_nested_block_quotes() -> Result<()> {
-        let text = ">>>  This is multiple blockquotes with bad indentation.
->>> More multiple blockquotes with good indentation.
->>>  More multiple blockquotes with bad indentation."
-            .to_owned();
+        let text = indoc! {"
+            >>>  This is multiple blockquotes with bad indentation.
+            >>> More multiple blockquotes with good indentation.
+            >>>  More multiple blockquotes with bad indentation.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -221,10 +232,12 @@ mod tests {
 
     #[test]
     fn check_errors_with_nested_block_quotes2() -> Result<()> {
-        let text = ">  >  >  This is multiple blockquote with bad indentation.
-> > > More multiple blockquote with good indentation.
->  >  >  More multiple blockquote with bad indentation."
-            .to_owned();
+        let text = indoc! {"
+            >  >  >  This is multiple blockquote with bad indentation.
+            > > > More multiple blockquote with good indentation.
+            >  >  >  More multiple blockquote with bad indentation.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -249,13 +262,15 @@ mod tests {
 
     #[test]
     fn check_no_errors_paragraph() -> Result<()> {
-        let text = "> Text
-> More text
-> *Emph* and text
-> **Strong** and text
-> `code` and text
-> [link](https://example.com) and text"
-            .to_owned();
+        let text = indoc! {"
+            > Text
+            > More text
+            > *Emph* and text
+            > **Strong** and text
+            > `code` and text
+            > [link](https://example.com) and text
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -268,11 +283,13 @@ mod tests {
 
     #[test]
     fn check_no_errors_list() -> Result<()> {
-        let text = "> * foo
-> * bar
->   * baz
-> * quz"
-            .to_owned();
+        let text = indoc! {"
+            > * foo
+            > * bar
+            >   * baz
+            > * quz
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -285,12 +302,14 @@ mod tests {
 
     #[test]
     fn check_no_errors_code_block() -> Result<()> {
-        let text = "> ```
-> foo
-> bar
-> baz
-> ```"
-            .to_owned();
+        let text = indoc! {"
+            > ```
+            > foo
+            > bar
+            > baz
+            > ```
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -303,10 +322,12 @@ mod tests {
 
     #[test]
     fn check_no_errors_html_block() -> Result<()> {
-        let text = "> <div>
-> <p>some text</p>
-> </div>"
-            .to_owned();
+        let text = indoc! {"
+            > <div>
+            > <p>some text</p>
+            > </div>
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -319,10 +340,12 @@ mod tests {
 
     #[test]
     fn check_no_errors_with_nested_block_quotes() -> Result<()> {
-        let text = ">>> This is multiple blockquotes with good indentation.
->>> More multiple blockquotes with good indentation.
->>> More multiple blockquotes with good indentation."
-            .to_owned();
+        let text = indoc! {"
+            >>> This is multiple blockquotes with good indentation.
+            >>> More multiple blockquotes with good indentation.
+            >>> More multiple blockquotes with good indentation.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -335,10 +358,12 @@ mod tests {
 
     #[test]
     fn check_no_errors_with_nested_block_quotes2() -> Result<()> {
-        let text = "> > > This is multiple blockquote with good indentation.
-> > > More multiple blockquote with good indentation.
-> > > More multiple blockquote with good indentation."
-            .to_owned();
+        let text = indoc! {"
+            > > > This is multiple blockquote with good indentation.
+            > > > More multiple blockquote with good indentation.
+            > > > More multiple blockquote with good indentation.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -351,10 +376,12 @@ mod tests {
 
     #[test]
     fn check_no_errors_with_nested_block_quotes3() -> Result<()> {
-        let text = ">>> This is multiple blockquote with good indentation.
-    More multiple blockquote with good indentation.
-    More multiple blockquote with good indentation."
-            .to_owned();
+        let text = indoc! {"
+            >>> This is multiple blockquote with good indentation.
+                More multiple blockquote with good indentation.
+                More multiple blockquote with good indentation.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;

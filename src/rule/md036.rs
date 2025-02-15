@@ -89,20 +89,23 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors() -> Result<()> {
-        let text = "**My document**
+        let text = indoc! {"
+            **My document**
 
-Lorem ipsum dolor sit amet...
+            Lorem ipsum dolor sit amet...
 
-_Another section_
+            _Another section_
 
-Consectetur adipiscing elit, sed do eiusmod."
-            .to_owned();
+            Consectetur adipiscing elit, sed do eiusmod.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -118,12 +121,14 @@ Consectetur adipiscing elit, sed do eiusmod."
 
     #[test]
     fn check_errors_in_between_texts() -> Result<()> {
-        let text = "Some text
+        let text = indoc! {"
+            Some text
 
-**Strong text**
+            **Strong text**
 
-Some more text"
-            .to_owned();
+            Some more text
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -136,14 +141,16 @@ Some more text"
 
     #[test]
     fn check_no_errors() -> Result<()> {
-        let text = "# My document
+        let text = indoc! {"
+            # My document
 
-Lorem ipsum dolor sit amet...
+            Lorem ipsum dolor sit amet...
 
-## Another section
+            ## Another section
 
-Consectetur adipiscing elit, sed do eiusmod."
-            .to_owned();
+            Consectetur adipiscing elit, sed do eiusmod.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -156,14 +163,16 @@ Consectetur adipiscing elit, sed do eiusmod."
 
     #[test]
     fn check_no_errors_with_punctuation() -> Result<()> {
-        let text = "**My document.**
+        let text = indoc! {"
+            **My document.**
 
-Lorem ipsum dolor sit amet...
+            Lorem ipsum dolor sit amet...
 
-_Another section?_
+            _Another section?_
 
-Consectetur adipiscing elit, sed do eiusmod."
-            .to_owned();
+            Consectetur adipiscing elit, sed do eiusmod.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -176,10 +185,12 @@ Consectetur adipiscing elit, sed do eiusmod."
 
     #[test]
     fn check_no_errors_with_text() -> Result<()> {
-        let text = "foo **My document**
+        let text = indoc! {"
+            foo **My document**
 
-_Another section_ bar"
-            .to_owned();
+            _Another section_ bar
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -192,10 +203,12 @@ _Another section_ bar"
 
     #[test]
     fn check_no_errors_in_between_texts() -> Result<()> {
-        let text = "Some text
-**Strong text**
-Some more text"
-            .to_owned();
+        let text = indoc! {"
+            Some text
+            **Strong text**
+            Some more text
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -208,9 +221,11 @@ Some more text"
 
     #[test]
     fn check_no_errors_multiple_lines() -> Result<()> {
-        let text = "**Multiple lines
-text**"
-            .to_owned();
+        let text = indoc! {"
+            **Multiple lines
+            text**
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;

@@ -68,16 +68,19 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors() -> Result<()> {
-        let text = "[ a link ](http://www.example.com/)
-[a link ](http://www.example.com/)
-[ a link](http://www.example.com/)"
-            .to_owned();
+        let text = indoc! {"
+            [ a link ](http://www.example.com/)
+            [a link ](http://www.example.com/)
+            [ a link](http://www.example.com/)
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -95,11 +98,13 @@ mod tests {
     // NOTE: These results may differ from mdl
     #[test]
     fn check_errors_code() -> Result<()> {
-        let text = "[ a `link` ](http://www.example.com/)
-[ `link` ](http://www.example.com)
-[`link` ](http://www.example.com)
-[ `link`](http://www.example.com)"
-            .to_owned();
+        let text = indoc! {"
+            [ a `link` ](http://www.example.com/)
+            [ `link` ](http://www.example.com)
+            [`link` ](http://www.example.com)
+            [ `link`](http://www.example.com)
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -156,9 +161,11 @@ mod tests {
 
     #[test]
     fn check_no_errors_code() -> Result<()> {
-        let text = "[a `link`](http://www.example.com)
-[`link`](http://www.example.com)"
-            .to_owned();
+        let text = indoc! {"
+            [a `link`](http://www.example.com)
+            [`link`](http://www.example.com)
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;

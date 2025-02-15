@@ -68,16 +68,19 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors() -> Result<()> {
-        let text = "## This isn't a H1 header
+        let text = indoc! {"
+            ## This isn't a H1 header
 
-### Another header"
-            .to_owned();
+            ### Another header
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -90,10 +93,12 @@ mod tests {
 
     #[test]
     fn check_errors_with_level() -> Result<()> {
-        let text = "# Start with a H1 header
+        let text = indoc! {"
+            # Start with a H1 header
 
-## Then use a H2 for subsections"
-            .to_owned();
+            ## Then use a H2 for subsections
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -106,10 +111,12 @@ mod tests {
 
     #[test]
     fn check_no_errors() -> Result<()> {
-        let text = "# Start with a H1 header
+        let text = indoc! {"
+            # Start with a H1 header
 
-## Then use a H2 for subsections"
-            .to_owned();
+            ## Then use a H2 for subsections
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -122,10 +129,12 @@ mod tests {
 
     #[test]
     fn check_no_errors_with_level() -> Result<()> {
-        let text = "## This isn't a H1 header
+        let text = indoc! {"
+            ## This isn't a H1 header
 
-### Another header"
-            .to_owned();
+            ### Another header
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;

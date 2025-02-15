@@ -79,38 +79,41 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors() -> Result<()> {
-        let text = "Some text
+        let text = indoc! {"
+            Some text
 
-> a quote
-> same quote
+            > a quote
+            > same quote
 
-> blank line above this
+            > blank line above this
 
 
-> two blank lines above this
- 
-> space above this
+            > two blank lines above this
+             
+            > space above this
 
-* List with embedded blockquote
+            * List with embedded blockquote
 
-  > Test
-  > Test
+              > Test
+              > Test
 
-  > Test
+              > Test
 
-* Item 2
+            * Item 2
 
-  > Test. The blank line below should _not_ trigger MD028 as one blockquote is
-  > inside the list, and the other is outside it.
+              > Test. The blank line below should _not_ trigger MD028 as one blockquote is
+              > inside the list, and the other is outside it.
 
-> Test"
-            .to_owned();
+            > Test
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -129,32 +132,34 @@ mod tests {
 
     #[test]
     fn check_no_errors() -> Result<()> {
-        let text = "Some text
+        let text = indoc! {"
+            Some text
 
-> a quote
-> same quote
->
-> blank line above this
->
->
-> two blank lines above this
-> 
-> space above this
+            > a quote
+            > same quote
+            >
+            > blank line above this
+            >
+            >
+            > two blank lines above this
+            > 
+            > space above this
 
-* List with embedded blockquote
+            * List with embedded blockquote
 
-  > Test
-  > Test
-  >
-  > Test
+              > Test
+              > Test
+              >
+              > Test
 
-* Item 2
+            * Item 2
 
-  > Test. The blank line below should _not_ trigger MD028 as one blockquote is
-  > inside the list, and the other is outside it.
+              > Test. The blank line below should _not_ trigger MD028 as one blockquote is
+              > inside the list, and the other is outside it.
 
-> Test"
-            .to_owned();
+            > Test
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -167,12 +172,14 @@ mod tests {
 
     #[test]
     fn check_no_errors_with_some_text_in_between() -> Result<()> {
-        let text = "> This is a blockquote.
+        let text = indoc! {"
+            > This is a blockquote.
 
-And Jimmy also said:
+            And Jimmy also said:
 
-> This too is a blockquote."
-            .to_owned();
+            > This too is a blockquote.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -186,13 +193,15 @@ And Jimmy also said:
     // NOTE: This case may differ from mdl
     // #[test]
     // fn check_no_errors_nested() -> Result<()> {
-    //     let text = "* List
-    // > This is a blockquote
-    // > which is immediately followed by
+    //     let text = indoc! {"
+    //         * List
+    //         > This is a blockquote
+    //         > which is immediately followed by
     //
-    // > this blockquote. Unfortunately
-    // > In some parsers, these are treated as the same blockquote."
-    //         .to_owned();
+    //         > this blockquote. Unfortunately
+    //         > In some parsers, these are treated as the same blockquote.
+    //     "}
+    //     .to_owned();
     //     let path = Path::new("test.md").to_path_buf();
     //     let arena = Arena::new();
     //     let doc = Document::new(&arena, path, text)?;

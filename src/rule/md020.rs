@@ -74,18 +74,21 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors() -> Result<()> {
-        let text = "#Header 1#
+        let text = indoc! {"
+            #Header 1#
 
-## Header 2##
+            ## Header 2##
 
-##Header 3 ##"
-            .to_owned();
+            ##Header 3 ##
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -102,10 +105,12 @@ mod tests {
 
     #[test]
     fn check_no_errors() -> Result<()> {
-        let text = "# Header 1 #
+        let text = indoc! {"
+            # Header 1 #
 
-## Header 2 ##"
-            .to_owned();
+            ## Header 2 ##
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -117,38 +122,42 @@ mod tests {
     }
 
     // TODO: Support escaped hash
-    //     #[test]
-    //     fn check_no_errors_with_escaped_hash() -> Result<()> {
-    //         let text = "#Header 1\\#
+    // #[test]
+    // fn check_no_errors_with_escaped_hash() -> Result<()> {
+    //     let text = indoc! {"
+    //         #Header 1\\#
     //
-    // \\##Header 2##
+    //         \\##Header 2##
     //
-    // ## Header 3\\##
+    //         ## Header 3\\##
     //
-    // \\## Header 4##
+    //         \\## Header 4##
     //
-    // ##Header 5 \\##
+    //         ##Header 5 \\##
     //
-    // \\##Header 6 ##"
-    //             .to_owned();
-    //         let path = Path::new("test.md").to_path_buf();
-    //         let arena = Arena::new();
-    //         let doc = Document::new(&arena, path, text)?;
-    //         let rule = MD020::default();
-    //         let actual = rule.check(&doc)?;
-    //         let expected = vec![];
-    //         assert_eq!(actual, expected);
-    //         Ok(())
-    //     }
+    //         \\##Header 6 ##
+    //     "}
+    //     .to_owned();
+    //     let path = Path::new("test.md").to_path_buf();
+    //     let arena = Arena::new();
+    //     let doc = Document::new(&arena, path, text)?;
+    //     let rule = MD020::default();
+    //     let actual = rule.check(&doc)?;
+    //     let expected = vec![];
+    //     assert_eq!(actual, expected);
+    //     Ok(())
+    // }
 
     #[test]
     fn check_no_errors_with_atx() -> Result<()> {
-        let text = "#Header 1
+        let text = indoc! {"
+            #Header 1
 
-## Header 2
+            ## Header 2
 
-##Header 3"
-            .to_owned();
+            ##Header 3
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -161,10 +170,12 @@ mod tests {
 
     #[test]
     fn check_no_errors_with_issue_number() -> Result<()> {
-        let text = "# Header 1 #
+        let text = indoc! {"
+            # Header 1 #
 
-See [#4649](https://example.com) and [#4979](https://example.com) for details."
-            .to_owned();
+            See [#4649](https://example.com) and [#4979](https://example.com) for details.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -190,9 +201,11 @@ See [#4649](https://example.com) and [#4979](https://example.com) for details."
 
     #[test]
     fn check_no_errors_with_code_block_comment() -> Result<()> {
-        let text = "```
-#Header#
-```"
+        let text = indoc! {"
+            ```
+            #Header#
+            ```
+        "}
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();

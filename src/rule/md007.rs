@@ -78,19 +78,22 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors() -> Result<()> {
-        let text = "* List item
-   * Nested list item indented by 3 spaces
-       * More nested list item indented by 4 spaces
-* List item
-   * Nested list item indented by 3 spaces
-       * More nested list item indented by 4 spaces"
-            .to_owned();
+        let text = indoc! {"
+            * List item
+               * Nested list item indented by 3 spaces
+                   * More nested list item indented by 4 spaces
+            * List item
+               * Nested list item indented by 3 spaces
+                   * More nested list item indented by 4 spaces
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -106,13 +109,15 @@ mod tests {
 
     #[test]
     fn check_errors_for_multiple_indentation() -> Result<()> {
-        let text = "* List item
-    * Nested list item indented by 4 spaces
-        * More nested list item indented by 4 spaces
-* List item
-    * Nested list item indented by 4 spaces
-        * More nested list item indented by 4 spaces"
-            .to_owned();
+        let text = indoc! {"
+            * List item
+                * Nested list item indented by 4 spaces
+                    * More nested list item indented by 4 spaces
+            * List item
+                * Nested list item indented by 4 spaces
+                    * More nested list item indented by 4 spaces
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -129,37 +134,41 @@ mod tests {
     }
 
     // TODO: This should be passed
-    //     #[test]
-    //     fn check_errors_with_ol() -> Result<()> {
-    //         let text = "* List item
-    //    1. Nested list item indented by 3 spaces
-    //        * More nested list item indented by 4 spaces
-    // * List item
-    //    1. Nested list item indented by 3 spaces
-    //        * More nested list item indented by 4 spaces"
-    //             .to_owned();
-    //         let path = Path::new("test.md").to_path_buf();
-    //         let arena = Arena::new();
-    //         let doc = Document::new(&arena, path.clone(), text)?;
-    //         let rule = MD007::default();
-    //         let actual = rule.check(&doc)?;
-    //         let expected = vec![
-    //             rule.to_violation(path.clone(), Sourcepos::from((3, 8, 3, 51))),
-    //             rule.to_violation(path, Sourcepos::from((6, 8, 6, 51))),
-    //         ];
-    //         assert_eq!(actual, expected);
-    //         Ok(())
-    //     }
+    // #[test]
+    // fn check_errors_with_ol() -> Result<()> {
+    //     let text = indoc! {"
+    //         * List item
+    //            1. Nested list item indented by 3 spaces
+    //                * More nested list item indented by 4 spaces
+    //         * List item
+    //            1. Nested list item indented by 3 spaces
+    //                * More nested list item indented by 4 spaces
+    //     "}
+    //     .to_owned();
+    //     let path = Path::new("test.md").to_path_buf();
+    //     let arena = Arena::new();
+    //     let doc = Document::new(&arena, path.clone(), text)?;
+    //     let rule = MD007::default();
+    //     let actual = rule.check(&doc)?;
+    //     let expected = vec![
+    //         rule.to_violation(path.clone(), Sourcepos::from((3, 8, 3, 51))),
+    //         rule.to_violation(path, Sourcepos::from((6, 8, 6, 51))),
+    //     ];
+    //     assert_eq!(actual, expected);
+    //     Ok(())
+    // }
 
     #[test]
     fn check_no_errors() -> Result<()> {
-        let text = "* List item
-    * Nested list item indented by 4 spaces
-        * More nested list item indented by 4 spaces
-* List Item
-    * Nested list item indented by 4 spaces
-        * More nested list item indented by 4 spaces"
-            .to_owned();
+        let text = indoc! {"
+            * List item
+                * Nested list item indented by 4 spaces
+                    * More nested list item indented by 4 spaces
+            * List Item
+                * Nested list item indented by 4 spaces
+                    * More nested list item indented by 4 spaces
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -172,11 +181,13 @@ mod tests {
 
     #[test]
     fn check_no_errors_ol() -> Result<()> {
-        let text = "* List item
-   1. Nested list item indented by 3 spaces
-* List Item
-   1. Nested list item indented by 3 spaces"
-            .to_owned();
+        let text = indoc! {"
+            * List item
+               1. Nested list item indented by 3 spaces
+            * List Item
+               1. Nested list item indented by 3 spaces
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -188,20 +199,21 @@ mod tests {
     }
 
     // TODO: This should be passed
-    //     #[test]
-    //     fn check_no_errors_with_blockquote() -> Result<()> {
-    //         let text = "* List
-    // > * List in blockquote
-    // >* List in blockquote
-    // "
-    //         .to_owned();
-    //         let path = Path::new("test.md").to_path_buf();
-    //         let arena = Arena::new();
-    //         let doc = Document::new(&arena, path, text)?;
-    //         let rule = MD007::default();
-    //         let actual = rule.check(&doc)?;
-    //         let expected = vec![];
-    //         assert_eq!(actual, expected);
-    //         Ok(())
-    //     }
+    // #[test]
+    // fn check_no_errors_with_blockquote() -> Result<()> {
+    //     let text = indoc! {"
+    //         * List
+    //         > * List in blockquote
+    //         >* List in blockquote
+    //     "}
+    //     .to_owned();
+    //     let path = Path::new("test.md").to_path_buf();
+    //     let arena = Arena::new();
+    //     let doc = Document::new(&arena, path, text)?;
+    //     let rule = MD007::default();
+    //     let actual = rule.check(&doc)?;
+    //     let expected = vec![];
+    //     assert_eq!(actual, expected);
+    //     Ok(())
+    // }
 }

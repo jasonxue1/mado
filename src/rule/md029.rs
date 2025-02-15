@@ -104,16 +104,19 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors_one() -> Result<()> {
-        let text = "1. Do this.
-2. Do that.
-3. Done."
-            .to_owned();
+        let text = indoc! {"
+            1. Do this.
+            2. Do that.
+            3. Done.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -129,10 +132,12 @@ mod tests {
 
     #[test]
     fn check_errors_ordered() -> Result<()> {
-        let text = "1. Do this.
-1. Do that.
-1. Done."
-            .to_owned();
+        let text = indoc! {"
+            1. Do this.
+            1. Do that.
+            1. Done.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -148,11 +153,13 @@ mod tests {
 
     #[test]
     fn check_errors_recursive() -> Result<()> {
-        let text = "* Parent list
-    1. Do this.
-    2. Do that.
-    3. Done."
-            .to_owned();
+        let text = indoc! {"
+            * Parent list
+                1. Do this.
+                2. Do that.
+                3. Done.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -168,10 +175,12 @@ mod tests {
 
     #[test]
     fn check_no_errors_one() -> Result<()> {
-        let text = "1. Do this.
-1. Do that.
-1. Done."
-            .to_owned();
+        let text = indoc! {"
+            1. Do this.
+            1. Do that.
+            1. Done.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -184,10 +193,12 @@ mod tests {
 
     #[test]
     fn check_no_errors_ordered() -> Result<()> {
-        let text = "1. Do this.
-2. Do that.
-3. Done."
-            .to_owned();
+        let text = indoc! {"
+            1. Do this.
+            2. Do that.
+            3. Done.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -200,11 +211,13 @@ mod tests {
 
     #[test]
     fn check_no_errors_recursive() -> Result<()> {
-        let text = "* Parent list
-    1. Do this.
-    1. Do that.
-    1. Done."
-            .to_owned();
+        let text = indoc! {"
+            * Parent list
+                1. Do this.
+                1. Do that.
+                1. Done.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;

@@ -68,17 +68,20 @@ mod tests {
     use std::path::Path;
 
     use comrak::Arena;
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors() -> Result<()> {
-        let text = "Some text here
+        let text = indoc! {"
+            Some text here
 
 
-Some more text here"
-            .to_owned();
+            Some more text here
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -91,13 +94,15 @@ Some more text here"
 
     #[test]
     fn check_errors_with_front_matter() -> Result<()> {
-        let text = "---
-foo:
----
+        let text = indoc! {"
+            ---
+            foo:
+            ---
 
 
-Some text"
-            .to_owned();
+            Some text
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -110,10 +115,12 @@ Some text"
 
     #[test]
     fn check_no_errors() -> Result<()> {
-        let text = "Some text here
+        let text = indoc! {"
+            Some text here
 
-Some more text here"
-            .to_owned();
+            Some more text here
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -126,17 +133,19 @@ Some more text here"
 
     #[test]
     fn check_no_errors_with_code_block() -> Result<()> {
-        let text = "Some text here
+        let text = indoc! {"
+            Some text here
 
-```
-This is a code block
+            ```
+            This is a code block
 
 
-Some code here
-```
+            Some code here
+            ```
 
-Some more text here"
-            .to_owned();
+            Some more text here
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -149,14 +158,16 @@ Some more text here"
 
     #[test]
     fn check_no_errors_with_nested_code_block() -> Result<()> {
-        let text = "* List
+        let text = indoc! {"
+            * List
 
-  ```
-  This is a code block
+              ```
+              This is a code block
 
 
-  Some code here
-  ```"
+              Some code here
+              ```
+        "}
         .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
@@ -170,24 +181,26 @@ Some more text here"
 
     #[test]
     fn check_no_errors_with_front_matter_and_code_block() -> Result<()> {
-        let text = "---
-foo:
-bar:
-baz:
-qux:
----
+        let text = indoc! {"
+            ---
+            foo:
+            bar:
+            baz:
+            qux:
+            ---
 
-Some text here
+            Some text here
 
-```
-This is a code block
+            ```
+            This is a code block
 
 
-Some code here
-```
+            Some code here
+            ```
 
-Some more text here"
-            .to_owned();
+            Some more text here
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;

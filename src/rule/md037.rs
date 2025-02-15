@@ -74,20 +74,23 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors() -> Result<()> {
-        let text = "Here is some ** bold ** text.
+        let text = indoc! {"
+            Here is some ** bold ** text.
 
-Here is some * italic * text.
+            Here is some * italic * text.
 
-Here is some more __ bold __ text.
+            Here is some more __ bold __ text.
 
-Here is some more _ italic _ text."
-            .to_owned();
+            Here is some more _ italic _ text.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -105,14 +108,16 @@ Here is some more _ italic _ text."
 
     #[test]
     fn check_errors_with_space() -> Result<()> {
-        let text = "Here is some **bold ** text.
+        let text = indoc! {"
+            Here is some **bold ** text.
 
-Here is some * italic* text.
+            Here is some * italic* text.
 
-Here is some more __bold __ text.
+            Here is some more __bold __ text.
 
-Here is some more _ italic_ text."
-            .to_owned();
+            Here is some more _ italic_ text.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -130,14 +135,16 @@ Here is some more _ italic_ text."
 
     #[test]
     fn check_no_errors() -> Result<()> {
-        let text = "Here is some **bold** text.
+        let text = indoc! {"
+            Here is some **bold** text.
 
-Here is some *italic* text.
+            Here is some *italic* text.
 
-Here is some more __bold__ text.
+            Here is some more __bold__ text.
 
-Here is some more _italic_ text."
-            .to_owned();
+            Here is some more _italic_ text.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -150,14 +157,16 @@ Here is some more _italic_ text."
 
     #[test]
     fn check_no_errors_nested() -> Result<()> {
-        let text = "Here is ** some **bold** text ** .
+        let text = indoc! {"
+            Here is ** some **bold** text ** .
 
-Here is * some *italic* text * .
+            Here is * some *italic* text * .
 
-Here is some __ more __bold__ text __ .
+            Here is some __ more __bold__ text __ .
 
-Here is some _ more _italic_ text _ ."
-            .to_owned();
+            Here is some _ more _italic_ text _ .
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -183,14 +192,16 @@ Here is some _ more _italic_ text _ ."
 
     #[test]
     fn check_no_errors_start_marker() -> Result<()> {
-        let text = "Here is some **bold **text.
+        let text = indoc! {"
+            Here is some **bold **text.
 
-Here is some *italic *text.
+            Here is some *italic *text.
 
-Here is some more __bold __text.
+            Here is some more __bold __text.
 
-Here is some more _italic _text."
-            .to_owned();
+            Here is some more _italic _text.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -203,14 +214,16 @@ Here is some more _italic _text."
 
     #[test]
     fn check_no_errors_end_marker() -> Result<()> {
-        let text = "Here is some** bold** text.
+        let text = indoc! {"
+            Here is some** bold** text.
 
-Here is some* italic* text.
+            Here is some* italic* text.
 
-Here is some more__ bold__ text.
+            Here is some more__ bold__ text.
 
-Here is some more_ italic_ text."
-            .to_owned();
+            Here is some more_ italic_ text.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;

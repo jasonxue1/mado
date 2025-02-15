@@ -43,6 +43,7 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use crate::config::lint::RuleSet;
@@ -53,13 +54,15 @@ mod tests {
 
     #[test]
     fn check() -> Result<()> {
-        let text = "---
-comments: false
-description: Some text
----
+        let text = indoc! {"
+            ---
+            comments: false
+            description: Some text
+            ---
 
-# This is a header."
-            .to_owned();
+            # This is a header.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;

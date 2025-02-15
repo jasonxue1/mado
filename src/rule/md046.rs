@@ -89,18 +89,21 @@ mod tests {
     use std::path::Path;
 
     use comrak::{nodes::Sourcepos, Arena};
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
 
     #[test]
     fn check_errors_with_fenced() -> Result<()> {
-        let text = "Some text.
+        let text = indoc! {"
+            Some text.
 
-    Code block
+                Code block
 
-Some more text."
-            .to_owned();
+            Some more text.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -113,14 +116,16 @@ Some more text."
 
     #[test]
     fn check_errors_with_indented() -> Result<()> {
-        let text = "Some text.
+        let text = indoc! {"
+            Some text.
 
-```ruby
-Code block
-```
+            ```ruby
+            Code block
+            ```
 
-Some more text."
-            .to_owned();
+            Some more text.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -133,17 +138,19 @@ Some more text."
 
     #[test]
     fn check_errors_with_consistent() -> Result<()> {
-        let text = "Some text.
+        let text = indoc! {"
+            Some text.
 
-```ruby
-Code block
-```
-Some more text.
+            ```ruby
+            Code block
+            ```
+            Some more text.
 
-    Code block
+                Code block
 
-Some more more text."
-            .to_owned();
+            Some more more text.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path.clone(), text)?;
@@ -156,14 +163,16 @@ Some more more text."
 
     #[test]
     fn check_no_errors_with_fenced() -> Result<()> {
-        let text = "Some text.
+        let text = indoc! {"
+            Some text.
 
-```ruby
-Code block
-```
+            ```ruby
+            Code block
+            ```
 
-Some more text."
-            .to_owned();
+            Some more text.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -176,12 +185,14 @@ Some more text."
 
     #[test]
     fn check_no_errors_with_indented() -> Result<()> {
-        let text = "Some text.
+        let text = indoc! {"
+            Some text.
 
-    Code block
+                Code block
 
-Some more text."
-            .to_owned();
+            Some more text.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -194,19 +205,21 @@ Some more text."
 
     #[test]
     fn check_no_errors_with_consistent_fenced() -> Result<()> {
-        let text = "Some text.
+        let text = indoc! {"
+            Some text.
 
-```ruby
-Code block
-```
-Some more text.
+            ```ruby
+            Code block
+            ```
+            Some more text.
 
-```ruby
-Code block
-```
+            ```ruby
+            Code block
+            ```
 
-Some more more text."
-            .to_owned();
+            Some more more text.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;
@@ -219,16 +232,18 @@ Some more more text."
 
     #[test]
     fn check_no_errors_with_consistent_indented() -> Result<()> {
-        let text = "Some text.
+        let text = indoc! {"
+            Some text.
 
-    Code block
+                Code block
 
-Some more text.
+            Some more text.
 
-    Code block
+                Code block
 
-Some more more text."
-            .to_owned();
+            Some more more text.
+        "}
+        .to_owned();
         let path = Path::new("test.md").to_path_buf();
         let arena = Arena::new();
         let doc = Document::new(&arena, path, text)?;

@@ -60,6 +60,7 @@ mod tests {
     use super::*;
 
     use crate::output::Format;
+    use indoc::indoc;
     use lint::{RuleSet, MD002};
     use pretty_assertions::assert_eq;
 
@@ -86,13 +87,14 @@ mod tests {
 
     #[test]
     fn deserialize() -> Result<()> {
-        let text = r#"[lint]
-output-format = "mdl"
-rules = ["MD027"]
+        let text = indoc! {r#"
+            [lint]
+            output-format = "mdl"
+            rules = ["MD027"]
 
-[lint.md002]
-level = 2
-"#;
+            [lint.md002]
+            level = 2
+        "#};
         let actual: Config = toml::from_str(text).into_diagnostic()?;
         let mut expected = Config::default();
         expected.lint.output_format = Format::Mdl;

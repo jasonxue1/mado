@@ -53,6 +53,7 @@ impl<'a> Document<'a> {
 
 #[cfg(test)]
 mod tests {
+    use indoc::indoc;
     use pretty_assertions::assert_eq;
 
     use super::*;
@@ -66,11 +67,12 @@ mod tests {
 
     #[test]
     fn front_matter_some() -> Result<()> {
-        let front_matter = "---
-foo: bar
----
+        let front_matter = indoc! {"
+            ---
+            foo: bar
+            ---
 
-"
+        "}
         .to_owned();
         let text = format!("{front_matter}text");
         let arena = Arena::new();
