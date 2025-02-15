@@ -115,6 +115,8 @@ impl StringLintRunner {
 mod tests {
     use std::path::Path;
 
+    use pretty_assertions::assert_eq;
+
     use super::*;
 
     #[test]

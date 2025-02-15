@@ -61,6 +61,7 @@ mod tests {
 
     use crate::output::Format;
     use lint::{RuleSet, MD002};
+    use pretty_assertions::assert_eq;
 
     #[test]
     fn load() {
