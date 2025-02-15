@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 
 use clap::Subcommand;
+use globset::Glob;
 
 use crate::output::Format;
 
@@ -22,5 +23,9 @@ pub enum Command {
         /// Only log errors
         #[arg(long, default_value_t = false)]
         quiet: bool,
+
+        /// List of file patterns to exclude from linting
+        #[arg(long, value_delimiter = ',')]
+        exclude: Option<Vec<Glob>>,
     },
 }

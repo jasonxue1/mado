@@ -33,11 +33,13 @@ fn main() -> Result<ExitCode> {
             files,
             output_format,
             quiet,
+            exclude,
         }) => {
             let options = Options {
                 output_format: output_format.clone(),
                 config_path: cli.config,
                 quiet: *quiet,
+                exclude: exclude.clone(),
             };
             let config = options.to_config()?;
             let checker = Checker::new(files, config)?;

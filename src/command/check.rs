@@ -3,6 +3,7 @@ use std::io::{self, BufWriter, IsTerminal as _, Write as _};
 use std::path::PathBuf;
 use std::process::ExitCode;
 
+use globset::Glob;
 use miette::IntoDiagnostic as _;
 use miette::Result;
 
@@ -16,6 +17,7 @@ pub struct Options {
     pub config_path: Option<PathBuf>,
     pub output_format: Option<Format>,
     pub quiet: bool,
+    pub exclude: Option<Vec<Glob>>,
 }
 
 impl Options {
@@ -32,6 +34,10 @@ impl Options {
 
         // Respect config
         config.lint.quiet |= self.quiet;
+
+        if let Some(exclude) = self.exclude {
+            config.lint.exclude = exclude;
+        }
 
         Ok(config)
     }
@@ -117,11 +123,12 @@ mod tests {
     use super::*;
 
     #[test]
-    fn options_to_config_none_none_false() {
+    fn options_to_config_none_none_false_none() {
         let options = Options {
             config_path: None,
             output_format: None,
             quiet: false,
+            exclude: None,
         };
         let actual = options.to_config().unwrap();
         let mut expected = Config::default();
@@ -132,16 +139,19 @@ mod tests {
     }
 
     #[test]
-    fn options_to_config_some_some_true() {
+    fn options_to_config_some_some_true_some() {
+        let exclude = vec![Glob::new("README.md").unwrap()];
         let options = Options {
             config_path: Some(Path::new("mado.toml").to_path_buf()),
             output_format: Some(Format::Mdl),
             quiet: true,
+            exclude: Some(exclude.clone()),
         };
         let actual = options.to_config().unwrap();
         let mut expected = Config::default();
         expected.lint.output_format = Format::Mdl;
         expected.lint.quiet = true;
+        expected.lint.exclude = exclude;
         expected.lint.md013.code_blocks = false;
         expected.lint.md013.tables = false;
         expected.lint.md024.allow_different_nesting = true;
