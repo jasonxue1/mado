@@ -38,6 +38,7 @@ mod tests {
     use std::path::Path;
 
     use comrak::nodes::Sourcepos;
+    use pretty_assertions::assert_eq;
 
     use crate::rule::RuleLike as _;
     use crate::rule::{MD001, MD010};
