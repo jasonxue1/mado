@@ -3,30 +3,30 @@
 class Mado < Formula
   desc "Fast Markdown linter written in Rust"
   homepage "https://github.com/akiomik/mado"
-  version "0.2.0"
+  version "0.2.2"
   license "Apache-2.0"
 
   on_macos do
     on_arm do
       url "https://github.com/akiomik/mado/releases/download/v#{version}/mado-macOS-arm64.tar.gz"
-      sha256 "3900c1a5a599ae07e3e1baf3efe20a3b8e3c3cddcb1f660eb2f025ae0b92a164"
+      sha256 "e4c4db3b3d2520e9de9c5bbae5d9af6cb72a8be7e059274c23d532019044ca93"
     end
 
     on_intel do
       url "https://github.com/akiomik/mado/releases/download/v#{version}/mado-macOS-x86_64.tar.gz"
-      sha256 "af3a80784be80c24e09ff313d92fd40a9165f6435570b00da33d259a6c8f90cf"
+      sha256 "f1357f79b7c4acaaf9454301e45fc38fb0c0f466af9967d0a19b1ac15c328dfa"
     end
   end
 
   on_linux do
     on_arm do
       url "https://github.com/akiomik/mado/releases/download/v#{version}/mado-Linux-gnu-arm64.tar.gz"
-      sha256 "dfae957b710c2d492b4c83503f66b8cf19aea6287cc69d95815bd7f945d7173e"
+      sha256 "cba6258a974240aa9a1a24ee5ed8d098e6b94a1a336cac92205f0d753aeb12ce"
     end
 
     on_intel do
       url "https://github.com/akiomik/mado/releases/download/v#{version}/mado-Linux-gnu-x86_64.tar.gz"
-      sha256 "49fc78169fc60f8484931323525a5cfc72da89b6cb4f70774f93dca6d300f69c"
+      sha256 "40467034f89b6157257dec7c3c709bdaa52285be4d60e1b107a9662350bff39a"
     end
   end
 
