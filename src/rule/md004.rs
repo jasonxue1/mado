@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use crate::violation::Violation;
 use crate::Document;
 
-use super::{Metadata, RuleLike};
+use super::{Metadata, RuleLike, Tag};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -31,7 +31,7 @@ impl MD004 {
     const METADATA: Metadata = Metadata {
         name: "MD004",
         description: "Unordered list style",
-        tags: &["bullet", "ul"],
+        tags: &[Tag::Bullet, Tag::Ul],
         aliases: &["ul-style"],
     };
 
