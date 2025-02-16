@@ -16,7 +16,7 @@ mado check path/to/*.md
 
 ## Performance
 
-Approx. **48-58x faster** than existing linters
+Approx. **49-60x faster** than existing linters
 (e.g. [markdownlint](https://github.com/markdownlint/markdownlint)).
 
 ```mermaid
@@ -37,7 +37,7 @@ xychart-beta
     title "Linting ~1,500 Markdown files (Lower is faster)"
     x-axis ["mado (rust)", "markdownlint-cli (node.js)", "markdownlint (ruby)", "markdownlint-cli2 (node.js)"]
     y-axis "Time (seconds)" 0 --> 10
-    bar [0.135, 6.435, 6.627, 7.801]
+    bar [0.129, 6.381, 6.609, 7.817]
 ```
 
 This benchmark was conducted on a MacBook Pro (2021, M1 Max)
@@ -95,7 +95,7 @@ Mado supports most [markdownlint rules](https://github.com/markdownlint/markdown
 | MD001 | :white_check_mark: |                                                |
 | MD002 | :white_check_mark: |                                                |
 | MD003 | :hammer:           |                                                |
-| MD004 | :hammer:           |                                                |
+| MD004 | :white_check_mark: |                                                |
 | MD005 | :white_check_mark: |                                                |
 | MD006 | :white_check_mark: |                                                |
 | MD007 | :hammer:           |                                                |
@@ -106,7 +106,7 @@ Mado supports most [markdownlint rules](https://github.com/markdownlint/markdown
 | MD014 | :white_check_mark: |                                                |
 | MD018 | :white_check_mark: |                                                |
 | MD019 | :white_check_mark: |                                                |
-| MD020 | :white_check_mark: |                                                |
+| MD020 | :hammer:           |                                                |
 | MD021 | :white_check_mark: |                                                |
 | MD022 | :white_check_mark: |                                                |
 | MD023 | :white_check_mark: |                                                |
@@ -118,11 +118,11 @@ Mado supports most [markdownlint rules](https://github.com/markdownlint/markdown
 | MD029 | :white_check_mark: |                                                |
 | MD030 | :white_check_mark: |                                                |
 | MD031 | :white_check_mark: |                                                |
-| MD032 | :white_check_mark: |                                                |
-| MD033 | :hammer:           |                                                |
+| MD032 | :hammer:           |                                                |
+| MD033 | :white_check_mark: |                                                |
 | MD034 | :white_check_mark: |                                                |
 | MD035 | :white_check_mark: |                                                |
-| MD036 | :hammer:           |                                                |
+| MD036 | :white_check_mark: |                                                |
 | MD037 | :white_check_mark: |                                                |
 | MD038 | :white_check_mark: |                                                |
 | MD039 | :white_check_mark: |                                                |
