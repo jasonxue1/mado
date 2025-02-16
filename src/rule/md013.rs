@@ -6,7 +6,7 @@ use regex::Regex;
 
 use crate::{collection::RangeSet, violation::Violation, Document};
 
-use super::{Metadata, RuleLike};
+use super::{Metadata, RuleLike, Tag};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -20,7 +20,7 @@ impl MD013 {
     const METADATA: Metadata = Metadata {
         name: "MD013",
         description: "Line length",
-        tags: &["line_length"],
+        tags: &[Tag::LineLength],
         aliases: &["line-length"],
     };
 

@@ -4,7 +4,7 @@ use rustc_hash::FxHashSet;
 
 use crate::{violation::Violation, Document};
 
-use super::{Metadata, RuleLike};
+use super::{Metadata, RuleLike, Tag};
 
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -14,7 +14,7 @@ impl MD027 {
     const METADATA: Metadata = Metadata {
         name: "MD027",
         description: "Multiple spaces after blockquote symbol",
-        tags: &["blockquote", "whitespace", "indentation"],
+        tags: &[Tag::Blockquote, Tag::Whitespace, Tag::Indentation],
         aliases: &["no-multiple-space-blockquote"],
     };
 

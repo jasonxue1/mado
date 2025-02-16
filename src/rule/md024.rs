@@ -4,7 +4,7 @@ use rustc_hash::FxHashMap;
 
 use crate::{violation::Violation, Document};
 
-use super::{helper::inline_text_of, Metadata, RuleLike};
+use super::{helper::inline_text_of, Metadata, RuleLike, Tag};
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -16,7 +16,7 @@ impl MD024 {
     const METADATA: Metadata = Metadata {
         name: "MD024",
         description: "Multiple headers with the same content",
-        tags: &["headers"],
+        tags: &[Tag::Headers],
         aliases: &["no-duplicate-header"],
     };
 

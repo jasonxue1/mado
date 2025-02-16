@@ -6,7 +6,7 @@ use rustc_hash::FxHashMap;
 
 use crate::{violation::Violation, Document};
 
-use super::{Metadata, RuleLike};
+use super::{Metadata, RuleLike, Tag};
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -16,7 +16,7 @@ impl MD005 {
     const METADATA: Metadata = Metadata {
         name: "MD005",
         description: "Inconsistent indentation for list items at the same level",
-        tags: &["bullet", "ul", "indentation"],
+        tags: &[Tag::Bullet, Tag::Ul, Tag::Indentation],
         aliases: &["list-indent"],
     };
 

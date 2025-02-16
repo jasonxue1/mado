@@ -45,6 +45,7 @@ mod md041;
 pub mod md046;
 mod md047;
 mod metadata;
+mod tag;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -186,3 +187,4 @@ pub use md041::MD041;
 pub use md046::MD046;
 pub use md047::MD047;
 pub use metadata::Metadata;
+pub use tag::Tag;
