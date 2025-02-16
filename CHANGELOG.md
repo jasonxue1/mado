@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.2.2 (2025-02-16)
+
+### Features
+
+* feat: add sublist to style in [lint.md004] by @akiomik in #107
+* feat: add respect-gitignore to [lint] by @akiomik in #109
+* Feat exclude by @akiomik in #115
+
+### Other Changes
+
+* chore: enable MD024 in mado.toml by @akiomik in #106
+* chore: fix `just cov` by @akiomik in #108
+* build(deps): bump clap from 4.5.27 to 4.5.28 by @dependabot in #112
+* build(deps): bump rustc-hash from 2.1.0 to 2.1.1 by @dependabot in #111
+* build(deps): bump toml from 0.8.19 to 0.8.20 by @dependabot in #110
+* perf: use ignore::Types by @akiomik in #113
+* refactor: add with_tmp_file helper by @akiomik in #114
+* test: use pretty_assertions by @akiomik in #116
+* test: disable allow-unwrap-in-tests by @akiomik in #117
+* Test indoc by @akiomik in #118
+* test: refactor for WalkParallelBuilder by @akiomik in #119
+
 ## 0.2.1 (2025-02-04)
 
 ### Features
