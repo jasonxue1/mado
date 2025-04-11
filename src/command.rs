@@ -8,7 +8,7 @@ use crate::output::Format;
 pub mod check;
 
 #[derive(Subcommand)]
-#[non_exhaustive]
+#[allow(clippy::exhaustive_enums)]
 pub enum Command {
     /// Check markdown on the given files or directories
     Check {

@@ -29,12 +29,12 @@ fn main() -> Result<ExitCode> {
     let cli = Cli::parse();
 
     match &cli.command {
-        Some(Command::Check {
+        Command::Check {
             files,
             output_format,
             quiet,
             exclude,
-        }) => {
+        } => {
             let options = Options {
                 output_format: output_format.clone(),
                 config_path: cli.config,
@@ -45,6 +45,5 @@ fn main() -> Result<ExitCode> {
             let checker = Checker::new(files, config)?;
             checker.check()
         }
-        _ => Ok(ExitCode::FAILURE),
     }
 }
