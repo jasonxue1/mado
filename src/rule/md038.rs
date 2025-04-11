@@ -37,7 +37,7 @@ impl RuleLike for MD038 {
         for node in doc.ast.descendants() {
             if let NodeValue::Code(code) = &node.data.borrow().value {
                 let position = node.data.borrow().sourcepos;
-                let content_len = position.end.column - position.start.column + 1;
+                let content_len = position.end.column - position.start.column - 1;
                 if code.literal.trim() != code.literal || code.literal.len() != content_len {
                     let violation = self.to_violation(doc.path.clone(), position);
                     violations.push(violation);
@@ -75,9 +75,9 @@ mod tests {
         let rule = MD038::new();
         let actual = rule.check(&doc)?;
         let expected = vec![
-            rule.to_violation(path.clone(), Sourcepos::from((1, 2, 1, 12))),
-            rule.to_violation(path.clone(), Sourcepos::from((3, 2, 3, 11))),
-            rule.to_violation(path, Sourcepos::from((5, 2, 5, 11))),
+            rule.to_violation(path.clone(), Sourcepos::from((1, 1, 1, 13))),
+            rule.to_violation(path.clone(), Sourcepos::from((3, 1, 3, 12))),
+            rule.to_violation(path, Sourcepos::from((5, 1, 5, 12))),
         ];
         assert_eq!(actual, expected);
         Ok(())
