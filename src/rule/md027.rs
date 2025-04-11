@@ -45,15 +45,7 @@ impl RuleLike for MD027 {
                                 let block_quote_position = node.data.borrow().sourcepos;
                                 let inline_position = inline_node.data.borrow().sourcepos;
                                 let lineno = inline_position.start.line;
-
-                                // NOTE: `code` pos is wrong: https://github.com/kivikakk/comrak/issues/503
-                                let is_code =
-                                    matches!(inline_node.data.borrow().value, NodeValue::Code(_));
-                                let expected_column = if is_code {
-                                    block_quote_position.start.column + 3
-                                } else {
-                                    block_quote_position.start.column + 2
-                                };
+                                let expected_column = block_quote_position.start.column + 2;
 
                                 if inline_position.start.column > expected_column
                                     && !lines.contains(&lineno)
@@ -129,7 +121,7 @@ mod tests {
             rule.to_violation(path.clone(), Sourcepos::from((2, 4, 2, 16))),
             rule.to_violation(path.clone(), Sourcepos::from((4, 4, 4, 9))),
             rule.to_violation(path.clone(), Sourcepos::from((5, 4, 5, 13))),
-            rule.to_violation(path.clone(), Sourcepos::from((6, 5, 6, 8))),
+            rule.to_violation(path.clone(), Sourcepos::from((6, 4, 6, 9))),
             rule.to_violation(path, Sourcepos::from((7, 4, 7, 30))),
         ];
         assert_eq!(actual, expected);
