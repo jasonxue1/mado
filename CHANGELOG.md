@@ -1,5 +1,39 @@
 # Changelog
 
+## 0.3.0 (2025-04-12)
+
+### ⚠️ BREAKING CHANGES
+
+* build(deps): bump comrak from 0.36.0 to 0.38.0 by @dependabot in #148
+
+### Features
+
+* feat: tags by @akiomik in #92
+* feat: shell completion by @akiomik in #125
+
+### Other Changes
+
+* chore: bump packages to v0.2.2 by @akiomik in #121
+* chore: update README.md by @akiomik in #122
+* refactor: add enum Tag by @akiomik in #123
+* chore: enable clippy::integer_division_remainder_used by @akiomik in #124
+* build(deps): bump tempfile from 3.16.0 to 3.17.0 by @dependabot in #127
+* build(deps): bump clap from 4.5.28 to 4.5.29 by @dependabot in #126
+* build(deps): bump serde from 1.0.217 to 1.0.219 by @dependabot in #135
+* build(deps): bump etcetera from 0.8.0 to 0.10.0 by @dependabot in #134
+* build(deps): bump tempfile from 3.17.0 to 3.18.0 by @dependabot in #133
+* build(deps): bump clap from 4.5.29 to 4.5.31 by @dependabot in #128
+* build(deps): bump globset from 0.4.15 to 0.4.16 by @dependabot in #131
+* build(deps): bump comrak from 0.35.0 to 0.36.0 by @dependabot in #139
+* build(deps): bump scraper from 0.22.0 to 0.23.1 by @dependabot in #138
+* build(deps): bump indoc from 2.0.5 to 2.0.6 by @dependabot in #137
+* build(deps): bump tempfile from 3.18.0 to 3.19.0 by @dependabot in #136
+* build(deps): bump mimalloc from 0.1.43 to 0.1.45 by @dependabot in #147
+* build(deps): bump clap from 4.5.32 to 4.5.35 by @dependabot in #146
+* build(deps): bump tempfile from 3.19.0 to 3.19.1 by @dependabot in #145
+* refactor: make subcommand required by @akiomik in #149
+* build(deps): bump comrak from 0.36.0 to 0.38.0 by @dependabot in #148
+
 ## 0.2.2 (2025-02-16)
 
 ### Features
