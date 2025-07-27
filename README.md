@@ -60,6 +60,12 @@ brew install mado
 nix profile install github:akiomik/mado
 ```
 
+### Arch Linux (Linux)
+
+```bash
+pacman -S mado
+```
+
 ### Scoop (Windows)
 
 ```bash
