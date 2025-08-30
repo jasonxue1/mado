@@ -1,7 +1,6 @@
 use std::path::PathBuf;
 
-use clap::{Subcommand, ValueHint};
-use clap_complete::Shell;
+use clap::{Subcommand, ValueEnum, ValueHint};
 use globset::Glob;
 
 use crate::output::Format;
@@ -33,6 +32,19 @@ pub enum Command {
     /// Generate shell completion
     GenerateShellCompletion {
         /// Shell to generate a completion script
-        shell: Shell,
+        #[arg(value_enum)]
+        shell: CompletionShell,
     },
+}
+
+#[derive(Copy, Clone, Debug, Eq, PartialEq, ValueEnum)]
+#[allow(clippy::exhaustive_enums)]
+pub enum CompletionShell {
+    Bash,
+    Elvish,
+    Fish,
+    PowerShell,
+    Zsh,
+    Nushell,
+    Fig,
 }

@@ -50,7 +50,7 @@ fn main() -> Result<ExitCode> {
         Command::GenerateShellCompletion { shell } => {
             let cmd = Cli::command();
             let mut generator = ShellCompletionGenerator::new(cmd);
-            generator.generate(*shell);
+            generator.generate_for(*shell);
             Ok(ExitCode::SUCCESS)
         }
     }
