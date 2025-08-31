@@ -11,7 +11,8 @@ use crate::Command;
     version,
     about,
     long_about = None,
-    arg_required_else_help = true
+    arg_required_else_help = true,
+    color = clap::ColorChoice::Always
 )]
 #[non_exhaustive]
 pub struct Cli {

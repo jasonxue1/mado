@@ -74,6 +74,9 @@ mod tests {
 
     #[test]
     fn display_fmt() {
+        // Force ANSI colors even when formatting to String
+        use colored::control;
+        control::set_override(true);
         let path = Path::new("file.md").to_path_buf();
         let position = Sourcepos::from((0, 1, 3, 5));
         let violation = Violation::new(path, &METADATA, position);

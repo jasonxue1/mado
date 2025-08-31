@@ -7,6 +7,7 @@ use rand::distr::SampleString as _;
 use rand::distr::StandardUniform;
 
 // TODO: Test `println!` and use actually stdout
+#[allow(clippy::format_push_string)]
 fn string_push_str_with_format(ss: &[String]) {
     #[allow(clippy::collection_is_never_read)]
     let mut buf = String::new();
@@ -71,6 +72,7 @@ fn buf_writer_write_method_without_format(ss: &[String]) {
 }
 
 #[allow(clippy::unwrap_used)]
+#[allow(clippy::format_push_string)]
 fn buf_writer_write_all_push_str(ss: &[String]) {
     let buf = vec![];
     let mut output = BufWriter::new(buf);
@@ -87,6 +89,7 @@ fn buf_writer_write_all_push_str(ss: &[String]) {
 }
 
 #[allow(clippy::unwrap_used)]
+#[allow(clippy::format_push_string)]
 fn buf_writer_write_all_append_with_format(ss: &[String]) {
     let buf = vec![];
     let mut output = BufWriter::new(buf);

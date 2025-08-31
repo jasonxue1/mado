@@ -15,6 +15,7 @@ static GLOBAL: tikv_jemallocator::Jemalloc = tikv_jemallocator::Jemalloc;
 #[global_allocator]
 static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
+use colored::control;
 use std::process::ExitCode;
 
 use clap::CommandFactory as _;
@@ -28,6 +29,10 @@ use mado::Cli;
 use mado::Command;
 
 fn main() -> Result<ExitCode> {
+    // Ensure colored output in all environments (even when not a TTY),
+    // so CLI behavior matches tests that assert ANSI styling.
+    control::set_override(true);
+
     let cli = Cli::parse();
 
     match &cli.command {

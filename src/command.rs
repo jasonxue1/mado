@@ -43,6 +43,7 @@ pub enum CompletionShell {
     Bash,
     Elvish,
     Fish,
+    #[value(name = "powershell", alias = "power-shell")]
     PowerShell,
     Zsh,
     Nushell,

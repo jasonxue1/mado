@@ -30,7 +30,6 @@ impl Linter {
 
 impl From<&Config> for Linter {
     #[inline]
-    #[must_use]
     fn from(config: &Config) -> Self {
         let rules = Vec::from(&config.lint);
 
