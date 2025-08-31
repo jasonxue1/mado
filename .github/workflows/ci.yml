@@ -70,6 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CARGO_TERM_COLOR: always
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -84,8 +85,15 @@ jobs:
           CLICOLOR_FORCE: true
           TZ: 'Asia/Tokyo'
       - name: Upload coverage to Codecov
+        if: ${{ env.CODECOV_TOKEN != '' }}
         uses: codecov/codecov-action@v5
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ env.CODECOV_TOKEN }}
           files: lcov.info
           fail_ci_if_error: true
+
+      - name: Skip Codecov upload (no token)
+        if: ${{ env.CODECOV_TOKEN == '' }}
+        run: |
+          echo "CODECOV_TOKEN is not set; skipping upload."
+          echo "You can add CODECOV_TOKEN in repository settings → Secrets and variables → Actions."
